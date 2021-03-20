@@ -5,7 +5,6 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
-import io.snello.model.UserDetails;
 import io.snello.model.events.DbCreatedEvent;
 import io.snello.repository.JdbcRepository;
 import io.snello.util.ConditionUtils;
@@ -24,11 +23,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
 import java.util.*;
 
-import static io.snello.management.AppConstants.DB_TYPE;
 import static io.snello.management.DbConstants.*;
 import static io.snello.repository.h2.H2Constants.*;
 
-@Singleton
+//@Singleton
 //@Requires(property = DB_TYPE, value = "h2")
 public class H2JdbcRepository implements JdbcRepository {
 
@@ -430,34 +428,34 @@ public class H2JdbcRepository implements JdbcRepository {
         return false;
     }
 
-    @Override
-    public SecurityIdentity login(String username, String password) throws Exception {
-        if (username == null) {
-            throw new Exception("login must contain username in 'username' field");
-        }
-        if (password == null) {
-            throw new Exception("login must contain password in 'password' field");
-        }
-        Map<String, Object> map = null;
-        try (Connection connection = dataSource.getConnection()) {
-            logger.info("login QUERY: " + LOGIN_QUERY);
-            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
-            preparedStatement.setObject(1, username);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                map = H2SqlUtils.single(resultSet);
-            }
-        }
-        if (map == null) {
-            logger.info("password not found for username: " + username);
-            throw new Exception("invalid username/password");
-        }
-        String passwordOnDb = (String) map.get(PWD_LOWERCASE);
-        String encrPassword = PasswordUtils.createPassword(password);
-        if (encrPassword.equals(passwordOnDb)) {
-            return new UserDetails(username, getRoles(username));
-        }
-        throw new Exception("Failure in authentication");
-    }
+//    @Override
+//    public SecurityIdentity login(String username, String password) throws Exception {
+//        if (username == null) {
+//            throw new Exception("login must contain username in 'username' field");
+//        }
+//        if (password == null) {
+//            throw new Exception("login must contain password in 'password' field");
+//        }
+//        Map<String, Object> map = null;
+//        try (Connection connection = dataSource.getConnection()) {
+//            logger.info("login QUERY: " + LOGIN_QUERY);
+//            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
+//            preparedStatement.setObject(1, username);
+//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+//                map = H2SqlUtils.single(resultSet);
+//            }
+//        }
+//        if (map == null) {
+//            logger.info("password not found for username: " + username);
+//            throw new Exception("invalid username/password");
+//        }
+//        String passwordOnDb = (String) map.get(PWD_LOWERCASE);
+//        String encrPassword = PasswordUtils.createPassword(password);
+//        if (encrPassword.equals(passwordOnDb)) {
+//            return new UserDetails(username, getRoles(username));
+//        }
+//        throw new Exception("Failure in authentication");
+//    }
 
 
     private List<String> getRoles(String username) throws Exception {
