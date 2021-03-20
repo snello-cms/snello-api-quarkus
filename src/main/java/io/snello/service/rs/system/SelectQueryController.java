@@ -1,4 +1,4 @@
-package io.snello.service.rs.security;
+package io.snello.service.rs.system;
 
 import io.snello.service.ApiService;
 import io.snello.model.events.SelectQueryCreateUpdateEvent;
