@@ -37,7 +37,7 @@ public class PublicDataController {
     @ConfigProperty(name = SYSTEM_DOCUMENTS_BASE_PATH)
     List<String> basePaths;
 
-    Logger logger = LoggerFactory.getLogger(PublicDataController.class);
+    Logger logger = LoggerFactory.getLogger(getClass());
 
 
     @POST

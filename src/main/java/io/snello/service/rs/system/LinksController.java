@@ -1,9 +1,5 @@
 package io.snello.service.rs.system;
 
-
-
-
-
 import io.snello.model.FieldDefinition;
 import io.snello.model.Link;
 import io.snello.model.Metadata;
@@ -13,7 +9,6 @@ import io.snello.service.MetadataService;
 import io.snello.util.MetadataUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -26,8 +21,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-
 
 import static io.snello.management.AppConstants.*;
 import static javax.ws.rs.core.Response.ok;
@@ -51,13 +44,13 @@ public class LinksController {
     static String table = LINKS;
 
 
-    Logger logger = LoggerFactory.getLogger(MetadataController.class);
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @GET
     public Response list(
-                                @Null @QueryParam(SORT_PARAM) String sort,
-                                @Null @QueryParam(LIMIT_PARAM) String limit,
-                                @Null @QueryParam(START_PARAM) String start) throws Exception {
+            @Null @QueryParam(SORT_PARAM) String sort,
+            @Null @QueryParam(LIMIT_PARAM) String limit,
+            @Null @QueryParam(START_PARAM) String start) throws Exception {
         if (sort != null)
             logger.info(SORT_DOT_DOT + sort);
         if (limit != null)
@@ -72,8 +65,9 @@ public class LinksController {
     }
 
 
-    @GET @Path(UUID_PATH_PARAM)
-    public Response fetch( @NotNull String uuid) throws Exception {
+    @GET
+    @Path(UUID_PATH_PARAM)
+    public Response fetch(@NotNull String uuid) throws Exception {
         return ok(apiService.fetch(null, table, uuid, NAME)).build();
     }
 
@@ -104,8 +98,9 @@ public class LinksController {
         return ok(map).build();
     }
 
-    @DELETE @Path(UUID_PATH_PARAM)
-    public Response delete( @NotNull String uuid) throws Exception {
+    @DELETE
+    @Path(UUID_PATH_PARAM)
+    public Response delete(@NotNull String uuid) throws Exception {
         boolean result = apiService.delete(table, uuid, NAME);
         if (result) {
             return ok().build();
@@ -113,7 +108,8 @@ public class LinksController {
         return serverError().build();
     }
 
-    @GET @Path(UUID_PATH_PARAM_CREATE)
+    @GET
+    @Path(UUID_PATH_PARAM_CREATE)
     public Response create(@NotNull String uuid) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, NAME);
         map.put(CREATED, true);

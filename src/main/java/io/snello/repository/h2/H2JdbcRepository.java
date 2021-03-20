@@ -1,7 +1,5 @@
 package io.snello.repository.h2;
 
-import io.quarkus.runtime.StartupEvent;
-import io.quarkus.security.identity.SecurityIdentity;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
@@ -9,25 +7,23 @@ import io.snello.model.events.DbCreatedEvent;
 import io.snello.repository.JdbcRepository;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
-import io.snello.util.PasswordUtils;
 import io.snello.util.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.sql.DataSource;
 import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static io.snello.management.DbConstants.*;
 import static io.snello.repository.h2.H2Constants.*;
 
-//@Singleton
-//@Requires(property = DB_TYPE, value = "h2")
 public class H2JdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
@@ -37,14 +33,15 @@ public class H2JdbcRepository implements JdbcRepository {
     @Inject
     Event eventPublisher;
 
-    public H2JdbcRepository(){}
+    public H2JdbcRepository() {
+    }
 
     public H2JdbcRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public void onLoad(@Observes StartupEvent event) {
-        logger.info("Creation queries at startup: " + event.toString());
+    public void onLoad() {
+        logger.info("Creation queries at startup: ");
         try {
             batch(creationQueries());
         } catch (Exception e) {
@@ -64,42 +61,7 @@ public class H2JdbcRepository implements JdbcRepository {
                 creationQueryDraggables,
                 creationQueryDroppables,
                 creationQuerySelectQueries,
-                creationUsersQueries,
-                creationRolesQueries,
-                creationUserRolesQueries,
-                creationUrlMapRulesQueries,
-                creationAdminUser,
-                creationAdminRole,
-                creationAdminUserRole,
-                creationLinksQueries,
-                creationConditionsViewRole,
-                creationConditionsEditRole,
-                creationDocumentsViewRole,
-                creationDocumentsEditRole,
-                creationExtensionsEditRole,
-                creationExtensionsViewRole,
-                creationFieldDefinitionsViewRole,
-                creationFieldDefinitionsEditRole,
-                creationLinksViewRole,
-                creationLinksEditRole,
-                creationMetadatasViewRole,
-                creationMetadatasEditRole,
-                creationRoleViewRole,
-                creationRoleEditRole,
-                creationSelectQueryViewRole,
-                creationSelectQueryEditRole,
-                creationUrlMapRuleViewRole,
-                creationUrlMapRuleEditRole,
-                creationUserViewRole,
-                creationUserEditRole,
-                creationDraggableEditRole,
-                creationDraggableViewRole,
-                creationDroppableEditRole,
-                creationDroppableViewRole,
-                creationContentsViewRole,
-                creationContentsEditRole,
-                creationPublicdataEditRole,
-                creationChangePasswordTokenQueries
+                creationLinksQueries
         };
     }
 
@@ -406,7 +368,6 @@ public class H2JdbcRepository implements JdbcRepository {
     }
 
 
-
     public boolean verifyTable(String tableName) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
@@ -457,33 +418,6 @@ public class H2JdbcRepository implements JdbcRepository {
 //        throw new Exception("Failure in authentication");
 //    }
 
-
-    private List<String> getRoles(String username) throws Exception {
-        List<String> roles = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            logger.info("roles QUERY: " + ROLES_QUERY);
-            PreparedStatement preparedStatement = connection.prepareStatement(ROLES_QUERY);
-            preparedStatement.setObject(1, username);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    roles.add(resultSet.getString(1));
-                }
-            }
-        }
-        return roles;
-    }
-
-    @Override
-    public List<String> roles(String username) throws Exception {
-        if (username == null) {
-            throw new Exception("username is null!");
-        }
-        return getRoles(username);
-    }
-
-    public String getUserRoleQuery() {
-        return INSERT_ROLE_QUERY;
-    }
 
     @Override
     public String getJoinTableQuery() {

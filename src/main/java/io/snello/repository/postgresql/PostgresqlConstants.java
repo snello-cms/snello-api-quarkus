@@ -11,10 +11,6 @@ public class PostgresqlConstants {
 
     public static final String ESCAPE = "";
 
-    public static final String LOGIN_QUERY = "SELECT password FROM users WHERE username = ? and active = true";
-    public static final String ROLES_QUERY = "SELECT role FROM userroles WHERE username = ?";
-    public static String INSERT_ROLE_QUERY = "INSERT INTO userroles (username, role) VALUES (?, ?) ON CONFLICT (username, role) DO NOTHING;";
-
     public static String creationQueryConditions = "CREATE TABLE IF NOT EXISTS conditions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  metadata_uuid varchar(255) NOT NULL,\n" +
@@ -128,50 +124,6 @@ public class PostgresqlConstants {
             "  PRIMARY KEY (uuid)\n" +
             ") ";
 
-    public static String creationUsersQueries = "CREATE TABLE IF NOT EXISTS users (\n" +
-            "  username varchar(255) NOT NULL,\n" +
-            "  password varchar(255) NOT NULL,\n" +
-            "  name varchar(255) NOT NULL,\n" +
-            "  surname varchar(255) DEFAULT NULL,\n" +
-            "  email varchar(255) DEFAULT NULL,\n" +
-            "  active boolean DEFAULT true,\n" +
-            "  creation_date timestamp ,\n" +
-            "  last_update_date timestamp ,\n" +
-            "  PRIMARY KEY (username)\n" +
-            ") ";
-
-    public static String creationChangePasswordTokenQueries = "CREATE TABLE IF NOT EXISTS changepasswordtokens (\n" +
-            "  uuid varchar(255) NOT NULL,\n" +
-            "  email varchar(255) NOT NULL,\n" +
-            "  token varchar(255) NOT NULL,\n" +
-            "  creation_date timestamp,\n" +
-            "  PRIMARY KEY (uuid)\n" +
-            ") ";
-
-
-    public static String creationRolesQueries = "CREATE TABLE IF NOT EXISTS roles (\n" +
-            "  name varchar(255) NOT NULL,\n" +
-            "  description varchar(255) NOT NULL,\n" +
-            "  object_type varchar(255) NOT NULL,\n" +
-            "  object_name varchar(255) DEFAULT NULL,\n" +
-            "  action varchar(255) DEFAULT NULL,\n" +
-            "  PRIMARY KEY (name)\n" +
-            ") ";
-
-    public static String creationUserRolesQueries = "CREATE TABLE IF NOT EXISTS userroles (\n" +
-            "  username varchar(255) NOT NULL,\n" +
-            "  role varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (username, role)\n" +
-            ") ";
-
-    public static String creationUrlMapRulesQueries = "CREATE TABLE IF NOT EXISTS urlmaprules (\n" +
-            "  uuid varchar(255) NOT NULL,\n" +
-            "  pattern varchar(255) NOT NULL,\n" +
-            "  access varchar(255) NOT NULL,\n" +
-            "  http_methods varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (uuid)\n" +
-            ") ";
-
     public static String creationLinksQueries = "CREATE TABLE IF NOT EXISTS links (\n" +
             "  name varchar(255) NOT NULL,\n" +
             "  labels varchar(255) NOT NULL,\n" +
@@ -183,63 +135,7 @@ public class PostgresqlConstants {
             "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  PRIMARY KEY (name)\n" +
             ") ";
-
-
-    public static String creationAdminUser = "INSERT INTO users (username, password, name, surname, email, active) VALUES ('admin', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=', 'admin', 'admin', 'admin@snello.io', '1') ON CONFLICT (username) DO NOTHING;";
-
-    public static String creationAdminRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('admin', 'all rules', 'metadatas', NULL, NULL)  ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationContentsViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('contents_view', 'contents view rule', 'metadatas', NULL, 'view')  ON CONFLICT (name) DO NOTHING;";
-    public static String creationContentsEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('contents_edit', 'contents edit rule', 'metadatas', NULL, 'edit')  ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationConditionsViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('conditions_view', 'conditions view rule', 'metadatas', 'conditions', 'view')  ON CONFLICT (name) DO NOTHING;";
-    public static String creationConditionsEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('conditions_edit', 'conditions edit rule', 'metadatas', 'conditions', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationDocumentsViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('documents_view', 'documents view rule', 'metadatas', 'documents', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationDocumentsEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('documents_edit', 'documents edit rule', 'metadatas', 'documents', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationFieldDefinitionsViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('fielddefinitions_view', 'fielddefinitions view rule', 'metadatas', 'fielddefinitions', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationFieldDefinitionsEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('fielddefinitions_edit', 'fielddefinitions edit rule', 'metadatas', 'fielddefinitions', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationExtensionsViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('extensions_view', 'extensions view rule', 'extensions', 'extensions', 'view')  ON CONFLICT (name) DO NOTHING;";
-    public static String creationExtensionsEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('extensions_edit', 'extensions edit rule', 'extensions', 'extensions', 'edit')  ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationLinksViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('links_view', 'links view rule', 'metadatas', 'links', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationLinksEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('links_edit', 'links edit rule', 'metadatas', 'links', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationMetadatasViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('metadatas_view', 'metadatas metadatas rule', 'metadatas', 'metadatas', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationMetadatasEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('metadatas_edit', 'metadatas metadatas rule', 'metadatas', 'metadatas', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationPublicdataEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('publicdata_edit', 'publicdata edit rule', 'metadatas', 'publicdata', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationRoleViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('roles_view', 'roles view rule', 'metadatas', 'roles', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationRoleEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('roles_edit', 'roles edit rule', 'metadatas', 'roles', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationSelectQueryViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('selectqueries_view', 'selectqueries view rule', 'metadatas', 'selectqueries', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationSelectQueryEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('selectqueries_edit', 'selectqueries edit rule', 'metadatas', 'selectqueries', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationUrlMapRuleViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('urlmaprules_view', 'urlmaprules view rule', 'metadatas', 'urlmaprules', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationUrlMapRuleEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('urlmaprules_edit', 'urlmaprules edit rule', 'metadatas', 'urlmaprules', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationUserViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('users_view', 'users view rule', 'metadatas', 'users', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationUserEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('users_edit', 'users edit rule', 'metadatas', 'users', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationDroppableViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('droppables_view', 'droppables view rule', 'metadatas', 'droppables', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationDroppableEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('droppables_edit', 'droppables edit rule', 'metadatas', 'droppables', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-    public static String creationDraggableViewRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('draggables_view', 'draggables view rule', 'metadatas', 'draggables', 'view') ON CONFLICT (name) DO NOTHING;";
-    public static String creationDraggableEditRole = "INSERT INTO roles (name, description, object_type, object_name, action) VALUES ('draggables_edit', 'draggables edit rule', 'metadatas', 'draggables', 'edit') ON CONFLICT (name) DO NOTHING;";
-
-
-    public static String creationAdminUserRole = "INSERT INTO userroles (username, role) VALUES ('admin', 'admin') ON CONFLICT (username, role) DO NOTHING;";
-
-
+    
     public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( " +
             "%2$s varchar(255) NOT NULL, " +
             "%3$s varchar(255) NOT NULL, " +

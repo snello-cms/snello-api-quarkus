@@ -15,7 +15,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
 import static javax.ws.rs.core.Response.ok;
@@ -24,7 +26,7 @@ import static javax.ws.rs.core.Response.serverError;
 @Path(API_PATH)
 public class ApiController {
 
-    Logger logger = LoggerFactory.getLogger(ApiController.class);
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Inject
     ApiService apiService;

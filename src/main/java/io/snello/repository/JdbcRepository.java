@@ -1,6 +1,5 @@
 package io.snello.repository;
 
-import io.quarkus.runtime.StartupEvent;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
@@ -15,7 +14,7 @@ import java.util.Map;
 public interface JdbcRepository {
 
 
-    void onLoad(final StartupEvent event);
+    void onLoad();
 
     String[] creationQueries();
 
@@ -74,13 +73,7 @@ public interface JdbcRepository {
 
     boolean verifyTable(String tableName) throws Exception;
 
-//    SecurityIdentity login(String username, String password) throws Exception;
-
-    List<String> roles(String username) throws Exception;
-
     boolean query(String query, List<Object> values) throws Exception;
-
-    String getUserRoleQuery();
 
     String getJoinTableQuery();
 

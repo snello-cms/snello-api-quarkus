@@ -1,6 +1,5 @@
 package io.snello.service.rs.system;
 
-import io.snello.api.service.AbstractServiceRs;
 import io.snello.model.Metadata;
 import io.snello.model.events.MetadataCreateUpdateEvent;
 import io.snello.model.events.MetadataDeleteEvent;
@@ -25,7 +24,7 @@ import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
 @Path(METADATA_PATH)
-public class MetadataServiceRs extends AbstractServiceRs<Metadata, String> {
+public class MetadataServiceRs {
 
 
     @Inject

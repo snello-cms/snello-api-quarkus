@@ -1,6 +1,5 @@
 package io.snello.repository.mysql;
 
-import io.quarkus.runtime.StartupEvent;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
@@ -14,20 +13,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.sql.DataSource;
 import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static io.snello.management.AppConstants.JDBC_DB;
 import static io.snello.management.DbConstants.*;
 import static io.snello.repository.mysql.MysqlConstants.*;
 
-//@Singleton
-//@Requires(property = DB_TYPE, value = "mysql")
 public class MysqlJdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
@@ -39,15 +37,16 @@ public class MysqlJdbcRepository implements JdbcRepository {
     @Inject
     Event eventPublisher;
 
-    public MysqlJdbcRepository(){}
+    public MysqlJdbcRepository() {
+    }
 
     public MysqlJdbcRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
 
-    public void onLoad(@Observes StartupEvent event) {
-        logger.info("Creation queries at startup: " + event.toString());
+    public void onLoad() {
+        logger.info("Creation queries at startup: ");
         try {
             batch(creationQueries());
         } catch (Exception e) {
@@ -67,42 +66,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
                 creationQueryDroppables,
                 creationQueryExtensions,
                 creationQuerySelectQueries,
-                creationUsersQueries,
-                creationRolesQueries,
-                creationUserRolesQueries,
-                creationUrlMapRulesQueries,
-                creationAdminUser,
-                creationAdminRole,
-                creationAdminUserRole,
-                creationLinksQueries,
-                creationConditionsViewRole,
-                creationConditionsEditRole,
-                creationDocumentsViewRole,
-                creationDocumentsEditRole,
-                creationFieldDefinitionsViewRole,
-                creationFieldDefinitionsEditRole,
-                creationLinksViewRole,
-                creationLinksEditRole,
-                creationMetadatasViewRole,
-                creationMetadatasEditRole,
-                creationRoleViewRole,
-                creationRoleEditRole,
-                creationSelectQueryViewRole,
-                creationSelectQueryEditRole,
-                creationUrlMapRuleViewRole,
-                creationUrlMapRuleEditRole,
-                creationUserViewRole,
-                creationUserEditRole,
-                creationDraggableEditRole,
-                creationDraggableViewRole,
-                creationDroppableEditRole,
-                creationDroppableViewRole,
-                creationExtensionsEditRole,
-                creationExtensionsViewRole,
-                creationContentsViewRole,
-                creationContentsEditRole,
-                creationPublicdataEditRole,
-                creationChangePasswordTokenQueries
+                creationLinksQueries
+
         };
     }
 
@@ -436,33 +401,6 @@ public class MysqlJdbcRepository implements JdbcRepository {
 //        throw new Exception("Failure in authentication");
 //    }
 
-
-    private List<String> getRoles(String username) throws Exception {
-        List<String> roles = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            logger.info("roles QUERY: " + ROLES_QUERY);
-            PreparedStatement preparedStatement = connection.prepareStatement(ROLES_QUERY);
-            preparedStatement.setObject(1, username);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    roles.add(resultSet.getString(1));
-                }
-            }
-        }
-        return roles;
-    }
-
-    @Override
-    public List<String> roles(String username) throws Exception {
-        if (username == null) {
-            throw new Exception("username is null!");
-        }
-        return getRoles(username);
-    }
-
-    public String getUserRoleQuery() {
-        return INSERT_ROLE_QUERY;
-    }
 
     @Override
     public String getJoinTableQuery() {

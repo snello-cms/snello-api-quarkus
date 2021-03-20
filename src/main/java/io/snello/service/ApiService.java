@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
-import static io.snello.repository.mysql.MysqlConstants.*;
+import static io.snello.repository.mysql.MysqlConstants.DROP_TABLE;
+import static io.snello.repository.mysql.MysqlConstants.TRUNCATE_TABLE;
 
 @Singleton
 public class ApiService {
@@ -226,10 +227,6 @@ public class ApiService {
 
     public Metadata createMetadataTable(String uuid) throws Exception {
         return metadataService.createTableFromMetadata(uuid);
-    }
-
-    public boolean createUserRole(List<Object> values) throws Exception {
-        return jdbcRepository.query(jdbcRepository.getUserRoleQuery(), values);
     }
 
     public boolean query(String query, List<Object> values) throws Exception {
