@@ -36,7 +36,6 @@ public abstract class AbstractServiceRs {
     }
 
     @POST
-    @Transactional
     public Response persist(Map<String, Object> map) throws Exception {
         if (map.get(TABLE_NAME) == null) {
             throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
@@ -53,7 +52,6 @@ public abstract class AbstractServiceRs {
 
     @GET
     @Path("/{id}")
-    @Transactional
     public Response fetch(@PathParam("id") String id) throws Exception {
         Map<String, Object> result = apiService.fetch(null, table, id, UUID);
         postFetch(result);
@@ -63,7 +61,6 @@ public abstract class AbstractServiceRs {
 
     @PUT
     @Path("/{id}")
-    @Transactional
     public Response update(@PathParam("id") String id,
                            Map<String, Object> map) throws Exception {
         if (map.get(TABLE_NAME) == null) {
@@ -79,7 +76,6 @@ public abstract class AbstractServiceRs {
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") String id) throws Exception {
         boolean result = apiService.delete(table, id, UUID);
         boolean deleteFieldDefinitionsByMetadataUuid = apiService.deleteFieldDefinitionsByMetadataUuid(id);
