@@ -5,10 +5,10 @@ import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
+import io.snello.util.MultipartFormUtils;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
 import javax.annotation.Nullable;
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +17,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,7 +46,7 @@ public class DocumentServiceRs {
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response download(@NotNull String uuid) throws Exception {
+    public Response download(@PathParam("uuid") @NotNull String uuid) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
@@ -56,10 +58,11 @@ public class DocumentServiceRs {
     }
 
     @GET
-    @Path(UUID_PATH_PARAM + DOWNLOAD_PATH + "/{name}")
+    @Path("/{uuid}/download/{name}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response downloadWithName(@NotNull String uuid, @NotNull String name) throws Exception {
+    public Response downloadWithName(@PathParam("uuid") @NotNull String uuid,
+                                     @PathParam("name") @NotNull String name) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
@@ -73,10 +76,10 @@ public class DocumentServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response persist(@MultipartForm MultipartFormDataInput multipartFormDataInput) {
+    public Response persist(@MultipartForm  DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
-            Map<String, Object> map = documentsService.upload(new DocumentFormData(multipartFormDataInput));
+            Map<String, Object> map = documentsService.upload(documentFormData);
             map = apiService.create(table, map, AppConstants.UUID);
             return ok(map).build();
         } catch (Exception e) {
@@ -88,10 +91,10 @@ public class DocumentServiceRs {
 
     @PUT
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Path(UUID_PATH_PARAM)
+    @Path("/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(DocumentFormData documentFormData,
-                           @NotNull String uuid) {
+    public Response update(@MultipartForm DocumentFormData documentFormData,
+                           @PathParam("uuid") @NotNull String uuid) {
         try {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
             Map<String, Object> map = documentsService.upload(documentFormData);
@@ -104,11 +107,12 @@ public class DocumentServiceRs {
     }
 
 
-    @Path(UUID_PATH_PARAM)
+    @Path("/{uuid}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response delete(@NotNull String uuid, @Nullable @QueryParam(DELETE_PARAM) String delete) throws Exception {
+    public Response delete(@PathParam("uuid") @NotNull String uuid,
+                           @Nullable @QueryParam("delete") String delete) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         if (delete != null && delete.toLowerCase().equals(TRUE)) {
             documentsService.delete((String) map.get(DOCUMENT_PATH));
