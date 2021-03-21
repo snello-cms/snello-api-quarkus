@@ -2,7 +2,6 @@ package io.snello.api.service;
 
 import io.snello.management.AppConstants;
 import io.snello.service.ApiService;
-import io.snello.util.MetadataUtils;
 import org.jboss.logging.Logger;
 
 import javax.validation.constraints.NotNull;
@@ -41,7 +40,7 @@ public abstract class AbstractServiceRs {
         prePersist(map);
         map.put(UUID, java.util.UUID.randomUUID().toString());
         map = apiService.create(table, map, UUID);
-        postCreate(map);
+        postPersist(map);
         return ok(map).build();
     }
 
@@ -107,7 +106,7 @@ public abstract class AbstractServiceRs {
     protected void postFetch(Map<String, Object> object) throws Exception {
     }
 
-    protected void postCreate(Map<String, Object> object) throws Exception {
+    protected void postPersist(Map<String, Object> object) throws Exception {
     }
 
     protected void preUpdate(Map<String, Object> object) throws Exception {

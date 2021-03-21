@@ -49,7 +49,7 @@ public class MetadataServiceRs extends AbstractServiceRs {
     }
 
     @Override
-    protected void postCreate(Map<String, Object> map) {
+    protected void postPersist(Map<String, Object> map) {
         eventPublisher.fireAsync(new MetadataCreateUpdateEvent(map));
     }
 

@@ -39,7 +39,7 @@ public class ConditionsServiceRs extends AbstractServiceRs {
     }
 
     @Override
-    protected void postCreate(Map<String, Object> object) {
+    protected void postPersist(Map<String, Object> object) {
         eventPublisher.fireAsync(new ConditionCreateUpdateEvent(object));
     }
 
