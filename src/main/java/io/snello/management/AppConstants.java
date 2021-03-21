@@ -41,14 +41,6 @@ public class AppConstants {
     public static final String METADATA_PATH = API_PATH + BASE_PATH + METADATAS;
     public static final String PUBLIC_DATA_PATH = API_PATH + BASE_PATH + PUBLIC_DATA;
     public static final String SELECT_QUERY_PATH = API_PATH + BASE_PATH + SELECT_QUERY;
-    public static final String URL_MAP_RULES_PATH = API_PATH + BASE_PATH + URL_MAP_RULES;
-    public static final String IDENTITY_PATH = API_PATH + BASE_PATH + IDENTITY;
-
-    public static final String USERS_PATH = API_PATH + BASE_PATH + USERS;
-    public static final String CHANGE_PASSORD_PATH = BASE_PATH + CHANGE_PASSWORD;
-    public static final String PASSWORD_PATH = BASE_PATH + PASSWORD;
-    public static final String ROLES_PATH = API_PATH + BASE_PATH + ROLES;
-    public static final String USER_ROLES_PATH = API_PATH + BASE_PATH + USER_ROLES;
 
     public static final String DATA_LIST_NAMES = "/names";
     public static final String DATA_LIST_METADATA_NAMES = "/metadata/{name}";
