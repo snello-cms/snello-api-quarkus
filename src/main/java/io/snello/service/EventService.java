@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class EventService {
         metadataService.fielddefinitionsMap();
     }
 
-    void createOrUpdateMetadata(@Observes MetadataCreateUpdateEvent metadataCreateUpdateEvent) {
+    void createOrUpdateMetadata(@ObservesAsync MetadataCreateUpdateEvent metadataCreateUpdateEvent) {
         logger.info("new MetadataCreateUpdateEvent " + metadataCreateUpdateEvent.toString());
         try {
             resetMetadata();
@@ -59,7 +60,7 @@ public class EventService {
         }
     }
 
-    void deleteMetadata(@Observes MetadataDeleteEvent metadataDeleteEvent) {
+    void deleteMetadata(@ObservesAsync MetadataDeleteEvent metadataDeleteEvent) {
         logger.info("new MetadataDeleteEvent " + metadataDeleteEvent.toString());
         try {
             resetMetadata();
@@ -69,7 +70,7 @@ public class EventService {
     }
 
 
-    void createOrUpdateFieldDefinition(@Observes FieldDefinitionCreateUpdateEvent fieldDefinitionCreateUpdateEvent) {
+    void createOrUpdateFieldDefinition(@ObservesAsync FieldDefinitionCreateUpdateEvent fieldDefinitionCreateUpdateEvent) {
         logger.info("new FieldDefinitionCreateUpdateEvent " + fieldDefinitionCreateUpdateEvent.toString());
 //        Map<String, FieldDefinition> fieldDefinitions = null;
 //        try {
@@ -98,7 +99,7 @@ public class EventService {
     }
 
 
-    void deleteFieldDefinition(@Observes FieldDefinitionDeleteEvent fieldDefinitionDeleteEvent) {
+    void deleteFieldDefinition(@ObservesAsync FieldDefinitionDeleteEvent fieldDefinitionDeleteEvent) {
         logger.info("new FieldDefinitionDeleteEvent " + fieldDefinitionDeleteEvent.toString());
 //        try {
 //            for (Map<String, FieldDefinition> fieldDefinitions : metadataService.fielddefinitionsMap().values()) {
@@ -120,7 +121,7 @@ public class EventService {
         }
     }
 
-    void createOrUpdateDraggable(@Observes DraggableCreateUpdateEvent draggableCreateUpdateEvent) {
+    void createOrUpdateDraggable(@ObservesAsync DraggableCreateUpdateEvent draggableCreateUpdateEvent) {
         logger.info("new DraggableCreateUpdateEvent " + draggableCreateUpdateEvent.toString());
         try {
             metadataService.draggablesMap().put(draggableCreateUpdateEvent.draggable.uuid, draggableCreateUpdateEvent.draggable);
@@ -130,7 +131,7 @@ public class EventService {
     }
 
 
-    void deleteDraggable(@Observes DraggableDeleteEvent draggableDeleteEvent) {
+    void deleteDraggable(@ObservesAsync DraggableDeleteEvent draggableDeleteEvent) {
         logger.info("new DraggableDeleteEvent " + draggableDeleteEvent.toString());
         try {
             for (Draggable draggable : metadataService.draggablesMap().values()) {
@@ -144,7 +145,7 @@ public class EventService {
         }
     }
 
-    void createOrUpdateDroppable(@Observes DroppableCreateUpdateEvent droppableCreateUpdateEvent) {
+    void createOrUpdateDroppable(@ObservesAsync DroppableCreateUpdateEvent droppableCreateUpdateEvent) {
         logger.info("new DroppableCreateUpdateEvent " + droppableCreateUpdateEvent.toString());
         try {
             metadataService.droppablesMap().put(droppableCreateUpdateEvent.droppable.uuid, droppableCreateUpdateEvent.droppable);
@@ -153,7 +154,7 @@ public class EventService {
         }
     }
 
-    void deleteDroppable(@Observes DroppableDeleteEvent droppableDeleteEvent) {
+    void deleteDroppable(@ObservesAsync DroppableDeleteEvent droppableDeleteEvent) {
         logger.info("new DroppableDeleteEvent " + droppableDeleteEvent.toString());
         try {
             for (Droppable droppable : metadataService.droppablesMap().values()) {
@@ -167,7 +168,7 @@ public class EventService {
         }
     }
 
-    void createOrUpdateSelectQuery(@Observes SelectQueryCreateUpdateEvent selectQueryCreateUpdateEvent) {
+    void createOrUpdateSelectQuery(@ObservesAsync SelectQueryCreateUpdateEvent selectQueryCreateUpdateEvent) {
         logger.info("new SelectQueryCreateUpdateEvent " + selectQueryCreateUpdateEvent.toString());
         try {
             metadataService.selectqueryMap().put(selectQueryCreateUpdateEvent.selectQuery.query_name, selectQueryCreateUpdateEvent.selectQuery);
@@ -176,7 +177,7 @@ public class EventService {
         }
     }
 
-    void deleteSelectQuery(@Observes SelectQueryDeleteEvent selectQueryDeleteEvent) {
+    void deleteSelectQuery(@ObservesAsync SelectQueryDeleteEvent selectQueryDeleteEvent) {
         logger.info("new SelectQueryDeleteEvent " + selectQueryDeleteEvent.toString());
         try {
             for (SelectQuery selectQuery : metadataService.selectqueryMap().values()) {
@@ -191,7 +192,7 @@ public class EventService {
     }
 
 
-    void createOrUpdateCondition(@Observes ConditionCreateUpdateEvent conditionCreateUpdateEvent) {
+    void createOrUpdateCondition(@ObservesAsync ConditionCreateUpdateEvent conditionCreateUpdateEvent) {
         logger.info("new ConditionCreateUpdateEvent " + conditionCreateUpdateEvent.toString());
         List<Condition> conditions = null;
         try {
@@ -214,7 +215,7 @@ public class EventService {
     }
 
 
-    void deleteCondition(@Observes ConditionDeleteEvent conditionDeleteEvent) {
+    void deleteCondition(@ObservesAsync ConditionDeleteEvent conditionDeleteEvent) {
         logger.info("new ConditionDeleteEvent " + conditionDeleteEvent.toString());
         try {
             for (List<Condition> conditions : metadataService.conditionsMap().values()) {
