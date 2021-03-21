@@ -23,6 +23,7 @@ import static io.snello.management.AppConstants.*;
 @ApplicationScoped
 public class SelectQueryServiceRs extends AbstractServiceRs {
 
+    @Inject
     public SelectQueryServiceRs(ApiService apiService) {
         super(apiService, SELECT_QUERY, "");
     }

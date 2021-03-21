@@ -5,10 +5,8 @@ import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
-import io.snello.util.MultipartFormUtils;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.annotation.Nullable;
 import javax.enterprise.context.ApplicationScoped;
@@ -17,8 +15,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 

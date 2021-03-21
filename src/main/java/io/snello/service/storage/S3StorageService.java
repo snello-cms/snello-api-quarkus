@@ -64,7 +64,7 @@ public class S3StorageService implements StorageService {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(documentFormData.uuid)
+                            .object(name)
                             .contentType(documentFormData.mimeType)
                             .stream(documentFormData.data, -1, PART_SIZE)
                             .build());

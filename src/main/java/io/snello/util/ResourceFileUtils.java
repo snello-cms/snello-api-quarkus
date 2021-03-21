@@ -31,7 +31,7 @@ public class ResourceFileUtils {
     }
 
     public static String getExtension(String filename) throws Exception {
-        if (filename.contains(".")) {
+        if (filename != null && filename.contains(".")) {
             return filename.substring(filename.lastIndexOf(".") + 1);
         }
         return null;

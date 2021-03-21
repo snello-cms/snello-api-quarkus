@@ -10,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -92,9 +93,11 @@ public abstract class AbstractServiceRs {
             logger.info(START_DOT_DOT + start);
         int l = Optional.ofNullable(limit).map(Integer::parseInt).orElse(10);
         int s = Optional.ofNullable(start).map(Integer::parseInt).orElse(0);
-        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))
-                .header(SIZE_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo))
-                .header(TOTAL_COUNT_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo)).build();
+        List<Map<String, Object>> list = apiService.list(table, uriInfo.getQueryParameters(), sort, l, s);
+        long count = apiService.count(table, uriInfo);
+        return ok(list)
+                .header(SIZE_HEADER_PARAM, EMPTY + count)
+                .header(TOTAL_COUNT_HEADER_PARAM, EMPTY + count).build();
     }
 
     protected void postUpdate(Map<String, Object> object) throws Exception {

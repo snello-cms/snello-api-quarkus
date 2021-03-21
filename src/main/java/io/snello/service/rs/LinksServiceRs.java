@@ -35,7 +35,8 @@ public class LinksServiceRs extends AbstractServiceRs {
     @Inject
     Event eventPublisher;
 
-    public LinksServiceRs(ApiService apiService, String table, String defaultSort) {
+    @Inject
+    public LinksServiceRs(ApiService apiService) {
         super(apiService, LINKS, "");
     }
 

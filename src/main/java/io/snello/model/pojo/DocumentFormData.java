@@ -1,9 +1,7 @@
 package io.snello.model.pojo;
 
 
-import io.snello.util.MultipartFormUtils;
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
