@@ -34,17 +34,4 @@ public class DocumentFormData {
     @PartType(MediaType.TEXT_PLAIN)
     public String table_key;
 
-    public DocumentFormData(MultipartFormDataInput partFormData) {
-        try {
-            this.data = MultipartFormUtils.readFileBytesInputStream(partFormData, "file");
-            this.table_name = MultipartFormUtils.readTextField(partFormData, "table_name");
-            this.table_key = MultipartFormUtils.readTextField(partFormData, "table_key");
-            this.uuid = MultipartFormUtils.readTextField(partFormData, "uuid");
-            this.filename = MultipartFormUtils.readTextField(partFormData, "filename");
-            this.mimeType = MultipartFormUtils.readTextField(partFormData, "mimeType");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

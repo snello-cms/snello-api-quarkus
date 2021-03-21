@@ -79,6 +79,7 @@ public class DocumentServiceRs {
     public Response persist(@MultipartForm  DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
+            documentFormData.uuid = uuid;
             Map<String, Object> map = documentsService.upload(documentFormData);
             map = apiService.create(table, map, AppConstants.UUID);
             return ok(map).build();
