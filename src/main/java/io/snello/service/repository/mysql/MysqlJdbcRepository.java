@@ -1,13 +1,12 @@
 package io.snello.service.repository.mysql;
 
+import io.snello.api.service.JdbcRepository;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
-import io.snello.api.service.JdbcRepository;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static io.snello.management.AppConstants.JDBC_DB;
 import static io.snello.management.DbConstants.*;
 import static io.snello.service.repository.mysql.MysqlConstants.*;
 
@@ -28,8 +26,6 @@ public class MysqlJdbcRepository implements JdbcRepository {
     DataSource dataSource;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @ConfigProperty(name = JDBC_DB)
-    String jdbc_db;
 
     public MysqlJdbcRepository() {
     }
@@ -354,7 +350,10 @@ public class MysqlJdbcRepository implements JdbcRepository {
     public boolean verifyTable(String tableName) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
-            PreparedStatement preparedStatement = connection.prepareStatement(SHOW_TABLES_INIT + jdbc_db + SHOW_TABLES_END);
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    SHOW_TABLES_INIT
+                    //+ getDbName()
+                    + SHOW_TABLES_END);
             preparedStatement.setObject(1, tableName);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -363,6 +362,15 @@ public class MysqlJdbcRepository implements JdbcRepository {
             }
         }
         return false;
+    }
+
+    private String getDbName() throws Exception {
+        ResultSet rs = dataSource.getConnection().getMetaData().getSchemas();
+        while (rs.next()) {
+            System.out.println(rs.getString(1));
+            return rs.getString(1);
+        }
+        throw new Exception();
     }
 
 //    @Override
