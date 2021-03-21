@@ -13,26 +13,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.sql.DataSource;
 import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.snello.management.DbConstants.*;
 import static io.snello.repository.postgresql.PostgresqlConstants.*;
 
+//@Singleton
+//@Requires(property = DB_TYPE, value = "postgresql")
 public class PostgresqlJdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
     Logger logger = LoggerFactory.getLogger(getClass());
-
-
-    @Inject
-    Event eventPublisher;
 
     public PostgresqlJdbcRepository() {
     }
@@ -43,13 +40,12 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
     }
 
     public void onLoad() {
-        logger.info("Creation queries at startup: ");
+        logger.info("Creation queries at startup: " );
         try {
             batch(creationQueries());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        eventPublisher.fireAsync(new DbCreatedEvent());
     }
 
     @Override

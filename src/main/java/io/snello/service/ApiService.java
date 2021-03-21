@@ -1,12 +1,16 @@
 package io.snello.service;
 
+import io.quarkus.runtime.StartupEvent;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.model.SelectQuery;
+import io.snello.model.events.DbCreatedEvent;
 import io.snello.repository.JdbcRepository;
 import io.snello.util.ParamUtils;
 
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MultivaluedMap;
@@ -28,7 +32,15 @@ public class ApiService {
     @Inject
     JdbcRepository jdbcRepository;
 
+    @Inject
+    Event eventPublisher;
+
     public ApiService() {
+    }
+
+    public void onLoad(@Observes StartupEvent event) {
+        jdbcRepository.onLoad();
+        eventPublisher.fireAsync(new DbCreatedEvent());
     }
 
 
