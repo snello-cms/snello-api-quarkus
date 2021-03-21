@@ -21,7 +21,7 @@ public abstract class AbstractServiceRs {
 
     protected Logger logger = Logger.getLogger(AbstractServiceRs.class);
 
-    private ApiService apiService;
+    protected ApiService apiService;
 
     private String table;
     private String defaultSort;

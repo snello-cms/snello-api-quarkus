@@ -6,7 +6,7 @@ import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.model.SelectQuery;
 import io.snello.model.events.DbCreatedEvent;
-import io.snello.repository.JdbcRepository;
+import io.snello.api.service.JdbcRepository;
 import io.snello.util.ParamUtils;
 
 import javax.enterprise.event.Event;

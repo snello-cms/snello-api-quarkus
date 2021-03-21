@@ -1,13 +1,10 @@
 package io.snello.service;
 
 import io.snello.model.*;
-import io.snello.model.events.ConditionCreateUpdateEvent;
-import io.snello.repository.JdbcRepository;
-import io.snello.util.ConditionUtils;
+import io.snello.api.service.JdbcRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;

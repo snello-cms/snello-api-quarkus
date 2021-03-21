@@ -1,4 +1,4 @@
-package io.snello.repository;
+package io.snello.api.service;
 
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;

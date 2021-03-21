@@ -79,6 +79,11 @@
       <artifactId>quarkus-jdbc-h2</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.quarkiverse.minio</groupId>
+      <artifactId>minio-client</artifactId>
+      <version>0.2.0</version>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
       <scope>test</scope>

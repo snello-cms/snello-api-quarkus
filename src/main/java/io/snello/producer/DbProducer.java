@@ -2,19 +2,21 @@ package io.snello.producer;
 
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
-import io.snello.repository.JdbcRepository;
+import io.snello.api.service.JdbcRepository;
 import io.snello.repository.h2.H2JdbcRepository;
 import io.snello.repository.mysql.MysqlJdbcRepository;
 import io.snello.repository.postgresql.PostgresqlJdbcRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
-import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class DbProducer {
+
+    Logger logger = Logger.getLogger(getClass());
 
     @ConfigProperty(name = "snello.dbtype")
     String dbtype;
@@ -32,11 +34,8 @@ public class DbProducer {
     @DataSource("h2")
     AgroalDataSource h2DataSource;
 
-    @Inject
-    Event eventPublisher;
-
     public DbProducer() {
-        System.out.println("DbProducer");
+        logger.info("DbProducer");
     }
 
     @Produces

@@ -1,21 +1,15 @@
 package io.snello.repository.postgresql;
 
-import io.quarkus.runtime.StartupEvent;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
-import io.snello.model.events.DbCreatedEvent;
-import io.snello.repository.JdbcRepository;
+import io.snello.api.service.JdbcRepository;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.sql.DataSource;
 import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
