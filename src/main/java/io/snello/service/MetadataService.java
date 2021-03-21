@@ -27,9 +27,6 @@ public class MetadataService {
     Map<String, Droppable> droppablesMap;
 
     @Inject
-    Event eventPublisher;
-
-    @Inject
     JdbcRepository jdbcRepository;
 
 
@@ -64,7 +61,7 @@ public class MetadataService {
             }
             for (Condition cc : conditions) {
                 jdbcRepository.create(CONDITIONS, UUID, cc.toMap());
-                eventPublisher.fireAsync(new ConditionCreateUpdateEvent(cc.toMap()));
+//                eventPublisher.fireAsync(new ConditionCreateUpdateEvent(cc.toMap()));
             }
         } else {
             logger.info("creation query foud in metedata object: " + metadata.creation_query);

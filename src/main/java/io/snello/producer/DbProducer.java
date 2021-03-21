@@ -8,6 +8,7 @@ import io.snello.repository.mysql.MysqlJdbcRepository;
 import io.snello.repository.postgresql.PostgresqlJdbcRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,6 +31,9 @@ public class DbProducer {
     @Inject
     @DataSource("h2")
     AgroalDataSource h2DataSource;
+
+    @Inject
+    Event eventPublisher;
 
     public DbProducer() {
         System.out.println("DbProducer");

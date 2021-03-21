@@ -81,7 +81,7 @@ public class AppConstants {
     public static final String DB_TYPE = "micronaut.db.type";
     public static final String EMAIL_TYPE = "micronaut.email.type";
     public static final String STORAGE_TYPE = "micronaut.storage.type";
-    public static final String SYSTEM_DOCUMENTS_BASE_PATH = "micronaut.router.static-resources.files.paths";
+    public static final String SYSTEM_DOCUMENTS_BASE_PATH = "files.paths";
     public static final String EMAIL_SMTP_PORT = "micronaut.email.smtp-port";
     public static final String EMAIL_SMTP_AUTH = "micronaut.email.smtp-auth";
     public static final String EMAIL_SMTP_STARTSSL_ENABLE = "micronaut.email.starttls-enable";

@@ -29,10 +29,6 @@ public class H2JdbcRepository implements JdbcRepository {
     DataSource dataSource;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-
-    @Inject
-    Event eventPublisher;
-
     public H2JdbcRepository() {
     }
 
@@ -47,7 +43,6 @@ public class H2JdbcRepository implements JdbcRepository {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        eventPublisher.fireAsync(new DbCreatedEvent());
     }
 
     @Override

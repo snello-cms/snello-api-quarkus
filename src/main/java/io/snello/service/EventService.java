@@ -24,13 +24,13 @@ public class EventService {
     MetadataService metadataService;
 
     public void onLoad(@Observes StartupEvent event) {
-        logger.error("START METADATA SERVICE AT STARTUP: " + event.toString());
+        logger.info("******** START METADATA SERVICE AT STARTUP ******** ");
         try {
             resetAll();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        logger.error("END METADATA SERVICE AT STARTUP: " + event.toString());
+        logger.info("******** END METADATA SERVICE AT STARTUP ********");
     }
 
     public void resetAll() throws Exception {

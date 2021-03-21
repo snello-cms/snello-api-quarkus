@@ -34,9 +34,6 @@ public class MysqlJdbcRepository implements JdbcRepository {
     @ConfigProperty(name = JDBC_DB)
     String jdbc_db;
 
-    @Inject
-    Event eventPublisher;
-
     public MysqlJdbcRepository() {
     }
 
@@ -52,7 +49,6 @@ public class MysqlJdbcRepository implements JdbcRepository {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        eventPublisher.fireAsync(new DbCreatedEvent());
     }
 
     @Override
