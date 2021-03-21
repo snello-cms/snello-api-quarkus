@@ -24,7 +24,7 @@ import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
 @Path(API_PATH)
-public class ApiController {
+public class ApiServiceRs {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -34,13 +34,13 @@ public class ApiController {
     @Context
     UriInfo uriInfo;
 
-    public ApiController() {
+    public ApiServiceRs() {
     }
 
 
     @GET
     @Path(TABLE_PATH_PARAM)
-    public Response list(@NotNull String table,
+    public Response list(@NotNull @PathParam("table") String table,
                          @QueryParam(SORT_PARAM) String sort,
                          @QueryParam(LIMIT_PARAM) String limit,
                          @QueryParam(START_PARAM) String start) throws Exception {
@@ -62,7 +62,8 @@ public class ApiController {
 
     @GET
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
-    public Response fetch(@NotNull String table, @NotNull String uuid) throws Exception {
+    public Response fetch(@NotNull @PathParam("table") String table,
+                          @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());
         String key = apiService.table_key(table);
         return ok(apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key)).build();
@@ -71,7 +72,9 @@ public class ApiController {
 
     @GET
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM + EXTRA_PATH_PARAM)
-    public Response get(@NotNull String table, @NotNull String uuid, @NotNull String path,
+    public Response get(@NotNull @PathParam("table") String table,
+                        @NotNull @PathParam("uuid") String uuid,
+                        @NotNull @PathParam("path") String path,
                         @Null @QueryParam(SORT_PARAM) String sort,
                         @Null @QueryParam(LIMIT_PARAM) String limit,
                         @Null @QueryParam(START_PARAM) String start) throws Exception {
@@ -109,7 +112,8 @@ public class ApiController {
 
     @POST
     @Path(TABLE_PATH_PARAM)
-    public Response post(Map<String, Object> map, @NotNull String table) throws Exception {
+    public Response post(Map<String, Object> map,
+                         @NotNull @PathParam("table") String table) throws Exception {
         Metadata metadata = apiService.metadataWithFields(table);
         String key = metadata.table_key;
         TableKeyUtils.generateUUid(map, metadata, apiService);
@@ -139,7 +143,9 @@ public class ApiController {
 
     @PUT
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
-    public Response put(Map<String, Object> map, @NotNull String table, @NotNull String uuid) throws Exception {
+    public Response put(Map<String, Object> map,
+                        @NotNull @PathParam("table") String table,
+                        @NotNull @PathParam("uuid") String uuid) throws Exception {
         boolean renewSlug = TableKeyUtils.isSlug(apiService.metadata(table));
         String key = apiService.table_key(table);
         if (renewSlug) {
@@ -183,7 +189,8 @@ public class ApiController {
 
     @DELETE
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
-    public Response delete(@NotNull String table, @NotNull String uuid) throws Exception {
+    public Response delete(@NotNull @PathParam("table") String table,
+                           @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(DELETE.class.getName());
         String key = apiService.table_key(table);
         boolean result = apiService.delete(table, uuid, key);
