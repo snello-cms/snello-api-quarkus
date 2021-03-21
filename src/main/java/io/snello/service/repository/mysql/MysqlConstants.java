@@ -1,4 +1,4 @@
-package io.snello.repository.mysql;
+package io.snello.service.repository.mysql;
 
 public class MysqlConstants {
 

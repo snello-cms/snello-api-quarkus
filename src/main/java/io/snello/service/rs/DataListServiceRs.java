@@ -1,4 +1,4 @@
-package io.snello.service.rs.system;
+package io.snello.service.rs;
 
 import io.snello.service.MetadataService;
 import org.slf4j.Logger;

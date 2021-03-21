@@ -1,4 +1,4 @@
-package io.snello.repository.mysql;
+package io.snello.service.repository.postgresql;
 
 import io.snello.util.SqlHelper;
 
@@ -6,9 +6,9 @@ import java.sql.*;
 import java.util.*;
 
 import static io.snello.management.DbConstants.*;
-import static io.snello.repository.mysql.MysqlConstants.*;
+import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
 
-public class MysqlSqlUtils {
+public class PostgresqlSqlUtils {
 
 
     public static List<Map<String, Object>> list(final ResultSet rs)
@@ -133,14 +133,13 @@ public class MysqlSqlUtils {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             SqlHelper.fillStatement(preparedStatement, in);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return MysqlSqlUtils.list(resultSet);
+                return PostgresqlSqlUtils.list(resultSet);
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
         }
         return null;
     }
-
 
     public static String escape(String name) {
         return ESCAPE + name + ESCAPE;

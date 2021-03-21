@@ -1,16 +1,11 @@
-package io.snello.repository.h2;
+package io.snello.service.repository.mysql;
 
 import io.snello.model.FieldDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static io.snello.repository.h2.H2SqlUtils.escape;
+import static io.snello.service.repository.mysql.MysqlSqlUtils.escape;
 
 
-public class H2FieldDefinitionUtils {
-
-
-    static Logger logger = LoggerFactory.getLogger(H2FieldDefinitionUtils.class);
+public class MysqlFieldDefinitionUtils {
 
 
     //input_type: text,
@@ -22,14 +17,10 @@ public class H2FieldDefinitionUtils {
 //                    password => type: input, input_type: password,
 //                    enum => type: select, input_type: null,
 //                    media => type: media(todo), input_type: null
-    public static String sql(FieldDefinition fieldDefinition) throws Exception {
+    public static String sql(FieldDefinition fieldDefinition) {
         StringBuffer sb = new StringBuffer();
         switch (fieldDefinition.type) {
             case "input": {
-                if (fieldDefinition.input_type == null) {
-                    logger.info("fieldDefinition.input_type  IS NULL: " + fieldDefinition.toString());
-                    throw new Exception(" fieldDefinition.input_type  IS NULL");
-                }
                 switch (fieldDefinition.input_type) {
                     case "text":
                     case "password":
@@ -56,7 +47,7 @@ public class H2FieldDefinitionUtils {
             case "monaco":
             case "textarea":
             case "tinymce":
-                return escape(fieldDefinition.name) + " VARCHAR default null";
+                return escape(fieldDefinition.name) + " text default null";
             case "date":
                 return escape(fieldDefinition.name) + " date default null";
             case "datetime":

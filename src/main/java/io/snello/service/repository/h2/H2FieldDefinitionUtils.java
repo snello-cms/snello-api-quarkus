@@ -1,11 +1,16 @@
-package io.snello.repository.postgresql;
+package io.snello.service.repository.h2;
 
 import io.snello.model.FieldDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static io.snello.repository.postgresql.PostgresqlSqlUtils.escape;
+import static io.snello.service.repository.h2.H2SqlUtils.escape;
 
 
-public class PostgresqlFieldDefinitionUtils {
+public class H2FieldDefinitionUtils {
+
+
+    static Logger logger = LoggerFactory.getLogger(H2FieldDefinitionUtils.class);
 
 
     //input_type: text,
@@ -17,10 +22,14 @@ public class PostgresqlFieldDefinitionUtils {
 //                    password => type: input, input_type: password,
 //                    enum => type: select, input_type: null,
 //                    media => type: media(todo), input_type: null
-    public static String sql(FieldDefinition fieldDefinition) {
+    public static String sql(FieldDefinition fieldDefinition) throws Exception {
         StringBuffer sb = new StringBuffer();
         switch (fieldDefinition.type) {
             case "input": {
+                if (fieldDefinition.input_type == null) {
+                    logger.info("fieldDefinition.input_type  IS NULL: " + fieldDefinition.toString());
+                    throw new Exception(" fieldDefinition.input_type  IS NULL");
+                }
                 switch (fieldDefinition.input_type) {
                     case "text":
                     case "password":
@@ -31,13 +40,13 @@ public class PostgresqlFieldDefinitionUtils {
                         }
                         return sb.toString();
                     case "number":
-                        sb.append(fieldDefinition.name + " NUMERIC(10) ");
+                        sb.append(fieldDefinition.name + " int(10) ");
                         if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(fieldDefinition.default_value + " ");
                         }
                         return sb.toString();
                     case "decimal":
-                        sb.append(fieldDefinition.name + " DOUBLE PRECISION ");
+                        sb.append(fieldDefinition.name + " DOUBLE ");
                         if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(fieldDefinition.default_value + " ");
                         }
@@ -47,7 +56,7 @@ public class PostgresqlFieldDefinitionUtils {
             case "monaco":
             case "textarea":
             case "tinymce":
-                return escape(fieldDefinition.name) + " text default null";
+                return escape(fieldDefinition.name) + " VARCHAR default null";
             case "date":
                 return escape(fieldDefinition.name) + " date default null";
             case "datetime":

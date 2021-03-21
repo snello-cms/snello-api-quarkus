@@ -1,11 +1,11 @@
-package io.snello.repository.mysql;
+package io.snello.service.repository.postgresql;
 
 import io.snello.model.FieldDefinition;
 
-import static io.snello.repository.mysql.MysqlSqlUtils.escape;
+import static io.snello.service.repository.postgresql.PostgresqlSqlUtils.escape;
 
 
-public class MysqlFieldDefinitionUtils {
+public class PostgresqlFieldDefinitionUtils {
 
 
     //input_type: text,
@@ -31,13 +31,13 @@ public class MysqlFieldDefinitionUtils {
                         }
                         return sb.toString();
                     case "number":
-                        sb.append(fieldDefinition.name + " int(10) ");
+                        sb.append(fieldDefinition.name + " NUMERIC(10) ");
                         if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(fieldDefinition.default_value + " ");
                         }
                         return sb.toString();
                     case "decimal":
-                        sb.append(fieldDefinition.name + " DOUBLE ");
+                        sb.append(fieldDefinition.name + " DOUBLE PRECISION ");
                         if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(fieldDefinition.default_value + " ");
                         }

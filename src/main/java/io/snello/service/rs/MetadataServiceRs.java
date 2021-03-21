@@ -1,4 +1,4 @@
-package io.snello.service.rs.system;
+package io.snello.service.rs;
 
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.model.Metadata;
@@ -7,6 +7,7 @@ import io.snello.model.events.MetadataDeleteEvent;
 import io.snello.service.ApiService;
 import io.snello.util.MetadataUtils;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ import static javax.ws.rs.core.Response.serverError;
 @Path(METADATA_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class MetadataServiceRs extends AbstractServiceRs {
     private static String table = METADATAS;
 

@@ -1,29 +1,27 @@
-package io.snello.repository.h2;
+package io.snello.service.repository.postgresql;
 
-public class H2Constants {
-
+public class PostgresqlConstants {
     public static final String COUNT_QUERY = " SELECT COUNT(*) AS SIZE_OF FROM ";
     public static final String DELETE_FROM = "DELETE FROM ";
-    public static final String SHOW_TABLES = "SHOW TABLES";
+    public static final String SHOW_TABLES = "SELECT to_regclass";
     public static final String SELECT_FROM = " SELECT * FROM ";
     public static final String INSERT_INTO = "INSERT INTO ";
     public static final String TRUNCATE_TABLE = "TRUNCATE TABLE ";
     public static final String DROP_TABLE = "DROP TABLE ";
 
-
     public static final String ESCAPE = "";
-    
+
     public static String creationQueryConditions = "CREATE TABLE IF NOT EXISTS conditions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  metadata_uuid varchar(255) NOT NULL,\n" +
             "  metadata_name varchar(255) NOT NULL,\n" +
             "  separator varchar(255) DEFAULT NULL,\n" +
             "  condition varchar(255) NOT NULL,\n" +
-            "  query_params varchar(255) DEFAULT NULL,\n" +
+            "  query_params varchar(255) NOT NULL,\n" +
             "  sub_query varchar(255) NOT NULL,\n" +
             "  metadata_multijoin_uuid varchar(255) NOT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
+            ") ";
 
     public static String creationQueryDocuments = "CREATE TABLE IF NOT EXISTS documents (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
@@ -31,34 +29,34 @@ public class H2Constants {
             "  original_name varchar(255) NOT NULL,\n" +
             "  path varchar(255) ,\n" +
             "  mimetype varchar(255) NOT NULL,\n" +
-            "  size int(12),\n" +
+            "  size NUMERIC(12),\n" +
             "  table_name varchar(255) NOT NULL,\n" +
             "  table_key varchar(255) NOT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
-
+            ") ";
     public static String creationQueryDraggables = "CREATE TABLE IF NOT EXISTS draggables (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  name varchar(255) NOT NULL,\n" +
-            "  description varchar(255) NOT NULL,\n" +
+            "  description varchar(255),\n" +
             "  template varchar(255) ,\n" +
-            "  style varchar(255) NOT NULL,\n" +
-            "  image int(12),\n" +
-            "  static_vars varchar(255) NOT NULL,\n" +
-            "  dynamic_vars varchar(255) NOT NULL,\n" +
+            "  style varchar(255),\n" +
+            "  image varchar(255),\n" +
+            "  static_vars varchar(255),\n" +
+            "  dynamic_vars varchar(255),\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
+            " ) ";
 
     public static String creationQueryDroppables = "CREATE TABLE IF NOT EXISTS droppables (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  name varchar(255) NOT NULL,\n" +
-            "  description varchar(255) NOT NULL,\n" +
-            "  html varchar(255) NOT NULL,\n" +
+            "  description varchar(255),\n" +
+            "  html varchar(255),\n" +
             "  draggables varchar(255) ,\n" +
-            "  static_values varchar(255) NOT NULL,\n" +
-            "  dynamic_values varchar(255) NOT NULL,\n" +
+            "  static_values varchar(255),\n" +
+            "  dynamic_values varchar(255),\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
+            " ) ";
+
     public static String creationQueryExtensions = "CREATE TABLE IF NOT EXISTS extensions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  name varchar(255) NOT NULL,\n" +
@@ -67,7 +65,7 @@ public class H2Constants {
             "  tag_name varchar(255) NOT NULL,\n" +
             "  library_path varchar(255) ,\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
+            " ) ;";
 
     public static String creationQueryFieldDefinitions = "CREATE TABLE IF NOT EXISTS fielddefinitions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
@@ -96,7 +94,7 @@ public class H2Constants {
             "  search_field_name varchar(100) DEFAULT NULL,\n" +
             "  show_in_list BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
+            ") ";
 
     public static String creationQueryMetadatas = "CREATE TABLE IF NOT EXISTS metadatas (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
@@ -116,7 +114,7 @@ public class H2Constants {
             "  already_exist BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
+            ") ";
 
     public static String creationQuerySelectQueries = "CREATE TABLE IF NOT EXISTS selectqueries (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
@@ -124,8 +122,7 @@ public class H2Constants {
             "  with_params boolean DEFAULT false,\n" +
             "  select_query varchar(255) DEFAULT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
-            ") ;";
-
+            ") ";
 
     public static String creationLinksQueries = "CREATE TABLE IF NOT EXISTS links (\n" +
             "  name varchar(255) NOT NULL,\n" +
@@ -137,7 +134,11 @@ public class H2Constants {
             "  metadata_generated_uuid varchar(255) DEFAULT NULL,\n" +
             "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  PRIMARY KEY (name)\n" +
-            ") ;";
+            ") ";
+    
+    public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( " +
+            "%2$s varchar(255) NOT NULL, " +
+            "%3$s varchar(255) NOT NULL, " +
+            "id SERIAL PRIMARY KEY )";
 
-    public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( %2$s varchar_ignorecase(100), %3$s varchar_ignorecase(100), id IDENTITY NOT NULL PRIMARY KEY )";
 }

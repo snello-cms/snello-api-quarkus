@@ -1,4 +1,4 @@
-package io.snello.repository.h2;
+package io.snello.service.repository.h2;
 
 import io.snello.util.SqlHelper;
 
@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.*;
 
 import static io.snello.management.DbConstants.*;
-import static io.snello.repository.h2.H2Constants.*;
+import static io.snello.service.repository.h2.H2Constants.*;
 
 public class H2SqlUtils {
 

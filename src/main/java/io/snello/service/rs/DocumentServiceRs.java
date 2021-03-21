@@ -1,4 +1,4 @@
-package io.snello.service.rs.system;
+package io.snello.service.rs;
 
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.api.service.StorageService;
@@ -7,6 +7,7 @@ import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
 
 import javax.annotation.Nullable;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -21,6 +22,7 @@ import static javax.ws.rs.core.Response.serverError;
 @Path(DOCUMENTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class DocumentServiceRs extends AbstractServiceRs {
     private static String table = DOCUMENTS;
 

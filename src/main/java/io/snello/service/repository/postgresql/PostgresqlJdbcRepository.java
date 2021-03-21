@@ -1,4 +1,4 @@
-package io.snello.repository.h2;
+package io.snello.service.repository.postgresql;
 
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
@@ -13,28 +13,28 @@ import org.slf4j.LoggerFactory;
 import javax.sql.DataSource;
 import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.snello.management.DbConstants.*;
-import static io.snello.repository.h2.H2Constants.*;
+import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
 
-public class H2JdbcRepository implements JdbcRepository {
+//@Singleton
+//@Requires(property = DB_TYPE, value = "postgresql")
+public class PostgresqlJdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public H2JdbcRepository() {
+    public PostgresqlJdbcRepository() {
     }
 
-    public H2JdbcRepository(DataSource dataSource) {
+
+    public PostgresqlJdbcRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     public void onLoad() {
-        logger.info("Creation queries at startup: ");
+        logger.info("Creation queries at startup: " );
         try {
             batch(creationQueries());
         } catch (Exception e) {
@@ -49,9 +49,9 @@ public class H2JdbcRepository implements JdbcRepository {
                 creationQueryFieldDefinitions,
                 creationQueryConditions,
                 creationQueryDocuments,
-                creationQueryExtensions,
                 creationQueryDraggables,
                 creationQueryDroppables,
+                creationQueryExtensions,
                 creationQuerySelectQueries,
                 creationLinksQueries
         };
@@ -69,7 +69,6 @@ public class H2JdbcRepository implements JdbcRepository {
         select.append(COUNT_QUERY);
         if (alias_condition != null)
             where.append(alias_condition);
-
         boolean withCondition = false;
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
@@ -79,15 +78,14 @@ public class H2JdbcRepository implements JdbcRepository {
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
-
         try (
                 Connection connection = dataSource.getConnection()) {
 
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("query: " + select + H2SqlUtils.escape(table) + where);
-            try (PreparedStatement preparedStatement = connection.prepareStatement(select + H2SqlUtils.escape(table) + where)) {
+            logger.info("query: " + select + PostgresqlSqlUtils.escape(table) + where);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(select + PostgresqlSqlUtils.escape(table) + where)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -111,7 +109,7 @@ public class H2JdbcRepository implements JdbcRepository {
     }
 
     public boolean exist(String table, String table_key, Object uuid) throws Exception {
-        String select = COUNT_QUERY + H2SqlUtils.escape(table) + _WHERE_ + H2SqlUtils.escape(table_key) + "= ?";
+        String select = COUNT_QUERY + PostgresqlSqlUtils.escape(table) + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + "= ?";
         List<Object> in = new LinkedList<>();
         in.add(uuid);
         try (Connection connection = dataSource.getConnection()) {
@@ -150,7 +148,7 @@ public class H2JdbcRepository implements JdbcRepository {
         }
         select.append(_FROM_);
         if (alias_condition != null && !alias_condition.trim().isEmpty()) {
-            where.append(H2SqlUtils.escape(alias_condition));
+            where.append(PostgresqlSqlUtils.escape(alias_condition));
         }
 
         if (sort != null) {
@@ -162,9 +160,6 @@ public class H2JdbcRepository implements JdbcRepository {
             }
         }
 
-//        ParamUtils.where(httpParameters, where, in);
-//        ConditionUtils.where(httpParameters, conditions, where, in);
-
         boolean withCondition = false;
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
@@ -174,32 +169,31 @@ public class H2JdbcRepository implements JdbcRepository {
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
-
-
         if (start == 0 && limit == 0) {
             logger.info("no limits");
         } else {
             if (start > 0) {
-                order_limit.append(_LIMIT_).append(" ? ");
+                order_limit.append(_OFFSET_).append(_COND_);
                 in.add(start);
             } else {
-                order_limit.append(_LIMIT_).append(" ? ");
+                order_limit.append(_OFFSET_).append(_COND_);
                 in.add(0);
             }
             if (limit > 0) {
-                order_limit.append(",").append(" ? ");
+                order_limit.append(_LIMIT_).append(_COND_);
                 in.add(limit);
             } else {
-                order_limit.append(", ? ");
+                order_limit.append(_LIMIT_).append(_COND_);
                 in.add(10);
             }
         }
         try (Connection connection = dataSource.getConnection()) {
+
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("LIST query: " + select.toString() + H2SqlUtils.escape(table) + where + order_limit);
-            return H2SqlUtils.executeQueryList(connection, select.toString() + H2SqlUtils.escape(table) + where.toString() + order_limit.toString(), in);
+            logger.info("LIST query: " + select.toString() + PostgresqlSqlUtils.escape(table) + where + order_limit);
+            return PostgresqlSqlUtils.executeQueryList(connection, select.toString() + PostgresqlSqlUtils.escape(table) + where.toString() + order_limit.toString(), in);
         }
 
     }
@@ -232,17 +226,17 @@ public class H2JdbcRepository implements JdbcRepository {
             logger.info("no limits");
         } else {
             if (start > 0) {
-                order_limit.append(_LIMIT_).append(" ? ");
+                order_limit.append(_OFFSET_).append(_COND_);
                 in.add(start);
             } else {
-                order_limit.append(_LIMIT_).append(" ? ");
+                order_limit.append(_OFFSET_).append(_COND_);
                 in.add(0);
             }
             if (limit > 0) {
-                order_limit.append(",").append(" ? ");
+                order_limit.append(_LIMIT_).append(_COND_);
                 in.add(limit);
             } else {
-                order_limit.append(", ? ");
+                order_limit.append(_LIMIT_).append(_COND_);
                 in.add(10);
             }
         }
@@ -253,7 +247,7 @@ public class H2JdbcRepository implements JdbcRepository {
                 where = new StringBuffer(where);
             }
             logger.info("LIST query: " + select.toString() + where + order_limit);
-            return H2SqlUtils.executeQueryList(connection, select.toString() + where.toString() + order_limit.toString(), in);
+            return PostgresqlSqlUtils.executeQueryList(connection, select.toString() + where.toString() + order_limit.toString(), in);
         }
 
     }
@@ -262,16 +256,16 @@ public class H2JdbcRepository implements JdbcRepository {
         List<Object> in = new LinkedList<>();
         try (Connection connection = dataSource.getConnection()) {
             logger.info("LIST query: " + query);
-            return H2SqlUtils.executeQueryList(connection, query, in);
+            return PostgresqlSqlUtils.executeQueryList(connection, query, in);
         }
 
     }
 
     public Map<String, Object> create(String table, String table_key, Map<String, Object> map) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            String query = H2SqlUtils.create(table, map);
+            String query = PostgresqlSqlUtils.create(table, map);
             logger.info("CREATE QUERY: " + query);
-            H2SqlUtils.executeQueryCreate(connection, query, map, table_key);
+            PostgresqlSqlUtils.executeQueryCreate(connection, query, map, table_key);
         }
         return map;
     }
@@ -279,7 +273,7 @@ public class H2JdbcRepository implements JdbcRepository {
     public boolean query(String query, List<Object> values) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             logger.info("EXECUTE QUERY: " + query);
-            return H2SqlUtils.executeQuery(connection, query, values);
+            return PostgresqlSqlUtils.executeQuery(connection, query, values);
         } catch (Exception e) {
             logger.error("error: ", e);
             return false;
@@ -293,10 +287,10 @@ public class H2JdbcRepository implements JdbcRepository {
         Map<String, Object> keys = new HashMap<>();
         List<Object> in = new LinkedList<>();
         keys.put(table_key, key);
-        String query = H2SqlUtils.update(table, map, keys, in);
+        String query = PostgresqlSqlUtils.update(table, map, keys, in);
         try (Connection connection = dataSource.getConnection()) {
             logger.info("UPDATE QUERY: " + query);
-            H2SqlUtils.executeQueryUpdate(connection, query, in);
+            PostgresqlSqlUtils.executeQueryUpdate(connection, query, in);
         }
         return map;
     }
@@ -306,12 +300,12 @@ public class H2JdbcRepository implements JdbcRepository {
             if (select_fields == null) {
                 select_fields = " * ";
             }
-            logger.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + H2SqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
-            PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + H2SqlUtils.escape(table)
-                    + _WHERE_ + H2SqlUtils.escape(table_key) + " = ?");
+            logger.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + PostgresqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + PostgresqlSqlUtils.escape(table)
+                    + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return H2SqlUtils.single(resultSet);
+                return PostgresqlSqlUtils.single(resultSet);
             }
         }
     }
@@ -319,8 +313,8 @@ public class H2JdbcRepository implements JdbcRepository {
     public boolean delete(String table, String table_key, String uuid) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             logger.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + H2SqlUtils.escape(table) + _WHERE_
-                    + H2SqlUtils.escape(table_key) + " = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + PostgresqlSqlUtils.escape(table) + _WHERE_
+                    + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;
@@ -328,16 +322,11 @@ public class H2JdbcRepository implements JdbcRepository {
     }
 
     public void batch(String[] queries) throws Exception {
-        final int batchSize = 5;
-        int count = 0;
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
             for (String query : queries) {
                 logger.info("BATCH QUERY: " + query);
                 statement.addBatch(query);
-                if (++count % batchSize == 0) {
-                    statement.executeBatch();
-                }
             }
             statement.executeBatch();
             statement.close();
@@ -359,22 +348,14 @@ public class H2JdbcRepository implements JdbcRepository {
         return false;
     }
 
-
     public boolean verifyTable(String tableName) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            Statement statement = connection.createStatement();
-            PreparedStatement preparedStatement = connection.prepareStatement(SHOW_TABLES);
-            List<Map<String, Object>> list = null;
+            PreparedStatement preparedStatement = connection.prepareStatement(SHOW_TABLES + "('" + tableName + "')");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                list = H2SqlUtils.list(resultSet);
-            }
-            for (Map<String, Object> map : list) {
-                if (!map.containsKey("table_name")) {
-                    continue;
-                }
-                String table_name_found = (String) map.get("table_name");
-                if (table_name_found.toLowerCase().equals(tableName.toLowerCase())) {
-                    return true;
+                if (resultSet.next()) {
+                    Object resul = resultSet.getObject(1);
+                    if (resul != null)
+                        return true;
                 }
             }
         }
@@ -395,14 +376,14 @@ public class H2JdbcRepository implements JdbcRepository {
 //            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
 //            preparedStatement.setObject(1, username);
 //            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                map = H2SqlUtils.single(resultSet);
+//                map = PostgresqlSqlUtils.single(resultSet);
 //            }
 //        }
 //        if (map == null) {
 //            logger.info("password not found for username: " + username);
 //            throw new Exception("invalid username/password");
 //        }
-//        String passwordOnDb = (String) map.get(PWD_LOWERCASE);
+//        String passwordOnDb = (String) map.get("password");
 //        String encrPassword = PasswordUtils.createPassword(password);
 //        if (encrPassword.equals(passwordOnDb)) {
 //            return new UserDetails(username, getRoles(username));
@@ -418,22 +399,23 @@ public class H2JdbcRepository implements JdbcRepository {
 
     @Override
     public String escape(String name) {
-        return H2SqlUtils.escape(name);
+        return PostgresqlSqlUtils.escape(name);
     }
 
     @Override
-    public String fieldDefinition2Sql(FieldDefinition fieldDefinition) throws Exception {
-        return H2FieldDefinitionUtils.sql(fieldDefinition);
+    public String fieldDefinition2Sql(FieldDefinition fieldDefinition) {
+        return PostgresqlFieldDefinitionUtils.sql(fieldDefinition);
     }
 
     @Override
-    public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) throws Exception {
+    public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) {
         StringBuffer sb = new StringBuffer(" CREATE TABLE " + escape(metadata.table_name) + " (");
         if (metadata.table_key_type.equals("autoincrement")) {
-            sb.append(escape(metadata.table_key) + " int NOT NULL AUTO_INCREMENT ");
+            sb.append(escape(metadata.table_key) + " SERIAL ");
         } else {
             sb.append(escape(metadata.table_key) + " VARCHAR(50) NOT NULL ");
         }
+
         for (FieldDefinition fieldDefinition : fields) {
             if (fieldDefinition.sql_definition != null && !fieldDefinition.sql_definition.trim().isEmpty()) {
                 sb.append(",").append(fieldDefinition.sql_definition);
@@ -444,8 +426,7 @@ public class H2JdbcRepository implements JdbcRepository {
                 String join_table_name = metadata.table_name + "_" + fieldDefinition.join_table_name;
                 String table_id = metadata.table_name + "_id";
                 String join_table_id = fieldDefinition.join_table_name + "_id";
-                joiQueries.add(String.format(getJoinTableQuery(), metadata.table_name + "_" + fieldDefinition.join_table_name,
-                        metadata.table_name + "_id", fieldDefinition.join_table_name + "_id"));
+                joiQueries.add(String.format(getJoinTableQuery(), join_table_name, table_id, join_table_id));
                 Condition condition = new Condition();
                 condition.metadata_multijoin_uuid = metadata.uuid;
                 condition.uuid = java.util.UUID.randomUUID().toString();
@@ -458,7 +439,8 @@ public class H2JdbcRepository implements JdbcRepository {
             }
         }
         sb.append(", PRIMARY KEY (" + escape(metadata.table_key) + ")").append(") ;");
-        logger.info("CREATION TABLE QUERY: " + sb.toString());
+        logger.info("QUERY CREATION TABLE: " + sb.toString());
         return sb.toString();
     }
+
 }

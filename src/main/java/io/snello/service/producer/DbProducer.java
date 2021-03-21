@@ -1,11 +1,11 @@
-package io.snello.producer;
+package io.snello.service.producer;
 
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.snello.api.service.JdbcRepository;
-import io.snello.repository.h2.H2JdbcRepository;
-import io.snello.repository.mysql.MysqlJdbcRepository;
-import io.snello.repository.postgresql.PostgresqlJdbcRepository;
+import io.snello.service.repository.h2.H2JdbcRepository;
+import io.snello.service.repository.mysql.MysqlJdbcRepository;
+import io.snello.service.repository.postgresql.PostgresqlJdbcRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 

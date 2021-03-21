@@ -1,4 +1,4 @@
-package io.snello.service.rs.system;
+package io.snello.service.rs;
 
 
 import io.snello.api.service.AbstractServiceRs;
@@ -7,6 +7,7 @@ import io.snello.model.events.FieldDefinitionCreateUpdateEvent;
 import io.snello.model.events.FieldDefinitionDeleteEvent;
 import io.snello.service.ApiService;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -21,6 +22,7 @@ import static io.snello.management.AppConstants.FIELD_DEFINITIONS_PATH;
 @Path(FIELD_DEFINITIONS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class FieldDefinitionsServiceRs extends AbstractServiceRs {
 
     @Inject

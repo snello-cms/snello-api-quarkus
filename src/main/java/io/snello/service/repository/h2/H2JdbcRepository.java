@@ -1,4 +1,4 @@
-package io.snello.repository.mysql;
+package io.snello.service.repository.h2;
 
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
@@ -7,7 +7,6 @@ import io.snello.api.service.JdbcRepository;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,25 +18,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static io.snello.management.AppConstants.JDBC_DB;
 import static io.snello.management.DbConstants.*;
-import static io.snello.repository.mysql.MysqlConstants.*;
+import static io.snello.service.repository.h2.H2Constants.*;
 
-public class MysqlJdbcRepository implements JdbcRepository {
+public class H2JdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @ConfigProperty(name = JDBC_DB)
-    String jdbc_db;
-
-    public MysqlJdbcRepository() {
+    public H2JdbcRepository() {
     }
 
-    public MysqlJdbcRepository(DataSource dataSource) {
+    public H2JdbcRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
 
     public void onLoad() {
         logger.info("Creation queries at startup: ");
@@ -55,13 +49,17 @@ public class MysqlJdbcRepository implements JdbcRepository {
                 creationQueryFieldDefinitions,
                 creationQueryConditions,
                 creationQueryDocuments,
+                creationQueryExtensions,
                 creationQueryDraggables,
                 creationQueryDroppables,
-                creationQueryExtensions,
                 creationQuerySelectQueries,
                 creationLinksQueries
-
         };
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 
     public long count(String table, String alias_condition, MultivaluedMap<String, String> httpParameters, List<Condition> conditions) throws Exception {
@@ -71,6 +69,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         select.append(COUNT_QUERY);
         if (alias_condition != null)
             where.append(alias_condition);
+
         boolean withCondition = false;
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
@@ -80,14 +79,15 @@ public class MysqlJdbcRepository implements JdbcRepository {
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
+
         try (
                 Connection connection = dataSource.getConnection()) {
 
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("query: " + select + MysqlSqlUtils.escape(table) + where);
-            try (PreparedStatement preparedStatement = connection.prepareStatement(select + MysqlSqlUtils.escape(table) + where)) {
+            logger.info("query: " + select + H2SqlUtils.escape(table) + where);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(select + H2SqlUtils.escape(table) + where)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -111,7 +111,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
     }
 
     public boolean exist(String table, String table_key, Object uuid) throws Exception {
-        String select = COUNT_QUERY + MysqlSqlUtils.escape(table) + _WHERE_ + MysqlSqlUtils.escape(table_key) + "= ?";
+        String select = COUNT_QUERY + H2SqlUtils.escape(table) + _WHERE_ + H2SqlUtils.escape(table_key) + "= ?";
         List<Object> in = new LinkedList<>();
         in.add(uuid);
         try (Connection connection = dataSource.getConnection()) {
@@ -150,7 +150,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         }
         select.append(_FROM_);
         if (alias_condition != null && !alias_condition.trim().isEmpty()) {
-            where.append(MysqlSqlUtils.escape(alias_condition));
+            where.append(H2SqlUtils.escape(alias_condition));
         }
 
         if (sort != null) {
@@ -162,6 +162,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
             }
         }
 
+//        ParamUtils.where(httpParameters, where, in);
+//        ConditionUtils.where(httpParameters, conditions, where, in);
 
         boolean withCondition = false;
         try {
@@ -172,6 +174,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
+
+
         if (start == 0 && limit == 0) {
             logger.info("no limits");
         } else {
@@ -191,12 +195,11 @@ public class MysqlJdbcRepository implements JdbcRepository {
             }
         }
         try (Connection connection = dataSource.getConnection()) {
-
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("LIST query: " + select.toString() + MysqlSqlUtils.escape(table) + where + order_limit);
-            return MysqlSqlUtils.executeQueryList(connection, select.toString() + MysqlSqlUtils.escape(table) + where.toString() + order_limit.toString(), in);
+            logger.info("LIST query: " + select.toString() + H2SqlUtils.escape(table) + where + order_limit);
+            return H2SqlUtils.executeQueryList(connection, select.toString() + H2SqlUtils.escape(table) + where.toString() + order_limit.toString(), in);
         }
 
     }
@@ -250,7 +253,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
                 where = new StringBuffer(where);
             }
             logger.info("LIST query: " + select.toString() + where + order_limit);
-            return MysqlSqlUtils.executeQueryList(connection, select.toString() + where.toString() + order_limit.toString(), in);
+            return H2SqlUtils.executeQueryList(connection, select.toString() + where.toString() + order_limit.toString(), in);
         }
 
     }
@@ -259,16 +262,16 @@ public class MysqlJdbcRepository implements JdbcRepository {
         List<Object> in = new LinkedList<>();
         try (Connection connection = dataSource.getConnection()) {
             logger.info("LIST query: " + query);
-            return MysqlSqlUtils.executeQueryList(connection, query, in);
+            return H2SqlUtils.executeQueryList(connection, query, in);
         }
 
     }
 
     public Map<String, Object> create(String table, String table_key, Map<String, Object> map) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            String query = MysqlSqlUtils.create(table, map);
+            String query = H2SqlUtils.create(table, map);
             logger.info("CREATE QUERY: " + query);
-            MysqlSqlUtils.executeQueryCreate(connection, query, map, table_key);
+            H2SqlUtils.executeQueryCreate(connection, query, map, table_key);
         }
         return map;
     }
@@ -276,7 +279,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
     public boolean query(String query, List<Object> values) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             logger.info("EXECUTE QUERY: " + query);
-            return MysqlSqlUtils.executeQuery(connection, query, values);
+            return H2SqlUtils.executeQuery(connection, query, values);
         } catch (Exception e) {
             logger.error("error: ", e);
             return false;
@@ -290,10 +293,10 @@ public class MysqlJdbcRepository implements JdbcRepository {
         Map<String, Object> keys = new HashMap<>();
         List<Object> in = new LinkedList<>();
         keys.put(table_key, key);
-        String query = MysqlSqlUtils.update(table, map, keys, in);
+        String query = H2SqlUtils.update(table, map, keys, in);
         try (Connection connection = dataSource.getConnection()) {
             logger.info("UPDATE QUERY: " + query);
-            MysqlSqlUtils.executeQueryUpdate(connection, query, in);
+            H2SqlUtils.executeQueryUpdate(connection, query, in);
         }
         return map;
     }
@@ -303,12 +306,12 @@ public class MysqlJdbcRepository implements JdbcRepository {
             if (select_fields == null) {
                 select_fields = " * ";
             }
-            logger.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + MysqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
-            PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + MysqlSqlUtils.escape(table)
-                    + _WHERE_ + MysqlSqlUtils.escape(table_key) + " = ?");
+            logger.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + H2SqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + H2SqlUtils.escape(table)
+                    + _WHERE_ + H2SqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return MysqlSqlUtils.single(resultSet);
+                return H2SqlUtils.single(resultSet);
             }
         }
     }
@@ -316,8 +319,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
     public boolean delete(String table, String table_key, String uuid) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             logger.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + MysqlSqlUtils.escape(table) + _WHERE_
-                    + MysqlSqlUtils.escape(table_key) + " = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + H2SqlUtils.escape(table) + _WHERE_
+                    + H2SqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;
@@ -325,11 +328,16 @@ public class MysqlJdbcRepository implements JdbcRepository {
     }
 
     public void batch(String[] queries) throws Exception {
+        final int batchSize = 5;
+        int count = 0;
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
             for (String query : queries) {
                 logger.info("BATCH QUERY: " + query);
                 statement.addBatch(query);
+                if (++count % batchSize == 0) {
+                    statement.executeBatch();
+                }
             }
             statement.executeBatch();
             statement.close();
@@ -351,13 +359,21 @@ public class MysqlJdbcRepository implements JdbcRepository {
         return false;
     }
 
+
     public boolean verifyTable(String tableName) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
-            PreparedStatement preparedStatement = connection.prepareStatement(SHOW_TABLES_INIT + jdbc_db + SHOW_TABLES_END);
-            preparedStatement.setObject(1, tableName);
+            PreparedStatement preparedStatement = connection.prepareStatement(SHOW_TABLES);
+            List<Map<String, Object>> list = null;
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
+                list = H2SqlUtils.list(resultSet);
+            }
+            for (Map<String, Object> map : list) {
+                if (!map.containsKey("table_name")) {
+                    continue;
+                }
+                String table_name_found = (String) map.get("table_name");
+                if (table_name_found.toLowerCase().equals(tableName.toLowerCase())) {
                     return true;
                 }
             }
@@ -379,14 +395,14 @@ public class MysqlJdbcRepository implements JdbcRepository {
 //            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
 //            preparedStatement.setObject(1, username);
 //            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                map = MysqlSqlUtils.single(resultSet);
+//                map = H2SqlUtils.single(resultSet);
 //            }
 //        }
 //        if (map == null) {
 //            logger.info("password not found for username: " + username);
 //            throw new Exception("invalid username/password");
 //        }
-//        String passwordOnDb = (String) map.get("password");
+//        String passwordOnDb = (String) map.get(PWD_LOWERCASE);
 //        String encrPassword = PasswordUtils.createPassword(password);
 //        if (encrPassword.equals(passwordOnDb)) {
 //            return new UserDetails(username, getRoles(username));
@@ -402,16 +418,16 @@ public class MysqlJdbcRepository implements JdbcRepository {
 
     @Override
     public String escape(String name) {
-        return MysqlSqlUtils.escape(name);
+        return H2SqlUtils.escape(name);
     }
 
     @Override
-    public String fieldDefinition2Sql(FieldDefinition fieldDefinition) {
-        return MysqlFieldDefinitionUtils.sql(fieldDefinition);
+    public String fieldDefinition2Sql(FieldDefinition fieldDefinition) throws Exception {
+        return H2FieldDefinitionUtils.sql(fieldDefinition);
     }
 
     @Override
-    public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) {
+    public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) throws Exception {
         StringBuffer sb = new StringBuffer(" CREATE TABLE " + escape(metadata.table_name) + " (");
         if (metadata.table_key_type.equals("autoincrement")) {
             sb.append(escape(metadata.table_key) + " int NOT NULL AUTO_INCREMENT ");
@@ -441,13 +457,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
                 conditions.add(condition);
             }
         }
-        sb.append(", PRIMARY KEY (" + escape(metadata.table_key) + ")").append(")  ENGINE=INNODB;");
-        logger.info("QUERY CREATION TABLE: " + sb.toString());
+        sb.append(", PRIMARY KEY (" + escape(metadata.table_key) + ")").append(") ;");
+        logger.info("CREATION TABLE QUERY: " + sb.toString());
         return sb.toString();
-    }
-
-    @Override
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
     }
 }

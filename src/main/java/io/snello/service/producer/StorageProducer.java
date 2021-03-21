@@ -1,10 +1,9 @@
-package io.snello.producer;
+package io.snello.service.producer;
 
 import io.minio.MinioClient;
-import io.snello.api.service.JdbcRepository;
 import io.snello.api.service.StorageService;
-import io.snello.storage.FsStorageService;
-import io.snello.storage.S3StorageService;
+import io.snello.service.storage.FsStorageService;
+import io.snello.service.storage.S3StorageService;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.inject.Produces;

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
-import static io.snello.repository.mysql.MysqlConstants.DROP_TABLE;
-import static io.snello.repository.mysql.MysqlConstants.TRUNCATE_TABLE;
+import static io.snello.service.repository.mysql.MysqlConstants.DROP_TABLE;
+import static io.snello.service.repository.mysql.MysqlConstants.TRUNCATE_TABLE;
 
 @Singleton
 public class ApiService {

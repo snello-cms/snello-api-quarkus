@@ -1,4 +1,4 @@
-package io.snello.storage;
+package io.snello.service.storage;
 
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;

@@ -1,4 +1,4 @@
-package io.snello;
+package io.snello.service.rs;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

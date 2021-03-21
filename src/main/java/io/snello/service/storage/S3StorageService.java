@@ -1,4 +1,4 @@
-package io.snello.storage;
+package io.snello.service.storage;
 
 import io.minio.*;
 import io.snello.api.service.StorageService;
