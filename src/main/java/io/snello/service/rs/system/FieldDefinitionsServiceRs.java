@@ -2,6 +2,7 @@ package io.snello.service.rs.system;
 
 
 import io.snello.api.service.AbstractServiceRs;
+import io.snello.management.AppConstants;
 import io.snello.model.events.FieldDefinitionCreateUpdateEvent;
 import io.snello.model.events.FieldDefinitionDeleteEvent;
 import io.snello.service.ApiService;
@@ -31,6 +32,11 @@ public class FieldDefinitionsServiceRs extends AbstractServiceRs {
     }
 
     FieldDefinitionsServiceRs() {
+    }
+
+    @Override
+    protected void prePersist(Map<String, Object> object) throws Exception {
+        object.put(AppConstants.UUID, java.util.UUID.randomUUID().toString());
     }
 
     @Override

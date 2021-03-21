@@ -1,10 +1,11 @@
 package io.snello.api.service;
 
+import io.snello.management.AppConstants;
 import io.snello.service.ApiService;
 import io.snello.util.MetadataUtils;
 import org.jboss.logging.Logger;
 
-import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -37,12 +38,7 @@ public abstract class AbstractServiceRs {
 
     @POST
     public Response persist(Map<String, Object> map) throws Exception {
-        if (map.get(TABLE_NAME) == null) {
-            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
-        }
-        if (MetadataUtils.isReserved(map.get(TABLE_NAME))) {
-            throw new Exception(MSG_TABLE_NAME_IS_RESERVED);
-        }
+        prePersist(map);
         map.put(UUID, java.util.UUID.randomUUID().toString());
         map = apiService.create(table, map, UUID);
         postCreate(map);
@@ -53,6 +49,7 @@ public abstract class AbstractServiceRs {
     @GET
     @Path("/{id}")
     public Response fetch(@PathParam("id") String id) throws Exception {
+        preFetch(id);
         Map<String, Object> result = apiService.fetch(null, table, id, UUID);
         postFetch(result);
         return ok(result).build();
@@ -63,12 +60,7 @@ public abstract class AbstractServiceRs {
     @Path("/{id}")
     public Response update(@PathParam("id") String id,
                            Map<String, Object> map) throws Exception {
-        if (map.get(TABLE_NAME) == null) {
-            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
-        }
-        if (MetadataUtils.isReserved(map.get(TABLE_NAME))) {
-            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
-        }
+        preUpdate(map);
         map = apiService.merge(table, map, id, UUID);
         postUpdate(map);
         return ok(map).build();
@@ -76,10 +68,9 @@ public abstract class AbstractServiceRs {
 
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") String id) throws Exception {
-        boolean result = apiService.delete(table, id, UUID);
-        boolean deleteFieldDefinitionsByMetadataUuid = apiService.deleteFieldDefinitionsByMetadataUuid(id);
-        if (result && deleteFieldDefinitionsByMetadataUuid) {
+    public Response delete(@PathParam("id") @NotNull String id) throws Exception {
+        boolean result = apiService.delete(table, id, AppConstants.UUID);
+        if (result) {
             postDelete(id);
             return ok().build();
         }
@@ -107,23 +98,37 @@ public abstract class AbstractServiceRs {
                 .header(TOTAL_COUNT_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo)).build();
     }
 
-    protected void postUpdate(Map<String, Object> object) throws Exception
-    {
+    protected void postUpdate(Map<String, Object> object) throws Exception {
     }
 
-    protected void postDelete(String id) throws Exception
-    {
+    protected void postDelete(String id) throws Exception {
     }
 
-    protected void postFetch(Map<String, Object> object) throws Exception
-    {
+    protected void postFetch(Map<String, Object> object) throws Exception {
     }
 
-    protected void postCreate(Map<String, Object> object) throws Exception
-    {
+    protected void postCreate(Map<String, Object> object) throws Exception {
     }
 
-    protected ApiService getApiService(){
+    protected void preUpdate(Map<String, Object> object) throws Exception {
+        if (object.get(TABLE_NAME) == null) {
+            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
+        }
+        if (MetadataUtils.isReserved(object.get(TABLE_NAME))) {
+            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
+        }
+    }
+
+    protected void preDelete(String id) throws Exception {
+    }
+
+    protected void preFetch(String id) throws Exception {
+    }
+
+    protected void prePersist(Map<String, Object> object) throws Exception {
+    }
+
+    protected ApiService getApiService() {
         return apiService;
     }
 }

@@ -5,6 +5,7 @@ import io.snello.model.Metadata;
 import io.snello.model.events.MetadataCreateUpdateEvent;
 import io.snello.model.events.MetadataDeleteEvent;
 import io.snello.service.ApiService;
+import io.snello.util.MetadataUtils;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
 import static javax.ws.rs.core.Response.ok;
+import static javax.ws.rs.core.Response.serverError;
 
 @Path(METADATA_PATH)
 @Produces(MediaType.APPLICATION_JSON)
@@ -78,6 +80,40 @@ public class MetadataServiceRs extends AbstractServiceRs {
     public Response truncateTable(@PathParam("uuid") @NotNull String uuid) throws Exception {
         getApiService().truncateTable(uuid);
         return ok(getApiService().fetch(null, table, uuid, UUID)).build();
+    }
+
+    @Override
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") String id) throws Exception {
+        preDelete(id);
+        boolean result = getApiService().delete(table, id, UUID);
+        boolean deleteFieldDefinitionsByMetadataUuid = getApiService().deleteFieldDefinitionsByMetadataUuid(id);
+        if (result && deleteFieldDefinitionsByMetadataUuid) {
+            postDelete(id);
+            return ok().build();
+        }
+        return serverError().build();
+    }
+
+    @Override
+    protected void preUpdate(Map<String, Object> object) throws Exception {
+        if (object.get(TABLE_NAME) == null) {
+            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
+        }
+        if (MetadataUtils.isReserved(object.get(TABLE_NAME))) {
+            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
+        }
+    }
+
+    @Override
+    protected void prePersist(Map<String, Object> object) throws Exception {
+        if (object.get(TABLE_NAME) == null) {
+            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
+        }
+        if (MetadataUtils.isReserved(object.get(TABLE_NAME))) {
+            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
+        }
     }
 
 

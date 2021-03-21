@@ -71,19 +71,13 @@ public class LinksController {
         return ok(apiService.fetch(null, table, uuid, NAME)).build();
     }
 
-
     @POST
     public Response post(Map<String, Object> map) throws Exception {
-        if (map.get(NAME) == null) {
-            throw new Exception(MSG_NAME_PARAM_IS_EMPTY);
-        }
-        if (MetadataUtils.isReserved(map.get(NAME))) {
-            throw new Exception(MSG_NAME_PARAM_IS_RESERVED);
-        }
         map.put(NAME, map.get(NAME));
         map = apiService.create(table, map, NAME);
         return ok(map).build();
     }
+
 
     @PUT
     @Path(UUID_PATH_PARAM)
@@ -107,6 +101,7 @@ public class LinksController {
         }
         return serverError().build();
     }
+
 
     @GET
     @Path(UUID_PATH_PARAM_CREATE)
