@@ -40,7 +40,7 @@ public class FieldDefinitionsServiceRs extends AbstractServiceRs {
     }
 
     @Override
-    protected void postCreate(Map<String, Object> object) {
+    protected void postPersist(Map<String, Object> object) {
         eventPublisher.fireAsync(new FieldDefinitionCreateUpdateEvent(object));
     }
 
