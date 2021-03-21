@@ -42,11 +42,6 @@ public class AppConstants {
     public static final String PUBLIC_DATA_PATH = API_PATH + BASE_PATH + PUBLIC_DATA;
     public static final String SELECT_QUERY_PATH = API_PATH + BASE_PATH + SELECT_QUERY;
 
-    public static final String DATA_LIST_NAMES = "/names";
-    public static final String DATA_LIST_METADATA_NAMES = "/metadata/{name}";
-    public static final String DATA_LIST_FIELD_DEFINITIONS = "/metadata/{name}/fielddefinitions";
-    public static final String DATA_LIST_CONDITIONS = "/metadata/{name}/conditions";
-
     public static final String _0 = "0";
     public static final String _10 = "10";
     public static final String TABLE_PATH_PARAM = "/{table}";

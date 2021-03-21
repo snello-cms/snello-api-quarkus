@@ -4,21 +4,21 @@ import io.snello.service.MetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static io.snello.management.AppConstants.DATALIST_PATH;
 import static javax.ws.rs.core.Response.ok;
 
 @Path(DATALIST_PATH)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class DataListServiceRs {
-
-    Logger logger = LoggerFactory.getLogger(DataListServiceRs.class);
-
 
     @Inject
     MetadataService metadataService;
