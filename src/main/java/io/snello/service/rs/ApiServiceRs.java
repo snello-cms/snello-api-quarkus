@@ -11,10 +11,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +21,8 @@ import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
 @Path(API_PATH)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ApiServiceRs {
 
     Logger logger = LoggerFactory.getLogger(getClass());
