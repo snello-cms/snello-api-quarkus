@@ -6,6 +6,9 @@ import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
 import javax.annotation.Nullable;
 import javax.enterprise.context.ApplicationScoped;
@@ -70,10 +73,10 @@ public class DocumentServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response persist(DocumentFormData documentFormData) {
+    public Response persist(@MultipartForm MultipartFormDataInput multipartFormDataInput) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
-            Map<String, Object> map = documentsService.upload(documentFormData);
+            Map<String, Object> map = documentsService.upload(new DocumentFormData(multipartFormDataInput));
             map = apiService.create(table, map, AppConstants.UUID);
             return ok(map).build();
         } catch (Exception e) {
