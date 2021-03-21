@@ -32,6 +32,7 @@ public class DocumentServiceRs extends AbstractServiceRs {
         super(apiService, DOCUMENTS, "table_name asc");
     }
 
+    public DocumentServiceRs(){}
 
     @GET
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH)

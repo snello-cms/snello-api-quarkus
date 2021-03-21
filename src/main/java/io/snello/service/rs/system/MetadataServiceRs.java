@@ -35,7 +35,7 @@ public class MetadataServiceRs extends AbstractServiceRs {
         super(apiService, METADATAS, "table_name asc");
     }
 
-    MetadataServiceRs() {
+    public MetadataServiceRs() {
     }
 
     @Override

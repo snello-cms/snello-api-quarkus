@@ -15,6 +15,13 @@ public class DocumentFormData {
     @PartType(MediaType.TEXT_PLAIN)
     public String uuid;
 
+    @FormParam("filename")
+    @PartType(MediaType.TEXT_PLAIN)
+    public String filename;
+    @FormParam("mimeType")
+    @PartType(MediaType.TEXT_PLAIN)
+    public String mimeType;
+
     @FormParam("table_name")
     @PartType(MediaType.TEXT_PLAIN)
     public String table_name;
@@ -22,5 +29,5 @@ public class DocumentFormData {
     @FormParam("table_key")
     @PartType(MediaType.TEXT_PLAIN)
     public String table_key;
-    
+
 }

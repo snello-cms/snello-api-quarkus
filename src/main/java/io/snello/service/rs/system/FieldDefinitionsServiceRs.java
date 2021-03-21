@@ -31,7 +31,7 @@ public class FieldDefinitionsServiceRs extends AbstractServiceRs {
         super(apiService, FIELD_DEFINITIONS, "name asc");
     }
 
-    FieldDefinitionsServiceRs() {
+    public FieldDefinitionsServiceRs() {
     }
 
     @Override

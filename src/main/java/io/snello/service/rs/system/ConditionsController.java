@@ -35,6 +35,9 @@ public class ConditionsController extends AbstractServiceRs {
         super(apiService, CONDITIONS, "");
     }
 
+    public ConditionsController() {
+    }
+
     @Override
     protected void postCreate(Map<String, Object> object) {
         eventPublisher.fireAsync(new ConditionCreateUpdateEvent(object));

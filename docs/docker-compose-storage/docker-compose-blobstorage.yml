@@ -1,0 +1,11 @@
+version: "3"
+services:
+  blobstorage:
+    image: mcr.microsoft.com/azure-storage/azurite
+    volumes:
+      - ./data:/data
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+    environment:
+      AZURITE_ACCOUNTS: blobstorage1:key1
