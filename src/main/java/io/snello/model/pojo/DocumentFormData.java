@@ -1,18 +1,17 @@
 package io.snello.model.pojo;
 
 
+import io.snello.util.MultipartFormUtils;
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
 
 public class DocumentFormData {
-
     @FormParam("file")
     @PartType(MediaType.APPLICATION_OCTET_STREAM)
-    public byte[] bytes;
-
     public InputStream data;
 
     @FormParam("uuid")
@@ -34,4 +33,5 @@ public class DocumentFormData {
     @FormParam("table_key")
     @PartType(MediaType.TEXT_PLAIN)
     public String table_key;
+
 }
