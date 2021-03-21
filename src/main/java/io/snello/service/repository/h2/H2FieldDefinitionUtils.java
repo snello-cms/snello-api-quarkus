@@ -1,8 +1,7 @@
 package io.snello.service.repository.h2;
 
 import io.snello.model.FieldDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import static io.snello.service.repository.h2.H2SqlUtils.escape;
 
@@ -10,7 +9,7 @@ import static io.snello.service.repository.h2.H2SqlUtils.escape;
 public class H2FieldDefinitionUtils {
 
 
-    static Logger logger = LoggerFactory.getLogger(H2FieldDefinitionUtils.class);
+    static Logger logger = Logger.getLogger(H2FieldDefinitionUtils.class);
 
 
     //input_type: text,

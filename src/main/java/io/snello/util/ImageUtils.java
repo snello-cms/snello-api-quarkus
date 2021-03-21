@@ -1,7 +1,7 @@
 package io.snello.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.jboss.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.io.File;
 
 public class ImageUtils {
 
-    static Logger log = LoggerFactory.getLogger(ImageUtils.class.getName());
+    static Logger logger = Logger.getLogger(ImageUtils.class);
 
     public static Integer getImageWidthProportional(Object imageData,
                                                     Integer maxWidth, Integer maxHeight) {
@@ -95,10 +95,10 @@ public class ImageUtils {
             // Determine the shrink ratio
             double ratio = (double) maxWidthOrHeight
                     / imageIcon.getIconHeight();
-            log.info("resize ratio: " + ratio);
+            logger.info("resize ratio: " + ratio);
             width = (int) (imageIcon.getIconWidth() * ratio);
             height = maxWidthOrHeight;
-            log.info("imageIcon post scale width: " + width + "  height: "
+            logger.info("imageIcon post scale width: " + width + "  height: "
                     + height);
         }
 
@@ -107,10 +107,10 @@ public class ImageUtils {
                 && width > maxWidthOrHeight) {
             // Determine the shrink ratio
             double ratio = (double) maxWidthOrHeight / imageIcon.getIconWidth();
-            log.info("resize ratio: " + ratio);
+            logger.info("resize ratio: " + ratio);
             height = (int) (imageIcon.getIconHeight() * ratio);
             width = maxWidthOrHeight;
-            log.info("imageIcon post scale width: " + width + "  height: "
+            logger.info("imageIcon post scale width: " + width + "  height: "
                     + height);
         }
 

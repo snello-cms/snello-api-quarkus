@@ -6,8 +6,7 @@ import io.snello.model.Draggable;
 import io.snello.model.Droppable;
 import io.snello.model.SelectQuery;
 import io.snello.model.events.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.ObservesAsync;
@@ -19,7 +18,7 @@ import java.util.List;
 @Singleton
 public class EventService {
 
-    Logger logger = LoggerFactory.getLogger(EventService.class);
+    Logger logger = Logger.getLogger(getClass());
 
     @Inject
     MetadataService metadataService;

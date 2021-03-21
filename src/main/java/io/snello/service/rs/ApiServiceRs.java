@@ -4,8 +4,7 @@ import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
 import io.snello.util.TableKeyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,7 +26,7 @@ import static javax.ws.rs.core.Response.serverError;
 @ApplicationScoped
 public class ApiServiceRs {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    Logger logger = Logger.getLogger(getClass());
 
     @Inject
     ApiService apiService;

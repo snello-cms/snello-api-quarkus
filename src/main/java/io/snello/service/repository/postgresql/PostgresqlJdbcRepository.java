@@ -7,8 +7,7 @@ import io.snello.api.service.JdbcRepository;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import javax.sql.DataSource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -23,7 +22,7 @@ import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
 public class PostgresqlJdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
-    Logger logger = LoggerFactory.getLogger(getClass());
+    Logger logger = Logger.getLogger(getClass());
 
     public PostgresqlJdbcRepository() {
     }

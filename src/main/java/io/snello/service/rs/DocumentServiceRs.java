@@ -5,62 +5,72 @@ import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
+import org.jboss.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.snello.management.AppConstants.*;
 import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
 @Path(DOCUMENTS_PATH)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
-public class DocumentServiceRs extends AbstractServiceRs {
+public class DocumentServiceRs {
     private static String table = DOCUMENTS;
 
     @Inject
     StorageService documentsService;
 
-    @Inject
-    DocumentServiceRs(ApiService apiService) {
-        super(apiService, DOCUMENTS, "table_name asc");
-    }
+    Logger logger = Logger.getLogger(AbstractServiceRs.class);
 
-    public DocumentServiceRs(){}
+    @Inject
+    ApiService apiService;
+
+    public DocumentServiceRs() {
+    }
 
     @GET
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response download(@NotNull String uuid) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
-//        return documentsService.streamingOutput(path, mimetype);
-        return null;
+        String filename = (String) map.get(DOCUMENT_NAME);
+        StreamingOutput output = documentsService.streamingOutput(path, mimetype);
+        return Response.ok(output)
+                .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                .build();
     }
 
     @GET
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH + "/{name}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response downloadWithName(@NotNull String uuid, @NotNull String name) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
-//        return documentsService.streamingOutput(path, mimetype);
-        return null;
-
+        StreamingOutput output = documentsService.streamingOutput(path, mimetype);
+        return Response.ok(output)
+                .header("Content-Disposition", "attachment; filename=\"" + name + "\"")
+                .build();
     }
 
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response post(DocumentFormData documentFormData) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response persist(DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
             Map<String, Object> map = documentsService.upload(documentFormData);
@@ -76,8 +86,9 @@ public class DocumentServiceRs extends AbstractServiceRs {
     @PUT
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path(UUID_PATH_PARAM)
-    public Response put(DocumentFormData documentFormData,
-                        @NotNull String uuid) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(DocumentFormData documentFormData,
+                           @NotNull String uuid) {
         try {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
             Map<String, Object> map = documentsService.upload(documentFormData);
@@ -92,6 +103,8 @@ public class DocumentServiceRs extends AbstractServiceRs {
 
     @Path(UUID_PATH_PARAM)
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response delete(@NotNull String uuid, @Nullable @QueryParam(DELETE_PARAM) String delete) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         if (delete != null && delete.toLowerCase().equals(TRUE)) {
@@ -107,5 +120,29 @@ public class DocumentServiceRs extends AbstractServiceRs {
         } else {
             return serverError().build();
         }
+    }
+
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response list(
+            @Null @QueryParam(SORT_PARAM) String sort,
+            @Null @QueryParam(LIMIT_PARAM) String limit,
+            @Null @QueryParam(START_PARAM) String start,
+            @Context UriInfo uriInfo) throws Exception {
+        if (sort != null)
+            logger.info(SORT_DOT_DOT + sort);
+        else
+            sort = "table_name asc";
+        if (limit != null)
+            logger.info(LIMIT_DOT_DOT + limit);
+        if (start != null)
+            logger.info(START_DOT_DOT + start);
+        int l = Optional.ofNullable(limit).map(Integer::parseInt).orElse(10);
+        int s = Optional.ofNullable(start).map(Integer::parseInt).orElse(0);
+        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))
+                .header(SIZE_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo))
+                .header(TOTAL_COUNT_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo)).build();
     }
 }

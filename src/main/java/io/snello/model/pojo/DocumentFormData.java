@@ -1,5 +1,6 @@
 package io.snello.model.pojo;
 
+
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
 import javax.ws.rs.FormParam;
@@ -18,6 +19,7 @@ public class DocumentFormData {
     @FormParam("filename")
     @PartType(MediaType.TEXT_PLAIN)
     public String filename;
+
     @FormParam("mimeType")
     @PartType(MediaType.TEXT_PLAIN)
     public String mimeType;

@@ -3,8 +3,8 @@ package io.snello.util;
 import io.snello.model.Condition;
 import io.snello.model.events.ConditionCreateUpdateEvent;
 import io.snello.service.ApiService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
+
 
 import javax.enterprise.event.Event;
 import java.util.List;
@@ -15,7 +15,7 @@ import static io.snello.util.ParamUtils.*;
 
 public class ConditionUtils {
 
-    static Logger logger = LoggerFactory.getLogger(ConditionUtils.class);
+    static Logger logger = Logger.getLogger(ConditionUtils.class);
 
 
     public static Map<String, Object> createCondition(Map<String, Object> map, ApiService apiService, String table, Event<ConditionCreateUpdateEvent> eventPublisher) throws Exception {

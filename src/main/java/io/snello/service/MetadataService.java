@@ -2,8 +2,7 @@ package io.snello.service;
 
 import io.snello.model.*;
 import io.snello.api.service.JdbcRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,7 +13,7 @@ import static io.snello.management.AppConstants.*;
 @Singleton
 public class MetadataService {
 
-    Logger logger = LoggerFactory.getLogger(MetadataService.class);
+    Logger logger = Logger.getLogger(getClass());
 
     Map<String, Metadata> metadataMap;
     Map<String, SelectQuery> selectqueryMap;

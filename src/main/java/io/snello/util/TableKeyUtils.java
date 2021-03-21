@@ -2,14 +2,14 @@ package io.snello.util;
 
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import java.util.Map;
 
 public class TableKeyUtils {
 
-    static Logger logger = LoggerFactory.getLogger(TableKeyUtils.class);
+    static Logger logger = Logger.getLogger(TableKeyUtils.class);
+
 
     public static boolean isSlug(Metadata metadata) {
         switch (metadata.table_key_type) {
