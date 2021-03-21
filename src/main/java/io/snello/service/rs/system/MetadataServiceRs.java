@@ -9,10 +9,7 @@ import io.snello.service.ApiService;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
@@ -55,8 +52,8 @@ public class MetadataServiceRs extends AbstractServiceRs {
     }
 
     @GET
-    @Path(UUID_PATH_PARAM_CREATE)
-    public Response createTable(@NotNull String uuid) throws Exception {
+    @Path("/{uuid}/create")
+    public Response createTable(@PathParam("uuid") @NotNull String uuid) throws Exception {
         Metadata metadata = getApiService().createMetadataTable(uuid);
         Map<String, Object> updateMetadataMap = new HashMap<>();
         updateMetadataMap.put(CREATED, true);
@@ -65,8 +62,8 @@ public class MetadataServiceRs extends AbstractServiceRs {
     }
 
     @GET
-    @Path(UUID_PATH_PARAM_DELETE)
-    public Response deleteTable(@NotNull String uuid) throws Exception {
+    @Path("/{uuid}/delete")
+    public Response deleteTable(@PathParam("uuid") @NotNull String uuid) throws Exception {
         boolean result = getApiService().deleteTable(uuid);
         if (result) {
             Map<String, Object> updateMetadataMap = new HashMap<>();
@@ -77,8 +74,8 @@ public class MetadataServiceRs extends AbstractServiceRs {
     }
 
     @GET
-    @Path(UUID_PATH_PARAM_TRUNCATE)
-    public Response truncateTable(@NotNull String uuid) throws Exception {
+    @Path("/{uuid}/truncate")
+    public Response truncateTable(@PathParam("uuid") @NotNull String uuid) throws Exception {
         getApiService().truncateTable(uuid);
         return ok(getApiService().fetch(null, table, uuid, UUID)).build();
     }
