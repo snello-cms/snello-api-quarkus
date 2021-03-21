@@ -22,7 +22,7 @@ import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
 @Path(CONDITIONS_PATH)
-public class ConditionsController extends AbstractServiceRs {
+public class ConditionsServiceRs extends AbstractServiceRs {
 
     @Inject
     ApiService apiService;
@@ -31,11 +31,11 @@ public class ConditionsController extends AbstractServiceRs {
     Event eventPublisher;
 
     @Inject
-    ConditionsController(ApiService apiService) {
+    ConditionsServiceRs(ApiService apiService) {
         super(apiService, CONDITIONS, "");
     }
 
-    public ConditionsController() {
+    public ConditionsServiceRs() {
     }
 
     @Override

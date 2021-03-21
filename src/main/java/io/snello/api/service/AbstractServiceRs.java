@@ -111,12 +111,6 @@ public abstract class AbstractServiceRs {
     }
 
     protected void preUpdate(Map<String, Object> object) throws Exception {
-        if (object.get(TABLE_NAME) == null) {
-            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
-        }
-        if (MetadataUtils.isReserved(object.get(TABLE_NAME))) {
-            throw new Exception(MSG_TABLE_NAME_IS_EMPTY);
-        }
     }
 
     protected void preDelete(String id) throws Exception {
@@ -126,6 +120,7 @@ public abstract class AbstractServiceRs {
     }
 
     protected void prePersist(Map<String, Object> object) throws Exception {
+        object.put(UUID, java.util.UUID.randomUUID().toString());
     }
 
     protected ApiService getApiService() {
