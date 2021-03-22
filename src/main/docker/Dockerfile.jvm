@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/trackdeliveries-jvm .
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/snello-api-quarkus-jvm .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/trackdeliveries-jvm
+# docker run -i --rm -p 8080:8080 quarkus/snello-api-quarkus-jvm
 #
 # If you want to include the debug port into your docker image
 # you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5050
