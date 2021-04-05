@@ -6,12 +6,10 @@ import static io.snello.service.repository.postgresql.PostgresqlSqlUtils.escape;
 
 
 public class PostgresqlFieldDefinitionUtils {
-
-
-    //input_type: text,
+//                    input_type: text,
 //                    text => type: textarea (todo), input_type: null,
 //                    number => type: input, input_type: number,
-//                boolean => type: checkbox, input_type: null,
+//                    boolean => type: checkbox, input_type: null,
 //                    date => type: date, input_type: null,
 //                    email=> type: input, input_type: email,
 //                    password => type: input, input_type: password,
