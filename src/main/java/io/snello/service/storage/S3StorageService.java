@@ -25,7 +25,7 @@ public class S3StorageService implements StorageService {
 
     MinioClient minioClient;
     String bucketName;
-    String folder;
+    String base_folder;
 
     Logger logger = Logger.getLogger(getClass());
 
@@ -33,7 +33,7 @@ public class S3StorageService implements StorageService {
     public S3StorageService(MinioClient minioClient, String bucketName, String folder) {
         this.minioClient = minioClient;
         this.bucketName = bucketName;
-        this.folder = folder;
+        this.base_folder = folder;
         verificaBucket();
         verificaFolder();
     }
@@ -41,8 +41,8 @@ public class S3StorageService implements StorageService {
 
     @Override
     public String basePath(String folder) {
-        if (folder != null && !folder.trim().isEmpty()) {
-            return folder + folder;
+        if (base_folder != null && !base_folder.trim().isEmpty()) {
+            return base_folder + folder;
         }
         return folder;
     }
@@ -168,14 +168,14 @@ public class S3StorageService implements StorageService {
     }
 
     private void verificaFolder() {
-        logger.info("Bucket verificaFolder: " + folder);
-        if (folder != null && !folder.trim().isEmpty()) {
-            if (!folder.endsWith("/")) {
-                folder = bucketName + "/";
+        logger.info("Bucket verificaFolder: " + base_folder);
+        if (base_folder != null && !base_folder.trim().isEmpty()) {
+            if (!base_folder.endsWith("/")) {
+                base_folder = bucketName + "/";
             }
-            logger.info("Bucket folder: " + folder);
+            logger.info("Bucket folder: " + base_folder);
         } else {
-            folder = null;
+            base_folder = null;
         }
     }
 }

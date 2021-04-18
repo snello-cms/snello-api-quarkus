@@ -23,7 +23,7 @@ public class StorageProducer {
     String bucketName;
 
     @ConfigProperty(name = "snello.s3.folder")
-    String folder;
+    String base_folder;
 
     @ConfigProperty(name = "snello.fs.basePath")
     String basePath;
@@ -40,7 +40,7 @@ public class StorageProducer {
         logger.info("storagetype: " + storagetype);
         switch (storagetype) {
             case "s3":
-                return new S3StorageService(minioClient, bucketName, folder);
+                return new S3StorageService(minioClient, bucketName, base_folder);
             case "f2":
                 return new FsStorageService(basePath);
             case "blobstorage":
