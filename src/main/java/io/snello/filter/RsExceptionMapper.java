@@ -1,4 +1,4 @@
-package io.snello.service.producer;
+package io.snello.filter;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

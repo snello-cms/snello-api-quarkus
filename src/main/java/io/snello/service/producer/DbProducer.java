@@ -18,7 +18,7 @@ public class DbProducer {
 
     Logger logger = Logger.getLogger(getClass());
 
-    @ConfigProperty(name = "snello.dbtype")
+    @ConfigProperty(name = "snello.dbtype", defaultValue = "")
     String dbtype;
 
     @Inject

@@ -16,16 +16,16 @@ public class StorageProducer {
 
     Logger logger = Logger.getLogger(getClass());
 
-    @ConfigProperty(name = "snello.storagetype")
+    @ConfigProperty(name = "snello.storagetype", defaultValue = "")
     String storagetype;
 
-    @ConfigProperty(name = "snello.s3.bucketname")
+    @ConfigProperty(name = "snello.s3.bucketname", defaultValue = "")
     String bucketName;
 
-    @ConfigProperty(name = "snello.s3.folder")
+    @ConfigProperty(name = "snello.s3.folder", defaultValue = "")
     String base_folder;
 
-    @ConfigProperty(name = "snello.fs.basePath")
+    @ConfigProperty(name = "snello.fs.basePath", defaultValue = "")
     String basePath;
 
     @Inject
