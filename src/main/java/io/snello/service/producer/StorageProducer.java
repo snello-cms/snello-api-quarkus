@@ -5,6 +5,7 @@ import io.snello.api.service.StorageService;
 import io.snello.service.storage.FsStorageService;
 import io.snello.service.storage.S3StorageService;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -13,8 +14,10 @@ import javax.inject.Singleton;
 @Singleton
 public class StorageProducer {
 
+    Logger logger = Logger.getLogger(getClass());
+
     @ConfigProperty(name = "snello.storagetype")
-    String dbtype;
+    String storagetype;
 
     @ConfigProperty(name = "snello.s3.bucketname")
     String bucketName;
@@ -33,9 +36,9 @@ public class StorageProducer {
     }
 
     @Produces
-    public StorageService db() throws Exception {
-        System.out.println("dbtype: " + dbtype);
-        switch (dbtype) {
+    public StorageService storage() throws Exception {
+        logger.info("storagetype: " + storagetype);
+        switch (storagetype) {
             case "s3":
                 return new S3StorageService(minioClient, bucketName, folder);
             case "f2":
@@ -43,7 +46,7 @@ public class StorageProducer {
             case "blobstorage":
                 return null;
             default:
-                throw new Exception("no dbtype");
+                throw new Exception("no storagetype");
         }
     }
 }

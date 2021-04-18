@@ -1,7 +1,9 @@
 package io.snello.filter;
 
+import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import javax.ws.rs.container.*;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -14,9 +16,20 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
 
     Logger logger = Logger.getLogger(getClass());
 
+    @Inject
+    SecurityIdentity securityIdentity;
+
     @Override
     public void filter(ContainerRequestContext requestCtx, ContainerResponseContext responseCtx) throws IOException {
-        logger.info(requestCtx.getMethod() + " - " + requestCtx.getUriInfo().getPath());
+        try {
+            logger.info(requestCtx.getMethod() + " - " + requestCtx.getUriInfo().getPath()
+                    + " - mediaType: " + requestCtx.getMediaType()
+                    + ", (" + securityIdentity.getPrincipal().getName() + ")"
+                    + ", [" + securityIdentity.getRoles() + "]"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         responseCtx.getHeaders().add("Access-Control-Allow-Credentials", "true");
         responseCtx.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
 

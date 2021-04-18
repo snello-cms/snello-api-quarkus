@@ -9,8 +9,8 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import javax.annotation.Nullable;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.ws.rs.*;
@@ -23,7 +23,9 @@ import static javax.ws.rs.core.Response.ok;
 import static javax.ws.rs.core.Response.serverError;
 
 @Path(DOCUMENTS_PATH)
-@ApplicationScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Singleton
 public class DocumentServiceRs {
     private static String table = DOCUMENTS;
 
@@ -71,7 +73,6 @@ public class DocumentServiceRs {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response persist(@MultipartForm  DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
@@ -94,6 +95,7 @@ public class DocumentServiceRs {
                            @PathParam("uuid") @NotNull String uuid) {
         try {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
+            documentFormData.uuid= uuid;
             Map<String, Object> map = documentsService.upload(documentFormData);
             map = apiService.merge(table, map, uuid, AppConstants.UUID);
             return ok(map).build();
