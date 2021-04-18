@@ -30,12 +30,12 @@ public class S3StorageService implements StorageService {
     Logger logger = Logger.getLogger(getClass());
 
 
-    public S3StorageService(MinioClient minioClient, String bucketName, String folder) {
+    public S3StorageService(MinioClient minioClient, String bucketName, String base_folder) {
         this.minioClient = minioClient;
         this.bucketName = bucketName;
-        this.base_folder = folder;
-        verificaBucket();
-        verificaFolder();
+        this.base_folder = base_folder;
+        bucketExists();
+        folderExists();
     }
 
 
@@ -153,7 +153,7 @@ public class S3StorageService implements StorageService {
         }
     }
 
-    private void verificaBucket() {
+    private void bucketExists() {
         try {
             boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (isExist) {
@@ -167,14 +167,14 @@ public class S3StorageService implements StorageService {
 
     }
 
-    private void verificaFolder() {
-        logger.info("Bucket verificaFolder: " + base_folder);
+    private void folderExists() {
         if (base_folder != null && !base_folder.trim().isEmpty()) {
             if (!base_folder.endsWith("/")) {
-                base_folder = bucketName + "/";
+                base_folder = base_folder + "/";
             }
-            logger.info("Bucket folder: " + base_folder);
+            logger.info("Bucket folder exists: " + base_folder);
         } else {
+            logger.info("Bucket folder is empty or null");
             base_folder = null;
         }
     }
