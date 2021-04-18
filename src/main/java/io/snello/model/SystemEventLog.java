@@ -1,9 +1,10 @@
 package io.snello.model;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.time.LocalDateTime;
 
-//@Entity
-//@Table(name = "system_event_logs")
+@RegisterForReflection
 public class SystemEventLog {
 
     public String uuid;

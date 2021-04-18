@@ -1,11 +1,13 @@
 package io.snello.model;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.snello.util.MimeUtils;
 
 import java.io.File;
 import java.util.Base64;
 import java.util.Map;
 
+@RegisterForReflection
 public class ResourceFile {
 
     public ResourceFile(File file) {

@@ -1,9 +1,12 @@
 package io.snello.model;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@RegisterForReflection
 public class Metadata {
 
     public String uuid;

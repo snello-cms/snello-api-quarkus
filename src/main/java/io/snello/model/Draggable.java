@@ -1,7 +1,10 @@
 package io.snello.model;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.Map;
 
+@RegisterForReflection
 public class Draggable {
 
     public String uuid;
