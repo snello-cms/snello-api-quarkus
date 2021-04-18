@@ -40,6 +40,15 @@ public class DocumentServiceRs {
     public DocumentServiceRs() {
     }
 
+
+    @GET
+    @Path("/{id}")
+    public Response fetch(@PathParam("id") String id) throws Exception {
+        Map<String, Object> result = apiService.fetch(null, table, id, UUID);
+        return ok(result).build();
+    }
+
+
     @GET
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -73,7 +82,7 @@ public class DocumentServiceRs {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response persist(@MultipartForm  DocumentFormData documentFormData) {
+    public Response persist(@MultipartForm DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
             documentFormData.uuid = uuid;
@@ -95,7 +104,7 @@ public class DocumentServiceRs {
                            @PathParam("uuid") @NotNull String uuid) {
         try {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
-            documentFormData.uuid= uuid;
+            documentFormData.uuid = uuid;
             Map<String, Object> map = documentsService.upload(documentFormData);
             map = apiService.merge(table, map, uuid, AppConstants.UUID);
             return ok(map).build();
