@@ -3,12 +3,14 @@ package io.snello.service.rs;
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
+import io.snello.model.events.ImageEvent;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import javax.annotation.Nullable;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -37,6 +39,9 @@ public class DocumentServiceRs {
     @Inject
     ApiService apiService;
 
+    @Inject
+    Event<ImageEvent> imageEvent;
+
     public DocumentServiceRs() {
     }
 
@@ -53,11 +58,26 @@ public class DocumentServiceRs {
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response download(@PathParam("uuid") @NotNull String uuid) throws Exception {
+    public Response download(@PathParam("uuid") @NotNull String uuid, @QueryParam(value = "format") String format) throws Exception {
+        logger.info("download - " + uuid + "," + format);
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
         String filename = (String) map.get(DOCUMENT_NAME);
+        String formats = (String) map.get(FORMATS);
+        if (format != null && !format.isBlank()) {
+            boolean itemExists = formats != null && formats.contains(format);
+            if (itemExists) {
+                String duuid = uuid + "_" + format;
+                String dpath = path.replace(uuid, duuid);
+                StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
+                return Response.ok(output)
+                        .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                        .build();
+            } else {
+                imageEvent.fireAsync(new ImageEvent(uuid, format));
+            }
+        }
         StreamingOutput output = documentsService.streamingOutput(path, mimetype);
         return Response.ok(output)
                 .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")

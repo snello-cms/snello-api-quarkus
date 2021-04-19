@@ -5,6 +5,7 @@ public class AppConstants {
     public static final String BASE_PATH = "/";
     public static final String API_PATH = "/api";
 
+    public static final String BACKUP = "backup";
     public static final String CONDITIONS = "conditions";
     public static final String DATALISTS = "datalist";
     public static final String DRAGGABLES = "draggables";
@@ -29,6 +30,7 @@ public class AppConstants {
 
     public static final String SWAGGER_PATH = "/swagger";
 
+    public static final String BACKUP_PATH = API_PATH + BASE_PATH + BACKUP;
     public static final String CONDITIONS_PATH = API_PATH + BASE_PATH + CONDITIONS;
     public static final String DATALIST_PATH = API_PATH + BASE_PATH + DATALISTS;
     public static final String DOCUMENTS_PATH = API_PATH + BASE_PATH + DOCUMENTS;
@@ -89,6 +91,7 @@ public class AppConstants {
 
 
     public static final String DOCUMENT_NAME = "name";
+    public static final String FORMATS = "formats";
     public static final String DOCUMENT_ORIGINAL_NAME = "original_name";
     public static final String DOCUMENT_PATH = "path";
     public static final String DOCUMENT_MIME_TYPE = "mimetype";

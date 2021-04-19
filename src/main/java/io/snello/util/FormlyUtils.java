@@ -11,7 +11,6 @@ public class FormlyUtils {
         formlyFieldConfig.templateOptions.label = fieldDefinition.label;
         formlyFieldConfig.templateOptions.pattern = fieldDefinition.pattern;
         switch (fieldDefinition.input_type) {
-
             case "radio":
             case "checkbox":
                 formlyFieldConfig.type = fieldDefinition.input_type;

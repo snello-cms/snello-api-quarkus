@@ -11,13 +11,13 @@ public class Document {
     public String name;
     public String original_name;
     public String path;
+    public String formats;
     public String mimetype;
     public int size;
 
 
     public String table_name;
     public String table_key;
-
 
 
     public Document() {
@@ -55,6 +55,9 @@ public class Document {
         }
         if (map.get("table_key") instanceof String) {
             document.table_key = (String) map.get("table_key");
+        }
+        if (map.get("formats") instanceof String) {
+            document.formats = (String) map.get("formats");
         }
 
         return document;
