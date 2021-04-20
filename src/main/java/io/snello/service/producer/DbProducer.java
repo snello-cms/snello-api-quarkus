@@ -40,7 +40,7 @@ public class DbProducer {
 
     @Produces
     public JdbcRepository db() throws Exception {
-        System.out.println("dbtype: " + dbtype);
+        logger.info("dbtype: " + dbtype);
         switch (dbtype) {
             case "mysql":
                 return new MysqlJdbcRepository(mysqlDataSource);
