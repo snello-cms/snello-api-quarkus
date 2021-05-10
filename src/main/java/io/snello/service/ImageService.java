@@ -54,13 +54,17 @@ public class ImageService {
             String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
             if (map != null) {
                 String formats = (String) map.get(FORMATS);
-                boolean itemExists = formats != null && formats.contains(format);
+                boolean itemExists = formats != null && !formats.trim().isEmpty() && formats.contains(format);
                 if (!itemExists) {
                     String ruuid = uuid + "_" + format;
                     BufferedImage originalImg = downloadImageFromS3(path, mimetype);
                     ByteArrayOutputStream resizedBaos = resize(originalImg, format, mimetype);
                     uploadImageToS3(ruuid, resizedBaos, map);
-                    map.put(FORMATS, formats + "," + format);
+                    if (formats != null && !formats.trim().isEmpty()) {
+                        map.put(FORMATS, formats + "," + format);
+                    } else {
+                        map.put(FORMATS, format);
+                    }
                     apiService.merge(table, map, uuid, UUID);
                 }
             }
