@@ -48,10 +48,10 @@ public class ParamUtils {
     public static final String _IN = " IN (?) ";
 
     public static final String NN = "_nn";
-    public static final String _NN = " NOT NULL ";
+    public static final String _NN = " IS NOT NULL ";
 
     public static final String INN = "_inn";
-    public static final String _INN = " IS NOT NULL ";
+    public static final String _INN = " IS NULL ";
 
     public static final String NIE = "_nie";
     public static final String _NIE_ = " <> '' ";
@@ -103,29 +103,30 @@ public class ParamUtils {
                     && !key_value.getValue().get(0).trim().isEmpty()) {
                 value = key_value.getValue().get(0);
             } else {
-                continue;
-            }
-            // NN = "_nn";
-            // _NN = " NOT NULL ";
-            if (key.endsWith(NN)) {
-                if (where.length() > 0) {
-                    where.append(AND);
+                // NN = "_nn";
+                // _NN = " NOT NULL ";
+                if (key.endsWith(NN)) {
+                    if (where.length() > 0) {
+                        where.append(AND);
+                    }
+                    where.append(key.substring(0, key.length() - NN.length()));
+                    where.append(_NN).append(SPACE);
+//                    in.add(null);
+                    continue;
                 }
-                where.append(key.substring(0, key.length() - NN.length()));
-                where.append(_NN).append(SPACE);
-                in.add(null);
+
+                if (key.endsWith(INN)) {
+                    if (where.length() > 0) {
+                        where.append(AND);
+                    }
+                    where.append(key.substring(0, key.length() - INN.length()));
+                    where.append(_INN).append(SPACE);
+//                    in.add(null);
+                    continue;
+                }
                 continue;
             }
 
-            if (key.endsWith(INN)) {
-                if (where.length() > 0) {
-                    where.append(AND);
-                }
-                where.append(key.substring(0, key.length() - INN.length()));
-                where.append(_INN).append(SPACE);
-                in.add(null);
-                continue;
-            }
             if (key.endsWith(IN)) {
                 try {
                     if (where.length() > 0) {
