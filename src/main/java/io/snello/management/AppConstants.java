@@ -18,6 +18,7 @@ public class AppConstants {
     public static final String METADATAS = "metadatas";
     public static final String PUBLIC_DATA = "publicdata";
     public static final String SELECT_QUERY = "selectqueries";
+    public static final String TRIGGER_DEFINITION_QUERY = "triggerdefinitions";
     public static final String USERS = "users";
     public static final String CHANGE_PASSWORD = "changepassword";
     public static final String PASSWORD = "password";
@@ -43,6 +44,7 @@ public class AppConstants {
     public static final String METADATA_PATH = API_PATH + BASE_PATH + METADATAS;
     public static final String PUBLIC_DATA_PATH = API_PATH + BASE_PATH + PUBLIC_DATA;
     public static final String SELECT_QUERY_PATH = API_PATH + BASE_PATH + SELECT_QUERY;
+    public static final String TRIGGER_DEFINITION_PATH = API_PATH + BASE_PATH + TRIGGER_DEFINITION_QUERY;
 
     public static final String _0 = "0";
     public static final String _10 = "10";

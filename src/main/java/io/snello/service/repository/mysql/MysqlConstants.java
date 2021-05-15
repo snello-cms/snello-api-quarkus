@@ -126,6 +126,7 @@ public class MysqlConstants {
             "  `query_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `with_params` boolean DEFAULT false,\n" +
             "  `select_query` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `select_query_count` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
@@ -146,5 +147,15 @@ public class MysqlConstants {
             "`%2$s` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL, " +
             "%3$s varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL, " +
             "id int NOT NULL AUTO_INCREMENT, PRIMARY KEY (id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
+
+    public static String creationQuerySystemEventLogs = "CREATE TABLE IF NOT EXISTS `systemeventlogs` (\n" +
+            "  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `query_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `with_params` boolean DEFAULT false,\n" +
+            "  `select_query` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  PRIMARY KEY (uuid)\n" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
 
 }

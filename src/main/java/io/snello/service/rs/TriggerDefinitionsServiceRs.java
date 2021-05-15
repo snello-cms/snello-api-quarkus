@@ -17,18 +17,18 @@ import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
 
-@Path(SELECT_QUERY_PATH)
+@Path(TRIGGER_DEFINITION_QUERY)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
-public class SelectQueryServiceRs extends AbstractServiceRs {
+public class TriggerDefinitionsServiceRs extends AbstractServiceRs {
 
     @Inject
-    public SelectQueryServiceRs(ApiService apiService) {
-        super(apiService, SELECT_QUERY, "query_name asc");
+    public TriggerDefinitionsServiceRs(ApiService apiService) {
+        super(apiService, TRIGGER_DEFINITION_QUERY, "");
     }
 
-    public SelectQueryServiceRs() {
+    public TriggerDefinitionsServiceRs() {
         super();
     }
 
@@ -47,11 +47,6 @@ public class SelectQueryServiceRs extends AbstractServiceRs {
     }
 
     @Override
-    protected void postPersist(Map<String, Object> object) {
-        eventPublisher.fireAsync(new SelectQueryCreateUpdateEvent(object));
-    }
-
-    @Override
     protected void preUpdate(Map<String, Object> object) throws Exception {
         if (object.get(QUERY_NAME) == null) {
             throw new Exception(MSG_QUERY_NAME_IS_EMPTY);
@@ -61,13 +56,5 @@ public class SelectQueryServiceRs extends AbstractServiceRs {
         }
     }
 
-    @Override
-    protected void postUpdate(Map<String, Object> object) {
-        eventPublisher.fireAsync(new SelectQueryCreateUpdateEvent(object));
-    }
 
-    @Override
-    protected void postDelete(String id) {
-        eventPublisher.fireAsync(new SelectQueryDeleteEvent(id));
-    }
 }

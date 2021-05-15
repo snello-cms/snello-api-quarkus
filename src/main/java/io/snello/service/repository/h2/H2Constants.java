@@ -123,6 +123,7 @@ public class H2Constants {
             "  query_name varchar(255) NOT NULL,\n" +
             "  with_params boolean DEFAULT false,\n" +
             "  select_query varchar(255) DEFAULT NULL,\n" +
+            "  select_query_count varchar(255) DEFAULT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ;";
 

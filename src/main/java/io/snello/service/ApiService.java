@@ -68,8 +68,12 @@ public class ApiService {
     public long count(String table, UriInfo uriInfo) throws Exception {
         String alias_condition = null;
         List<Condition> conditions = null;
-        if (metadataService.selectqueryMap().containsKey(table)) {
-            return 0;
+        if (metadataService.selectqueryMap().containsKey(table) &&
+                metadataService.selectqueryMap().get(table).select_query_count != null
+                && !metadataService.selectqueryMap().get(table).select_query_count.isBlank()) {
+            return jdbcRepository.count(metadataService.selectqueryMap().get(table).select_query_count,
+                    uriInfo.getQueryParameters(),
+                    conditions);
         }
         if (metadataService.metadataMap().containsKey(table)) {
             conditions = metadataService.conditionsMap().get(table);

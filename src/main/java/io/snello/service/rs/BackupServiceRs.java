@@ -1,6 +1,5 @@
 package io.snello.service.rs;
 
-import io.snello.model.pojo.DocumentFormData;
 import io.snello.model.pojo.ZipFormData;
 import io.snello.service.BackupService;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -10,11 +9,9 @@ import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-
 import java.util.zip.ZipFile;
 
-import static io.snello.management.AppConstants.*;
+import static io.snello.management.AppConstants.BACKUP_PATH;
 
 @Path(BACKUP_PATH)
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,7 +24,18 @@ public class BackupServiceRs {
 
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Path("/data")
     public Response download() {
+        ZipFile output = backupService.exportData();
+        return Response.ok(output)
+                .header("Content-Disposition", "attachment; filename=\"zipfile.zip\"")
+                .build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Path("/files")
+    public Response downloadFiles() {
         ZipFile output = backupService.exportData();
         return Response.ok(output)
                 .header("Content-Disposition", "attachment; filename=\"zipfile.zip\"")
@@ -36,7 +44,16 @@ public class BackupServiceRs {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/data")
     public Response upload(@MultipartForm ZipFormData zipFormData) {
+        backupService.importData(zipFormData.data);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/files")
+    public Response uploadFiles(@MultipartForm ZipFormData zipFormData) {
         backupService.importData(zipFormData.data);
         return Response.ok().build();
     }

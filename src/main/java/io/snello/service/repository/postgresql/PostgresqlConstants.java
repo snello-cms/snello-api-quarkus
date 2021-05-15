@@ -121,6 +121,7 @@ public class PostgresqlConstants {
             "  query_name varchar(255) NOT NULL,\n" +
             "  with_params boolean DEFAULT false,\n" +
             "  select_query varchar(255) DEFAULT NULL,\n" +
+            "  select_query_count varchar(255) DEFAULT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ";
 
@@ -135,7 +136,7 @@ public class PostgresqlConstants {
             "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  PRIMARY KEY (name)\n" +
             ") ";
-    
+
     public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( " +
             "%2$s varchar(255) NOT NULL, " +
             "%3$s varchar(255) NOT NULL, " +

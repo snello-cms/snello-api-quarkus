@@ -98,10 +98,59 @@ public class MysqlJdbcRepository implements JdbcRepository {
 
 
     public long count(String select_query, MultivaluedMap<String, String> httpParameters, List<Condition> conditions) throws Exception {
+        StringBuffer where = new StringBuffer();
+        StringBuffer select = new StringBuffer(select_query);
+        List<Object> in = new LinkedList<>();
+        boolean withCondition = false;
+        try {
+            withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        if (!withCondition) {
+            ParamUtils.where(httpParameters, where, in);
+        }
+        try (
+                Connection connection = dataSource.getConnection()) {
+
+            if (where.length() > 0) {
+                where = new StringBuffer(_WHERE_).append(where);
+            }
+            logger.info("query: " + select + where);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(select.toString() + where)) {
+                SqlHelper.fillStatement(preparedStatement, in);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        long count = resultSet.getLong(SIZE_OF);
+                        logger.info("count:" + count);
+                        return count;
+                    }
+                }
+            }
+        }
         return 0;
     }
 
     public long count(String select_query) throws Exception {
+        StringBuffer where = new StringBuffer();
+        StringBuffer select = new StringBuffer(select_query);
+        List<Object> in = new LinkedList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            if (where.length() > 0) {
+                where = new StringBuffer(_WHERE_).append(where);
+            }
+            logger.info("query: " + select + where);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(select.toString() + where)) {
+                SqlHelper.fillStatement(preparedStatement, in);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        long count = resultSet.getLong(SIZE_OF);
+                        logger.info("count:" + count);
+                        return count;
+                    }
+                }
+            }
+        }
         return 0;
     }
 

@@ -11,11 +11,13 @@ public class SelectQuery {
     public String uuid;
     public String query_name;
     public String select_query;
+    public String select_query_count;
     public boolean with_params;
 
-    public SelectQuery(String query_name, String select_query, boolean with_params) {
+    public SelectQuery(String query_name, String select_query, String select_query_count, boolean with_params) {
         this.query_name = query_name;
         this.select_query = select_query;
+        this.select_query_count = select_query_count;
         this.with_params = with_params;
     }
 
@@ -35,6 +37,7 @@ public class SelectQuery {
                 ", query_name='" + query_name + '\'' +
                 ", with_params='" + with_params + '\'' +
                 ", select_query='" + select_query + '\'' +
+                ", select_query_count='" + select_query_count + '\'' +
                 '}';
     }
 
@@ -52,6 +55,9 @@ public class SelectQuery {
 
         if (map.get("select_query") instanceof String) {
             selectQuery.select_query = (String) map.get("select_query");
+        }
+        if (map.get("select_query_count") instanceof String) {
+            selectQuery.select_query_count = (String) map.get("select_query_count");
         }
         return selectQuery;
     }
