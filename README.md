@@ -16,4 +16,6 @@ This Headless CMS uses Quarkus, the Supersonic Subatomic Java Framework. In the 
 
 ### github actions
 - split the actions in different task
+- maven build send packages to github repo
 - maven task and save all target folder in some place to reuse in the generation of docker images
+- 
