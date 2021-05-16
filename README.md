@@ -1,8 +1,8 @@
 # snello-api-quarkus project
 
-This Headless CMS uses Quarkus, the Supersonic Subatomic Java Framework.
+This Headless CMS uses Quarkus, the Supersonic Subatomic Java Framework. In the past we used Micronaut.
 
-## TODO list
+## TODO list 
 
 ### FOR ADMIN FRONTEND FUTURES
 - rewrite all field definitions in formly format
@@ -14,6 +14,5 @@ This Headless CMS uses Quarkus, the Supersonic Subatomic Java Framework.
 - export/import of data and documents in zip files
 
 ### github actions
-
 - split the actions in different task
 - maven task and save all target folder in some place to reuse in the generation of docker images
