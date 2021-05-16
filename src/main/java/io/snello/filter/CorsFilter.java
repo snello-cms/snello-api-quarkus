@@ -32,11 +32,11 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
         }
         responseCtx.getHeaders().add("Access-Control-Allow-Credentials", "true");
         responseCtx.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
-
+        responseCtx.getHeaders().add("Access-Control-Expose-Headers", "Authorization, authorization,Origin,origin,X-Requested-With, x-request-with,Content-Type,content-type,Accept,accept,X-total-count,x-total-count,size,Size");
         responseCtx.getHeaders().add("Access-Control-Max-Age", "1209600");
         responseCtx.getHeaders()
                 .add("Access-Control-Allow-Headers",
-                        "Authorization, Accept, accept, Accept-Language, authorization, Content-Language, Origin, Content-Type,content-type, X-Requested-With, hostname, Pragma, mobile");
+                        "Authorization, authorization,Origin,origin,X-Requested-With, x-request-with,Content-Type,content-type,Accept,accept,X-total-count,x-total-count,size,Size, hostname, Pragma, mobile");
         try {
             MultivaluedMap<String, String> multiValuedMap = requestCtx.getHeaders();
             if (multiValuedMap.containsKey("Origin") && !responseCtx.getHeaders()
