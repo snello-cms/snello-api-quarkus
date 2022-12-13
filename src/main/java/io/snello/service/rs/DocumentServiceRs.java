@@ -1,5 +1,6 @@
 package io.snello.service.rs;
 
+import io.smallrye.common.constraint.Nullable;
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
@@ -9,7 +10,6 @@ import io.snello.service.ApiService;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
-import javax.annotation.Nullable;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
