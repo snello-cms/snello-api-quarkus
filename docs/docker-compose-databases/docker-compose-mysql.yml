@@ -1,7 +1,7 @@
 version: '3'
 services:
   mysql:
-    image: mysql:8.0.17
+    image: mysql:8.0.31
     restart: always
     expose:
       - "3306"
@@ -14,7 +14,7 @@ services:
       MYSQL_PASSWORD: snello
     command: [--character-set-server=utf8mb4,--max-connections=1000, --wait-timeout=300, --interactive-timeout=300, --collation-server=utf8mb4_unicode_ci,--default-authentication-plugin=mysql_native_password]
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:edge-4.9
+    image: phpmyadmin
     logging:
       driver: none
     depends_on:

@@ -1,8 +1,8 @@
 package io.snello;
 
-import io.quarkus.test.junit.NativeImageTest;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 
-@NativeImageTest
+@QuarkusIntegrationTest
 public class NativeSnelloHelloIT extends SnelloHelloTest {
 
     // Execute the same tests but in native mode.

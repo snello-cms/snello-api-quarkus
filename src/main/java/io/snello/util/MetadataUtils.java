@@ -18,11 +18,7 @@ public class MetadataUtils {
             case LINKS:
             case METADATAS:
             case PUBLIC_DATA:
-            case ROLES:
             case SELECT_QUERY:
-            case USERS:
-            case USER_ROLES:
-            case CHANGE_PASSWORD_TOKENS:
                 return true;
             default:
                 return false;

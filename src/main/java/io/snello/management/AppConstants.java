@@ -12,37 +12,22 @@ public class AppConstants {
     public static final String DROPPABLES = "droppables";
     public static final String DOCUMENTS = "documents";
     public static final String EXTENSIONS = "extensions";
-    public static final String IMAGES = "images";
     public static final String FIELD_DEFINITIONS = "fielddefinitions";
     public static final String LINKS = "links";
     public static final String METADATAS = "metadatas";
     public static final String PUBLIC_DATA = "publicdata";
     public static final String SELECT_QUERY = "selectqueries";
     public static final String TRIGGER_DEFINITION_QUERY = "triggerdefinitions";
-    public static final String USERS = "users";
-    public static final String CHANGE_PASSWORD = "changepassword";
-    public static final String PASSWORD = "password";
-    public static final String ROLES = "roles";
-    public static final String URL_MAP_RULES = "urlmaprules";
-    public static final String USER_ROLES = "userroles";
-    public static final String CHANGE_PASSWORD_TOKENS = "changepasswordtokens";
-    public static final String IDENTITY = "identity";
 
 
-    public static final String SWAGGER_PATH = "/swagger";
 
     public static final String BACKUP_PATH = API_PATH + BASE_PATH + BACKUP;
     public static final String CONDITIONS_PATH = API_PATH + BASE_PATH + CONDITIONS;
     public static final String DATALIST_PATH = API_PATH + BASE_PATH + DATALISTS;
     public static final String DOCUMENTS_PATH = API_PATH + BASE_PATH + DOCUMENTS;
-    public static final String EXTENSIONS_PATH = API_PATH + BASE_PATH + EXTENSIONS;
-    public static final String IMAGES_PATH = API_PATH + BASE_PATH + IMAGES;
-    public static final String DRAGGABLES_PATH = API_PATH + BASE_PATH + DRAGGABLES;
-    public static final String DROPPABLES_PATH = API_PATH + BASE_PATH + DROPPABLES;
     public static final String FIELD_DEFINITIONS_PATH = API_PATH + BASE_PATH + FIELD_DEFINITIONS;
     public static final String LINKS_PATH = API_PATH + BASE_PATH + LINKS;
     public static final String METADATA_PATH = API_PATH + BASE_PATH + METADATAS;
-    public static final String PUBLIC_DATA_PATH = API_PATH + BASE_PATH + PUBLIC_DATA;
     public static final String SELECT_QUERY_PATH = API_PATH + BASE_PATH + SELECT_QUERY;
     public static final String TRIGGER_DEFINITION_PATH = API_PATH + BASE_PATH + TRIGGER_DEFINITION_QUERY;
 

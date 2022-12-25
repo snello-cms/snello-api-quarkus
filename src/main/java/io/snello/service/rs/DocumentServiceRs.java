@@ -102,6 +102,7 @@ public class DocumentServiceRs {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response persist(@MultipartForm DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
