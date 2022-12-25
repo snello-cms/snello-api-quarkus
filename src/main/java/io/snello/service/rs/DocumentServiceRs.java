@@ -79,9 +79,15 @@ public class DocumentServiceRs {
             }
         }
         StreamingOutput output = documentsService.streamingOutput(path, mimetype);
-        return Response.ok(output)
-                .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
-                .build();
+        if (format != null) {
+            return Response.ok(output)
+                    .header("Content-Disposition", "inline; \"")
+                    .build();
+        } else {
+            return Response.ok(output)
+                    .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                    .build();
+        }
     }
 
     @GET
