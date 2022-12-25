@@ -44,6 +44,6 @@ jobs:
           context: ./
           file: ./src/main/docker/Dockerfile.jvm
           push: true
-          tags: snellocms/snello-api:2.0.RC1
+          tags: snellocms/snello-api-quarkus:3.0.0
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
