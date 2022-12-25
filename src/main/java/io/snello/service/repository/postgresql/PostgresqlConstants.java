@@ -28,6 +28,7 @@ public class PostgresqlConstants {
             "  name varchar(255) NOT NULL,\n" +
             "  original_name varchar(255) NOT NULL,\n" +
             "  path varchar(255) ,\n" +
+            "  formats varchar(2055) ,\n" +
             "  mimetype varchar(255) NOT NULL,\n" +
             "  size NUMERIC(12),\n" +
             "  table_name varchar(255) NOT NULL,\n" +

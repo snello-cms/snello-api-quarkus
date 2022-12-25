@@ -30,6 +30,7 @@ public class H2Constants {
             "  name varchar(255) NOT NULL,\n" +
             "  original_name varchar(255) NOT NULL,\n" +
             "  path varchar(255) ,\n" +
+            "  formats varchar(2055) ,\n" +
             "  mimetype varchar(255) NOT NULL,\n" +
             "  size int(12),\n" +
             "  table_name varchar(255) NOT NULL,\n" +

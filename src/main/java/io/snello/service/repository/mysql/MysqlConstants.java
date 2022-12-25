@@ -32,6 +32,7 @@ public class MysqlConstants {
             "  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `original_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `path` varchar(255) COLLATE utf8mb4_unicode_ci ,\n" +
+            "  `formats` varchar(2055) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `mimetype` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `size` int(12),\n" +
             "  `table_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
