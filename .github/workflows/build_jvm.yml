@@ -37,7 +37,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Build and push
+      - name: Build and push amd64
         id: docker_build1
         uses: docker/build-push-action@v3
         with:
@@ -46,7 +46,7 @@ jobs:
           file: ./src/main/docker/Dockerfile.jvm
           push: true
           tags: snellocms/snello-api-quarkus:3.0.0
-      - name: Build and push
+      - name: Build and push arm64
         id: docker_build2
         uses: docker/build-push-action@v3
         with:
