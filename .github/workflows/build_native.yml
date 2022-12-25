@@ -43,7 +43,7 @@ jobs:
         with:
           context: ./
           platforms: linux/amd64
-          file: ./src/main/docker/Dockerfile.jvm
+          file: ./src/main/docker/Dockerfile.native
           push: true
           tags: snellocms/snello-api-quarkus:3.0.0-native
       - name: Build and push arm64
@@ -52,7 +52,7 @@ jobs:
         with:
           context: ./
           platforms: linux/arm64
-          file: ./src/main/docker/Dockerfile.jvm
+          file: ./src/main/docker/Dockerfile.native
           push: true
           tags: snellocms/snello-api-quarkus:3.0.0-native
       - name: Image digest
