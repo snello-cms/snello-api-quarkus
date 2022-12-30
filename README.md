@@ -4,6 +4,10 @@ This Headless CMS uses Quarkus, the Supersonic Subatomic Java Framework. In the 
 
 ## TODO list 
 
+### roles usable in keycloak
+
+metadatas_edit, metadatas_view,fielddefinitions_edit, fielddefinitions_view,conditions_edit, conditions_view,documents_edit, documents_view,publicdata_edit,selectqueries_edit, selectqueries_view,users_edit, users_view,roles_edit,roles_view,urlmaprules_edit, urlmaprules_view,links_edit, links_view,draggables_edit, draggables_view,droppables_edit, droppables_view, extensions_edit, extensions_view'
+
 ### FOR ADMIN FRONTEND FUTURES
 - rewrite all field definitions in formly format
 - generate dinamically formly json definitions
