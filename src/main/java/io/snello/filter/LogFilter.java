@@ -1,13 +1,13 @@
 package io.snello.filter;
 
+import io.quarkus.logging.Log;
 import io.snello.service.SystemLogService;
-import org.jboss.logging.Logger;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.ext.Provider;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,8 +17,6 @@ import java.util.StringJoiner;
 @Provider
 @PreMatching
 public class LogFilter implements ContainerRequestFilter {
-
-    Logger logger = Logger.getLogger(getClass());
 
     @Inject
     SystemLogService systemEventLogService;
@@ -35,14 +33,14 @@ public class LogFilter implements ContainerRequestFilter {
                 || requestContext.getUriInfo().getPath().contains("deviceevents")) {
             return;
         } else {
-            logger.info("LogFilter: getMediaType " + requestContext.getHeaderString("accept"));
+            Log.info("LogFilter: getMediaType " + requestContext.getHeaderString("accept"));
         }
         byte[] bytes = null;
         switch (requestContext.getMethod()) {
             case "POST":
             case "PUT":
             case "DELETE":
-                logger.info("LogFilter: method " + requestContext.getRequest().getMethod());
+                Log.info("LogFilter: method " + requestContext.getRequest().getMethod());
                 try {
                     StringJoiner sj = new StringJoiner(",");
                     if (requestContext.getSecurityContext() != null
@@ -71,7 +69,7 @@ public class LogFilter implements ContainerRequestFilter {
                         String jsonObject = new String(bytes, "UTF-8");
                         systemEventLogService.persistSystemLog(newPath, method, jsonObject, principal);
                     } else {
-                        logger.info("LogFilter: entity vuoto??");
+                        Log.info("LogFilter: entity vuoto??");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -90,7 +88,7 @@ public class LogFilter implements ContainerRequestFilter {
 //public class LogFilter implements ContainerRequestFilter
 //{
 //
-//   Logger logger = Logger.getLogger(getClass());
+//   Logger logger = Log.getLogger(getClass());
 //
 //   @Inject SystemLogService systemLogService;
 //
@@ -147,7 +145,7 @@ public class LogFilter implements ContainerRequestFilter {
 //            else
 //            {
 //               newPath = path.substring(initialOffset);
-//               logger.info(path.substring(initialOffset));
+//               Log.info(path.substring(initialOffset));
 //               if (newPath.contains("/") || newPath.contains("?"))
 //               {
 //                  String[] split = newPath.split("/|\\?");
@@ -164,7 +162,7 @@ public class LogFilter implements ContainerRequestFilter {
 //            String jsonObject = new String(bytes, "UTF-8");
 //            if (newPath.equalsIgnoreCase("events"))
 //            {
-//               logger.info(sj.toString() + ", entity events: SKIP LOGGING: " + jsonObject);
+//               Log.info(sj.toString() + ", entity events: SKIP LOGGING: " + jsonObject);
 //               requestContext.setEntityStream(new ByteArrayInputStream(bytes));
 //               return;
 //            }
@@ -177,7 +175,7 @@ public class LogFilter implements ContainerRequestFilter {
 //            {
 //
 //            }
-//            logger.info(sj.toString() + ", Posted: " + jsonObject);
+//            Log.info(sj.toString() + ", Posted: " + jsonObject);
 //            //String obj, String operation_type, String data, String principal
 //
 //            systemLogService.persistSystemLog(newPath, method, jsonObject, principal);

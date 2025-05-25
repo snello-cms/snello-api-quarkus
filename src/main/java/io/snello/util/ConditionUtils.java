@@ -1,12 +1,11 @@
 package io.snello.util;
 
+import io.quarkus.logging.Log;
 import io.snello.model.Condition;
 import io.snello.model.events.ConditionCreateUpdateEvent;
 import io.snello.service.ApiService;
-import org.jboss.logging.Logger;
-
-
 import jakarta.enterprise.event.Event;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +13,7 @@ import static io.snello.management.AppConstants.UUID;
 import static io.snello.util.ParamUtils.*;
 
 public class ConditionUtils {
-
-    static Logger logger = Logger.getLogger(ConditionUtils.class);
-
+    
 
     public static Map<String, Object> createCondition(Map<String, Object> map, ApiService apiService, String table, Event<ConditionCreateUpdateEvent> eventPublisher) throws Exception {
         map.put(UUID, java.util.UUID.randomUUID().toString());
@@ -28,11 +25,11 @@ public class ConditionUtils {
 
     public static boolean where(Map<String, List<String>> httpParameters, List<Condition> conditions, StringBuffer where, List<Object> in) throws Exception {
         if (httpParameters == null || httpParameters.isEmpty()) {
-            logger.info("no parameters");
+            Log.info("no parameters");
             return false;
         }
         if (conditions == null || conditions.isEmpty()) {
-            logger.info("no conditions");
+            Log.info("no conditions");
             return false;
         }
         String[] conditions_array = null;
@@ -160,7 +157,7 @@ public class ConditionUtils {
                 }
             }
         }
-        logger.info("where from conditions: " + where);
+        Log.info("where from conditions: " + where);
         return where.length() > 0;
     }
 

@@ -1,7 +1,7 @@
 package io.snello.util;
 
 
-import org.jboss.logging.Logger;
+import io.quarkus.logging.Log;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -9,9 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 @SuppressWarnings("restriction")
 public class PasswordUtils implements Serializable {
-
-    static Logger logger = Logger.getLogger(PasswordUtils.class);
-
+    
     private static final long serialVersionUID = 1L;
 
     public static String createPassword(String pwd) {
@@ -28,7 +26,7 @@ public class PasswordUtils implements Serializable {
             String encode = new String(java.util.Base64.getMimeEncoder().encode(enc));
             return encode;
         } catch (NoSuchAlgorithmException e) {
-            logger.error(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
             return null;
         }
     }

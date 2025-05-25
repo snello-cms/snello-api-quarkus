@@ -2,13 +2,10 @@ package io.snello.util;
 
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
-import org.jboss.logging.Logger;
 
 import java.util.Map;
 
 public class TableKeyUtils {
-
-    static Logger logger = Logger.getLogger(TableKeyUtils.class);
 
 
     public static boolean isSlug(Metadata metadata) {

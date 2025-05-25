@@ -5,7 +5,6 @@ import io.snello.model.events.SelectQueryCreateUpdateEvent;
 import io.snello.model.events.SelectQueryDeleteEvent;
 import io.snello.service.ApiService;
 import io.snello.util.MetadataUtils;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
@@ -13,6 +12,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
@@ -33,7 +33,10 @@ public class SelectQueryServiceRs extends AbstractServiceRs {
     }
 
     @Inject
-    Event eventPublisher;
+    Event<SelectQueryCreateUpdateEvent> eventCreateUpdatePublisher;
+
+  @Inject
+    Event<SelectQueryDeleteEvent> eventDeletePublisher;
 
 
     @Override
@@ -48,7 +51,7 @@ public class SelectQueryServiceRs extends AbstractServiceRs {
 
     @Override
     protected void postPersist(Map<String, Object> object) {
-        eventPublisher.fireAsync(new SelectQueryCreateUpdateEvent(object));
+        eventCreateUpdatePublisher.fireAsync(new SelectQueryCreateUpdateEvent(object));
     }
 
     @Override
@@ -63,11 +66,11 @@ public class SelectQueryServiceRs extends AbstractServiceRs {
 
     @Override
     protected void postUpdate(Map<String, Object> object) {
-        eventPublisher.fireAsync(new SelectQueryCreateUpdateEvent(object));
+        eventCreateUpdatePublisher.fireAsync(new SelectQueryCreateUpdateEvent(object));
     }
 
     @Override
     protected void postDelete(String id) {
-        eventPublisher.fireAsync(new SelectQueryDeleteEvent(id));
+        eventDeletePublisher.fireAsync(new SelectQueryDeleteEvent(id));
     }
 }

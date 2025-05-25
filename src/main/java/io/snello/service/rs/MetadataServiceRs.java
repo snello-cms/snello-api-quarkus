@@ -29,7 +29,9 @@ public class MetadataServiceRs extends AbstractServiceRs {
     private static String table = METADATAS;
 
     @Inject
-    Event eventPublisher;
+    Event<MetadataCreateUpdateEvent> eventCreateUpdatePublisher;
+    @Inject
+    Event<MetadataDeleteEvent> eventDeletePublisher;
 
 
     @Inject
@@ -42,17 +44,17 @@ public class MetadataServiceRs extends AbstractServiceRs {
 
     @Override
     protected void postUpdate(Map<String, Object> map) {
-        eventPublisher.fireAsync(new MetadataCreateUpdateEvent(map));
+        eventCreateUpdatePublisher.fireAsync(new MetadataCreateUpdateEvent(map));
     }
 
     @Override
     protected void postDelete(String id) {
-        eventPublisher.fireAsync(new MetadataDeleteEvent(id));
+        eventDeletePublisher.fireAsync(new MetadataDeleteEvent(id));
     }
 
     @Override
     protected void postPersist(Map<String, Object> map) {
-        eventPublisher.fireAsync(new MetadataCreateUpdateEvent(map));
+        eventCreateUpdatePublisher.fireAsync(new MetadataCreateUpdateEvent(map));
     }
 
     @GET

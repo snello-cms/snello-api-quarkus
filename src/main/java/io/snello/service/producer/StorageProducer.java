@@ -1,21 +1,18 @@
 package io.snello.service.producer;
 
 import io.minio.MinioClient;
+import io.quarkus.logging.Log;
 import io.snello.api.service.StorageService;
 import io.snello.service.storage.FsStorageService;
 import io.snello.service.storage.S3StorageService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
-
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Singleton
 public class StorageProducer {
-
-    Logger logger = Logger.getLogger(getClass());
-
+    
     @ConfigProperty(name = "snello.storagetype", defaultValue = "")
     String storagetype;
 
@@ -37,7 +34,7 @@ public class StorageProducer {
 
     @Produces
     public StorageService storage() throws Exception {
-        logger.info("storagetype: " + storagetype);
+        Log.info("storagetype: " + storagetype);
         switch (storagetype) {
             case "s3":
                 return new S3StorageService(minioClient, bucketName, base_folder);

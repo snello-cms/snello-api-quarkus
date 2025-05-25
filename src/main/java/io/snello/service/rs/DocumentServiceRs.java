@@ -1,15 +1,12 @@
 package io.snello.service.rs;
 
+import io.quarkus.logging.Log;
 import io.smallrye.common.constraint.Nullable;
-import io.snello.api.service.AbstractServiceRs;
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.events.ImageEvent;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.service.ApiService;
-import org.jboss.logging.Logger;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -17,6 +14,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,9 +32,7 @@ public class DocumentServiceRs {
 
     @Inject
     StorageService documentsService;
-
-    Logger logger = Logger.getLogger(AbstractServiceRs.class);
-
+    
     @Inject
     ApiService apiService;
 
@@ -59,7 +56,7 @@ public class DocumentServiceRs {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response download(@PathParam("uuid") @NotNull String uuid, @QueryParam(value = "format") String format) throws Exception {
-        logger.info("download - " + uuid + "," + format);
+        Log.info("download - " + uuid + "," + format);
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
@@ -117,7 +114,7 @@ public class DocumentServiceRs {
             map = apiService.create(table, map, AppConstants.UUID);
             return ok(map).build();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
         }
         return serverError().build();
     }
@@ -136,7 +133,7 @@ public class DocumentServiceRs {
             map = apiService.merge(table, map, uuid, AppConstants.UUID);
             return ok(map).build();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
         }
         return serverError().build();
     }
@@ -174,13 +171,13 @@ public class DocumentServiceRs {
             @Null @QueryParam(START_PARAM) String start,
             @Context UriInfo uriInfo) throws Exception {
         if (sort != null)
-            logger.info(SORT_DOT_DOT + sort);
+            Log.info(SORT_DOT_DOT + sort);
         else
             sort = "table_name asc";
         if (limit != null)
-            logger.info(LIMIT_DOT_DOT + limit);
+            Log.info(LIMIT_DOT_DOT + limit);
         if (start != null)
-            logger.info(START_DOT_DOT + start);
+            Log.info(START_DOT_DOT + start);
         int l = Optional.ofNullable(limit).map(Integer::parseInt).orElse(10);
         int s = Optional.ofNullable(start).map(Integer::parseInt).orElse(0);
         return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))

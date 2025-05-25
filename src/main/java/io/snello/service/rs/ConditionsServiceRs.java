@@ -4,7 +4,6 @@ import io.snello.api.service.AbstractServiceRs;
 import io.snello.model.events.ConditionCreateUpdateEvent;
 import io.snello.model.events.ConditionDeleteEvent;
 import io.snello.service.ApiService;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
@@ -12,6 +11,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Map;
 
 import static io.snello.management.AppConstants.CONDITIONS;
@@ -25,7 +25,10 @@ public class ConditionsServiceRs extends AbstractServiceRs {
 
 
     @Inject
-    Event eventPublisher;
+    Event<ConditionCreateUpdateEvent> eventCreateUpdatePublisher;
+
+    @Inject
+    Event<ConditionDeleteEvent> eventDeletePublisher;
 
     @Inject
     ConditionsServiceRs(ApiService apiService) {
@@ -37,16 +40,16 @@ public class ConditionsServiceRs extends AbstractServiceRs {
 
     @Override
     protected void postPersist(Map<String, Object> object) {
-        eventPublisher.fireAsync(new ConditionCreateUpdateEvent(object));
+        eventCreateUpdatePublisher.fireAsync(new ConditionCreateUpdateEvent(object));
     }
 
     @Override
     protected void postUpdate(Map<String, Object> object) {
-        eventPublisher.fireAsync(new ConditionCreateUpdateEvent(object));
+        eventCreateUpdatePublisher.fireAsync(new ConditionCreateUpdateEvent(object));
     }
 
     @Override
     protected void postDelete(String id) {
-        eventPublisher.fireAsync(new ConditionDeleteEvent(id));
+        eventDeletePublisher.fireAsync(new ConditionDeleteEvent(id));
     }
 }

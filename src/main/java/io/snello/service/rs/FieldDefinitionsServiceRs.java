@@ -14,6 +14,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Map;
 
 import static io.snello.management.AppConstants.FIELD_DEFINITIONS;
@@ -26,7 +27,9 @@ import static io.snello.management.AppConstants.FIELD_DEFINITIONS_PATH;
 public class FieldDefinitionsServiceRs extends AbstractServiceRs {
 
     @Inject
-    Event eventPublisher;
+    Event<FieldDefinitionCreateUpdateEvent> eventUpdatePublisher;
+    @Inject
+    Event<FieldDefinitionDeleteEvent> eventDeletePublisher;
 
     @Inject
     FieldDefinitionsServiceRs(ApiService apiService) {
@@ -43,17 +46,17 @@ public class FieldDefinitionsServiceRs extends AbstractServiceRs {
 
     @Override
     protected void postPersist(Map<String, Object> object) {
-        eventPublisher.fireAsync(new FieldDefinitionCreateUpdateEvent(object));
+        eventUpdatePublisher.fireAsync(new FieldDefinitionCreateUpdateEvent(object));
     }
 
     @Override
     protected void postUpdate(Map<String, Object> object) {
-        eventPublisher.fireAsync(new FieldDefinitionCreateUpdateEvent(object));
+        eventUpdatePublisher.fireAsync(new FieldDefinitionCreateUpdateEvent(object));
     }
 
     @Override
     protected void postDelete(String id) {
-        eventPublisher.fireAsync(new FieldDefinitionDeleteEvent(id));
+        eventDeletePublisher.fireAsync(new FieldDefinitionDeleteEvent(id));
     }
 
 }

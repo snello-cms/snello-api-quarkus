@@ -1,20 +1,18 @@
 package io.snello.filter;
 
+import io.quarkus.logging.Log;
 import io.quarkus.security.identity.SecurityIdentity;
-import org.jboss.logging.Logger;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.*;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
+
 import java.io.IOException;
 
 @Provider
 @PreMatching
 public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilter {
-
-    Logger logger = Logger.getLogger(getClass());
 
     @Inject
     SecurityIdentity securityIdentity;
@@ -22,7 +20,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
     @Override
     public void filter(ContainerRequestContext requestCtx, ContainerResponseContext responseCtx) throws IOException {
         try {
-            logger.info(requestCtx.getMethod() + " - " + requestCtx.getUriInfo().getPath()
+            Log.info(requestCtx.getMethod() + " - " + requestCtx.getUriInfo().getPath()
                     + " - mediaType: " + requestCtx.getMediaType()
                     + ", (" + securityIdentity.getPrincipal().getName() + ")"
                     + ", [" + securityIdentity.getRoles() + "]"

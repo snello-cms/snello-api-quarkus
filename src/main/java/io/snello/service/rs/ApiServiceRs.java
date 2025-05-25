@@ -1,17 +1,17 @@
 package io.snello.service.rs;
 
+import io.quarkus.logging.Log;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
 import io.snello.util.TableKeyUtils;
-import org.jboss.logging.Logger;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,6 @@ import static jakarta.ws.rs.core.Response.serverError;
 @ApplicationScoped
 public class ApiServiceRs {
 
-    Logger logger = Logger.getLogger(getClass());
 
     @Inject
     ApiService apiService;
@@ -45,11 +44,11 @@ public class ApiServiceRs {
                          @QueryParam(LIMIT_PARAM) String limit,
                          @QueryParam(START_PARAM) String start) throws Exception {
         if (sort != null)
-            logger.info(SORT_DOT_DOT + sort);
+            Log.info(SORT_DOT_DOT + sort);
         if (limit != null)
-            logger.info(LIMIT_DOT_DOT + limit);
+            Log.info(LIMIT_DOT_DOT + limit);
         if (start != null)
-            logger.info(START_DOT_DOT + start);
+            Log.info(START_DOT_DOT + start);
         debug(GET.class.getName());
         Integer l = limit == null ? 10 : Integer.valueOf(limit);
         Integer s = start == null ? 0 : Integer.valueOf(start);
@@ -88,7 +87,7 @@ public class ApiServiceRs {
         if (limit == null) {
             limit = _10;
         }
-        logger.info("path accessorio: " + path);
+        Log.info("path accessorio: " + path);
         if (path.contains("/")) {
             String[] pars = path.split(BASE_PATH);
             if (pars.length > 1) {
@@ -152,12 +151,12 @@ public class ApiServiceRs {
             String fieldSluggable = apiService.slugField(table);
             String toSlugValue = (String) map.get(fieldSluggable);
             String slugged = TableKeyUtils.createSlug(toSlugValue);
-            logger.info("toSlugValue: " + toSlugValue + ", old slug: " + uuid);
+            Log.info("toSlugValue: " + toSlugValue + ", old slug: " + uuid);
             if (!uuid.equals(slugged)) {
-                logger.info("renew slug");
+                Log.info("renew slug");
                 TableKeyUtils.generateUUid(map, apiService.metadata(table), apiService);
             } else {
-                logger.info(" slug is the same!!");
+                Log.info(" slug is the same!!");
             }
         }
         // CI VUOLE UNA TRANSAZIONE PER TENERE TUTTO INSIEME
@@ -201,14 +200,14 @@ public class ApiServiceRs {
 
 
     private void debug(String method) {
-        logger.info("------------");
-        logger.info("METHOD: " + method);
-        logger.info("RELATIVE PATH: " + uriInfo.getPath());
-        uriInfo.getPathParameters().forEach((key, value) -> logger.info(key + ":" + value));
-        logger.info("------------");
-        logger.info("------------");
-        uriInfo.getQueryParameters().forEach((key, value) -> logger.info("," + key + ":" + value));
-        logger.info("------------");
+        Log.info("------------");
+        Log.info("METHOD: " + method);
+        Log.info("RELATIVE PATH: " + uriInfo.getPath());
+        uriInfo.getPathParameters().forEach((key, value) -> Log.info(key + ":" + value));
+        Log.info("------------");
+        Log.info("------------");
+        uriInfo.getQueryParameters().forEach((key, value) -> Log.info("," + key + ":" + value));
+        Log.info("------------");
     }
 
 }

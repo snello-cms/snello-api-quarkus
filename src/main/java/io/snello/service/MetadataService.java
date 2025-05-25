@@ -1,20 +1,18 @@
 package io.snello.service;
 
-import io.snello.model.*;
+import io.quarkus.logging.Log;
 import io.snello.api.service.JdbcRepository;
-import org.jboss.logging.Logger;
-
+import io.snello.model.*;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+
 import java.util.*;
 
 import static io.snello.management.AppConstants.*;
 
 @Singleton
 public class MetadataService {
-
-    Logger logger = Logger.getLogger(getClass());
-
+    
     Map<String, Metadata> metadataMap;
     Map<String, SelectQuery> selectqueryMap;
     Map<String, Map<String, FieldDefinition>> fielddefinitionsMap;
@@ -44,7 +42,7 @@ public class MetadataService {
             throw new Exception("table already existent!");
         }
         if (metadata.creation_query == null) {
-            logger.info("no creation query found in metedata object...i need to createTableFromMetadata...");
+            Log.info("no creation query found in metedata object...i need to createTableFromMetadata...");
             if (fieldDefinitions == null || fieldDefinitions.size() == 0) {
                 throw new Exception("selectQuery without fields: " + metadata.toString());
             }
@@ -60,7 +58,7 @@ public class MetadataService {
 //                eventPublisher.fireAsync(new ConditionCreateUpdateEvent(cc.toMap()));
             }
         } else {
-            logger.info("creation query foud in metedata object: " + metadata.creation_query);
+            Log.info("creation query foud in metedata object: " + metadata.creation_query);
             jdbcRepository.executeQuery(metadata.creation_query);
         }
         return metadata;

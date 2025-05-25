@@ -1,15 +1,12 @@
 package io.snello.service.repository.h2;
 
+import io.quarkus.logging.Log;
 import io.snello.model.FieldDefinition;
-import org.jboss.logging.Logger;
 
 import static io.snello.service.repository.h2.H2SqlUtils.escape;
 
 
 public class H2FieldDefinitionUtils {
-
-
-    static Logger logger = Logger.getLogger(H2FieldDefinitionUtils.class);
 
 
     //input_type: text,
@@ -26,7 +23,7 @@ public class H2FieldDefinitionUtils {
         switch (fieldDefinition.type) {
             case "input": {
                 if (fieldDefinition.input_type == null) {
-                    logger.info("fieldDefinition.input_type  IS NULL: " + fieldDefinition.toString());
+                    Log.info("fieldDefinition.input_type  IS NULL: " + fieldDefinition.toString());
                     throw new Exception(" fieldDefinition.input_type  IS NULL");
                 }
                 switch (fieldDefinition.input_type) {

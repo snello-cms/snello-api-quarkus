@@ -1,19 +1,17 @@
 package io.snello.service.producer;
 
+import io.quarkus.logging.Log;
 import io.quarkus.mailer.Mailer;
 import io.snello.api.service.MailService;
 import io.snello.service.mail.SmtpMailService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
-
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Singleton
 public class MailProducer {
 
-    Logger logger = Logger.getLogger(getClass());
 
     @Inject
     Mailer mailer;
@@ -22,7 +20,7 @@ public class MailProducer {
     String mailtype;
 
     public MailProducer() {
-        logger.info("MailProducer");
+        Log.info("MailProducer");
     }
 
     @Produces

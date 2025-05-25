@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class LinksServiceRs extends AbstractServiceRs {
     MetadataService metadataService;
 
     @Inject
-    Event eventPublisher;
+    Event<MetadataCreateUpdateEvent> eventCreateUpdatePublisher;
 
     @Inject
     public LinksServiceRs(ApiService apiService) {
@@ -104,7 +105,7 @@ public class LinksServiceRs extends AbstractServiceRs {
         }
         metadataService.createTableFromMetadataAndFields(metadata, fieldDefinitions);
         MetadataCreateUpdateEvent metadataCreateUpdateEvent = new MetadataCreateUpdateEvent(metadata);
-        eventPublisher.fireAsync(metadataCreateUpdateEvent);
+        eventCreateUpdatePublisher.fireAsync(metadataCreateUpdateEvent);
         return ok().build();
     }
 }

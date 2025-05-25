@@ -1,15 +1,15 @@
 package io.snello.api.service;
 
+import io.quarkus.logging.Log;
 import io.snello.management.AppConstants;
 import io.snello.service.ApiService;
-import org.jboss.logging.Logger;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,7 +20,6 @@ import static jakarta.ws.rs.core.Response.serverError;
 
 public abstract class AbstractServiceRs {
 
-    protected Logger logger = Logger.getLogger(AbstractServiceRs.class);
 
     protected ApiService apiService;
 
@@ -84,13 +83,13 @@ public abstract class AbstractServiceRs {
             @Null @QueryParam(START_PARAM) String start,
             @Context UriInfo uriInfo) throws Exception {
         if (sort != null)
-            logger.info(SORT_DOT_DOT + sort);
+            Log.info(SORT_DOT_DOT + sort);
         else
             sort = defaultSort;
         if (limit != null)
-            logger.info(LIMIT_DOT_DOT + limit);
+            Log.info(LIMIT_DOT_DOT + limit);
         if (start != null)
-            logger.info(START_DOT_DOT + start);
+            Log.info(START_DOT_DOT + start);
         int l = Optional.ofNullable(limit).map(Integer::parseInt).orElse(10);
         int s = Optional.ofNullable(start).map(Integer::parseInt).orElse(0);
         List<Map<String, Object>> list = apiService.list(table, uriInfo.getQueryParameters(), sort, l, s);

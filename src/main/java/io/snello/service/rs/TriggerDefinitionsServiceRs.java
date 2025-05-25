@@ -1,18 +1,15 @@
 package io.snello.service.rs;
 
 import io.snello.api.service.AbstractServiceRs;
-import io.snello.model.events.SelectQueryCreateUpdateEvent;
-import io.snello.model.events.SelectQueryDeleteEvent;
 import io.snello.service.ApiService;
 import io.snello.util.MetadataUtils;
-
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
@@ -32,8 +29,6 @@ public class TriggerDefinitionsServiceRs extends AbstractServiceRs {
         super();
     }
 
-    @Inject
-    Event eventPublisher;
 
 
     @Override

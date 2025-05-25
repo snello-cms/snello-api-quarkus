@@ -1,5 +1,6 @@
 package io.snello.service.repository.mysql;
 
+import io.quarkus.logging.Log;
 import io.snello.api.service.JdbcRepository;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
@@ -7,10 +8,9 @@ import io.snello.model.Metadata;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
-import org.jboss.logging.Logger;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import javax.sql.DataSource;
-import jakarta.ws.rs.core.MultivaluedMap;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,8 +23,6 @@ import static io.snello.service.repository.mysql.MysqlConstants.*;
 public class MysqlJdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
-    Logger logger = Logger.getLogger(getClass());
-
 
     public MysqlJdbcRepository() {
     }
@@ -35,11 +33,11 @@ public class MysqlJdbcRepository implements JdbcRepository {
 
 
     public void onLoad() {
-        logger.info("Creation queries at startup: ");
+        Log.info("Creation queries at startup: ");
         try {
             batch(creationQueries());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
         }
     }
 
@@ -70,7 +68,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
@@ -81,13 +79,13 @@ public class MysqlJdbcRepository implements JdbcRepository {
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("query: " + select + MysqlSqlUtils.escape(table) + where);
+            Log.info("query: " + select + MysqlSqlUtils.escape(table) + where);
             try (PreparedStatement preparedStatement = connection.prepareStatement(select + MysqlSqlUtils.escape(table) + where)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long count = resultSet.getLong(SIZE_OF);
-                        logger.info("count:" + count);
+                        Log.info("count:" + count);
                         return count;
                     }
                 }
@@ -105,7 +103,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
@@ -116,13 +114,13 @@ public class MysqlJdbcRepository implements JdbcRepository {
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("query: " + select + where);
+            Log.info("query: " + select + where);
             try (PreparedStatement preparedStatement = connection.prepareStatement(select.toString() + where)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long count = resultSet.getLong(SIZE_OF);
-                        logger.info("count:" + count);
+                        Log.info("count:" + count);
                         return count;
                     }
                 }
@@ -139,13 +137,13 @@ public class MysqlJdbcRepository implements JdbcRepository {
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("query: " + select + where);
+            Log.info("query: " + select + where);
             try (PreparedStatement preparedStatement = connection.prepareStatement(select.toString() + where)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long count = resultSet.getLong(SIZE_OF);
-                        logger.info("count:" + count);
+                        Log.info("count:" + count);
                         return count;
                     }
                 }
@@ -159,13 +157,13 @@ public class MysqlJdbcRepository implements JdbcRepository {
         List<Object> in = new LinkedList<>();
         in.add(uuid);
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("query: " + select);
+            Log.info("query: " + select);
             try (PreparedStatement preparedStatement = connection.prepareStatement(select)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long count = resultSet.getLong(SIZE_OF);
-                        logger.info("exist:" + (count > 0));
+                        Log.info("exist:" + (count > 0));
                         return count > 0;
                     }
                 }
@@ -211,13 +209,13 @@ public class MysqlJdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
         if (start == 0 && limit == 0) {
-            logger.info("no limits");
+            Log.info("no limits");
         } else {
             if (start > 0) {
                 order_limit.append(_LIMIT_).append(" ? ");
@@ -239,7 +237,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("LIST query: " + select.toString() + MysqlSqlUtils.escape(table) + where + order_limit);
+            Log.info("LIST query: " + select.toString() + MysqlSqlUtils.escape(table) + where + order_limit);
             return MysqlSqlUtils.executeQueryList(connection, select.toString() + MysqlSqlUtils.escape(table) + where.toString() + order_limit.toString(), in);
         }
 
@@ -264,13 +262,13 @@ public class MysqlJdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
         if (start == 0 && limit == 0) {
-            logger.info("no limits");
+            Log.info("no limits");
         } else {
             if (start > 0) {
                 order_limit.append(_LIMIT_).append(" ? ");
@@ -293,7 +291,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
             } else {
                 where = new StringBuffer(where);
             }
-            logger.info("LIST query: " + select.toString() + where + order_limit);
+            Log.info("LIST query: " + select.toString() + where + order_limit);
             return MysqlSqlUtils.executeQueryList(connection, select.toString() + where.toString() + order_limit.toString(), in);
         }
 
@@ -302,7 +300,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
     public List<Map<String, Object>> list(String query) throws Exception {
         List<Object> in = new LinkedList<>();
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("LIST query: " + query);
+            Log.info("LIST query: " + query);
             return MysqlSqlUtils.executeQueryList(connection, query, in);
         }
 
@@ -311,7 +309,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
     public Map<String, Object> create(String table, String table_key, Map<String, Object> map) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             String query = MysqlSqlUtils.create(table, map);
-            logger.info("CREATE QUERY: " + query);
+            Log.info("CREATE QUERY: " + query);
             MysqlSqlUtils.executeQueryCreate(connection, query, map, table_key);
         }
         return map;
@@ -319,10 +317,10 @@ public class MysqlJdbcRepository implements JdbcRepository {
 
     public boolean query(String query, List<Object> values) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("EXECUTE QUERY: " + query);
+            Log.info("EXECUTE QUERY: " + query);
             return MysqlSqlUtils.executeQuery(connection, query, values);
         } catch (Exception e) {
-            logger.error("error: ", e);
+            Log.error("error: ", e);
             return false;
         }
 
@@ -336,7 +334,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         keys.put(table_key, key);
         String query = MysqlSqlUtils.update(table, map, keys, in);
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("UPDATE QUERY: " + query);
+            Log.info("UPDATE QUERY: " + query);
             MysqlSqlUtils.executeQueryUpdate(connection, query, in);
         }
         return map;
@@ -347,7 +345,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
             if (select_fields == null) {
                 select_fields = " * ";
             }
-            logger.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + MysqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
+            Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + MysqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + MysqlSqlUtils.escape(table)
                     + _WHERE_ + MysqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
@@ -359,7 +357,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
 
     public boolean delete(String table, String table_key, String uuid) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
+            Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + MysqlSqlUtils.escape(table) + _WHERE_
                     + MysqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
@@ -372,7 +370,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
             for (String query : queries) {
-                logger.info("BATCH QUERY: " + query);
+                Log.info("BATCH QUERY: " + query);
                 statement.addBatch(query);
             }
             statement.executeBatch();
@@ -431,7 +429,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
 //        }
 //        Map<String, Object> map = null;
 //        try (Connection connection = dataSource.getConnection()) {
-//            logger.info("login QUERY: " + LOGIN_QUERY);
+//            Log.info("login QUERY: " + LOGIN_QUERY);
 //            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
 //            preparedStatement.setObject(1, username);
 //            try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -439,7 +437,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
 //            }
 //        }
 //        if (map == null) {
-//            logger.info("password not found for username: " + username);
+//            Log.info("password not found for username: " + username);
 //            throw new Exception("invalid username/password");
 //        }
 //        String passwordOnDb = (String) map.get("password");
@@ -498,7 +496,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
             }
         }
         sb.append(", PRIMARY KEY (" + escape(metadata.table_key) + ")").append(")  ENGINE=INNODB;");
-        logger.info("QUERY CREATION TABLE: " + sb.toString());
+        Log.info("QUERY CREATION TABLE: " + sb.toString());
         return sb.toString();
     }
 

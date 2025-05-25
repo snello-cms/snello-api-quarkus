@@ -1,5 +1,6 @@
 package io.snello.service.storage;
 
+import io.quarkus.logging.Log;
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
@@ -22,7 +23,6 @@ import static io.snello.management.AppConstants.*;
 
 public class FsStorageService implements StorageService {
 
-    Logger logger = Logger.getLogger(getClass());
     private static final int BUFFER_SIZE = 1024;
 
     String basePath;
@@ -124,7 +124,7 @@ public class FsStorageService implements StorageService {
     private Path verifyPath(String table_name) throws Exception {
         Path path = Path.of(basePath(table_name));
         if (Files.exists(path)) {
-            logger.info("path already existent: " + path);
+            Log.info("path already existent: " + path);
         } else {
             path = Files.createDirectory(path);
         }

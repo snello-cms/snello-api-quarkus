@@ -1,14 +1,14 @@
 package io.snello.service.storage;
 
 import io.minio.*;
+import io.quarkus.logging.Log;
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.util.MimeUtils;
 import io.snello.util.ResourceFileUtils;
-import org.jboss.logging.Logger;
-
 import jakarta.ws.rs.core.StreamingOutput;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -26,9 +26,7 @@ public class S3StorageService implements StorageService {
     MinioClient minioClient;
     String bucketName;
     String base_folder;
-
-    Logger logger = Logger.getLogger(getClass());
-
+    
 
     public S3StorageService(MinioClient minioClient, String bucketName, String base_folder) {
         this.minioClient = minioClient;
@@ -68,7 +66,7 @@ public class S3StorageService implements StorageService {
                             .contentType(documentFormData.mimeType)
                             .stream(documentFormData.data, -1, PART_SIZE)
                             .build());
-            logger.info("document uploaded!");
+            Log.info("document uploaded!");
             return map;
         } catch (Exception e) {
             throw new Exception("Failed uploading file [{0}]", e);
@@ -157,7 +155,7 @@ public class S3StorageService implements StorageService {
         try {
             boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (isExist) {
-                logger.info("Bucket already exists.");
+                Log.info("Bucket already exists.");
             } else {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
@@ -172,9 +170,9 @@ public class S3StorageService implements StorageService {
             if (!base_folder.endsWith("/")) {
                 base_folder = base_folder + "/";
             }
-            logger.info("Bucket folder exists: " + base_folder);
+            Log.info("Bucket folder exists: " + base_folder);
         } else {
-            logger.info("Bucket folder is empty or null");
+            Log.info("Bucket folder is empty or null");
             base_folder = null;
         }
     }

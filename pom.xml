@@ -16,7 +16,7 @@
         <quarkus.platform.version>3.22.3</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
-        <minio-client.version>0.2.0</minio-client.version>
+        <minio-client.version>3.8.3</minio-client.version>
         <commons-codec.version>1.15</commons-codec.version>
         <thumbnailator.version>0.4.18</thumbnailator.version>
     </properties>
@@ -83,7 +83,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.minio</groupId>
-            <artifactId>minio-client</artifactId>
+            <artifactId>quarkus-minio</artifactId>
             <version>${minio-client.version}</version>
         </dependency>
         <dependency>

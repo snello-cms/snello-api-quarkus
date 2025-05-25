@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.UriInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +34,14 @@ public class ApiService {
     JdbcRepository jdbcRepository;
 
     @Inject
-    Event eventPublisher;
+    Event<DbCreatedEvent> eventCreatedPublisher;
 
     public ApiService() {
     }
 
     public void onLoad(@Observes StartupEvent event) {
         jdbcRepository.onLoad();
-        eventPublisher.fireAsync(new DbCreatedEvent());
+        eventCreatedPublisher.fireAsync(new DbCreatedEvent());
     }
 
 

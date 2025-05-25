@@ -1,6 +1,7 @@
 package io.snello.service;
 
 
+import io.quarkus.logging.Log;
 import io.snello.api.service.StorageService;
 import io.snello.model.events.ImageEvent;
 import io.snello.model.pojo.DocumentFormData;
@@ -10,7 +11,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.StreamingOutput;
 import net.coobird.thumbnailator.Thumbnails;
-import org.jboss.logging.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -24,7 +24,6 @@ import static io.snello.management.AppConstants.*;
 @ApplicationScoped
 public class ImageService {
 
-    protected Logger logger = Logger.getLogger(getClass());
     private static String table = DOCUMENTS;
 
     @Inject
@@ -34,7 +33,7 @@ public class ImageService {
     ApiService apiService;
 
     public void onEvent(@ObservesAsync ImageEvent imageEvent) {
-        logger.info("resize event " + imageEvent);
+        Log.info("resize event " + imageEvent);
         if (imageEvent.isNotValid()) {
             return;
         }
@@ -68,7 +67,7 @@ public class ImageService {
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed to create resource in ImageService: " + e);
+            Log.error("Failed to create resource in ImageService: " + e);
         }
     }
 
@@ -77,7 +76,7 @@ public class ImageService {
         int targetWidth = Integer.valueOf(tokens[0]);
         int targetHeight = Integer.valueOf(tokens[1]);
         String targetImgFormat = getFormatForMimeType(mime_type);
-        logger.infov("new width = " + targetWidth + ", new height = " + targetHeight + ", target image format = " + targetImgFormat);
+        Log.infov("new width = " + targetWidth + ", new height = " + targetHeight + ", target image format = " + targetImgFormat);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Thumbnails.of(originalImage)
                 .size(targetWidth, targetHeight)
@@ -95,7 +94,7 @@ public class ImageService {
         BufferedImage originalImage = ImageIO.read(is);
         int imageWidth = originalImage.getWidth();
         int imageHeight = originalImage.getHeight();
-        logger.infov("image width = " + imageWidth + " image height = " + imageHeight);
+        Log.infov("image width = " + imageWidth + " image height = " + imageHeight);
         return originalImage;
     }
 

@@ -1,8 +1,7 @@
 package io.snello.service;
 
+import io.quarkus.logging.Log;
 import io.snello.model.SystemEventLog;
-import org.jboss.logging.Logger;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -11,17 +10,15 @@ public class SystemLogService {
 
     @Inject
     ApiService apiService;
-
-    Logger logger = Logger.getLogger(getClass());
-
+    
     public SystemEventLog persistSystemLog(String newPath, String method, String jsonObject, String principal) {
         SystemEventLog log = new SystemEventLog(newPath, method, jsonObject, principal);
         try {
-            logger.info("PERSIST: " + log);
+            Log.info("PERSIST: " + log);
 //            apiService.create("systemeventlogs", log.toMap(), "uuid");
             return log;
         } catch (Exception e) {
-            logger.error(e);
+            Log.error(e);
         }
         return null;
     }

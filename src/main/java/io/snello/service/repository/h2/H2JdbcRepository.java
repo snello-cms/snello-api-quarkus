@@ -1,5 +1,6 @@
 package io.snello.service.repository.h2;
 
+import io.quarkus.logging.Log;
 import io.snello.api.service.JdbcRepository;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
@@ -8,7 +9,6 @@ import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
 import jakarta.ws.rs.core.MultivaluedMap;
-import org.jboss.logging.Logger;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -23,7 +23,6 @@ import static io.snello.service.repository.h2.H2Constants.*;
 public class H2JdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
-    Logger logger = Logger.getLogger(getClass());
 
     public H2JdbcRepository() {
     }
@@ -33,11 +32,11 @@ public class H2JdbcRepository implements JdbcRepository {
     }
 
     public void onLoad() {
-        logger.info("Creation queries at startup: ");
+        Log.info("Creation queries at startup: ");
         try {
             batch(creationQueries());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
         }
     }
 
@@ -73,7 +72,7 @@ public class H2JdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
@@ -85,13 +84,13 @@ public class H2JdbcRepository implements JdbcRepository {
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("query: " + select + H2SqlUtils.escape(table) + where);
+            Log.info("query: " + select + H2SqlUtils.escape(table) + where);
             try (PreparedStatement preparedStatement = connection.prepareStatement(select + H2SqlUtils.escape(table) + where)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long count = resultSet.getLong(SIZE_OF);
-                        logger.info("count:" + count);
+                        Log.info("count:" + count);
                         return count;
                     }
                 }
@@ -114,13 +113,13 @@ public class H2JdbcRepository implements JdbcRepository {
         List<Object> in = new LinkedList<>();
         in.add(uuid);
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("query: " + select);
+            Log.info("query: " + select);
             try (PreparedStatement preparedStatement = connection.prepareStatement(select)) {
                 SqlHelper.fillStatement(preparedStatement, in);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long count = resultSet.getLong(SIZE_OF);
-                        logger.info("exist:" + (count > 0));
+                        Log.info("exist:" + (count > 0));
                         return count > 0;
                     }
                 }
@@ -168,7 +167,7 @@ public class H2JdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
@@ -176,7 +175,7 @@ public class H2JdbcRepository implements JdbcRepository {
 
 
         if (start == 0 && limit == 0) {
-            logger.info("no limits");
+            Log.info("no limits");
         } else {
             if (start > 0) {
                 order_limit.append(_LIMIT_).append(" ? ");
@@ -197,7 +196,7 @@ public class H2JdbcRepository implements JdbcRepository {
             if (where.length() > 0) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
-            logger.info("LIST query: " + select.toString() + H2SqlUtils.escape(table) + where + order_limit);
+            Log.info("LIST query: " + select.toString() + H2SqlUtils.escape(table) + where + order_limit);
             return H2SqlUtils.executeQueryList(connection, select.toString() + H2SqlUtils.escape(table) + where.toString() + order_limit.toString(), in);
         }
 
@@ -222,13 +221,13 @@ public class H2JdbcRepository implements JdbcRepository {
         try {
             withCondition = ConditionUtils.where(httpParameters, conditions, where, in);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Log.info(e.getMessage());
         }
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
         if (start == 0 && limit == 0) {
-            logger.info("no limits");
+            Log.info("no limits");
         } else {
             if (start > 0) {
                 order_limit.append(_LIMIT_).append(" ? ");
@@ -251,7 +250,7 @@ public class H2JdbcRepository implements JdbcRepository {
             } else {
                 where = new StringBuffer(where);
             }
-            logger.info("LIST query: " + select.toString() + where + order_limit);
+            Log.info("LIST query: " + select.toString() + where + order_limit);
             return H2SqlUtils.executeQueryList(connection, select.toString() + where.toString() + order_limit.toString(), in);
         }
 
@@ -260,7 +259,7 @@ public class H2JdbcRepository implements JdbcRepository {
     public List<Map<String, Object>> list(String query) throws Exception {
         List<Object> in = new LinkedList<>();
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("LIST query: " + query);
+            Log.info("LIST query: " + query);
             return H2SqlUtils.executeQueryList(connection, query, in);
         }
 
@@ -269,7 +268,7 @@ public class H2JdbcRepository implements JdbcRepository {
     public Map<String, Object> create(String table, String table_key, Map<String, Object> map) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             String query = H2SqlUtils.create(table, map);
-            logger.info("CREATE QUERY: " + query);
+            Log.info("CREATE QUERY: " + query);
             H2SqlUtils.executeQueryCreate(connection, query, map, table_key);
         }
         return map;
@@ -277,10 +276,10 @@ public class H2JdbcRepository implements JdbcRepository {
 
     public boolean query(String query, List<Object> values) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("EXECUTE QUERY: " + query);
+            Log.info("EXECUTE QUERY: " + query);
             return H2SqlUtils.executeQuery(connection, query, values);
         } catch (Exception e) {
-            logger.error("error: ", e);
+            Log.error("error: ", e);
             return false;
         }
 
@@ -294,7 +293,7 @@ public class H2JdbcRepository implements JdbcRepository {
         keys.put(table_key, key);
         String query = H2SqlUtils.update(table, map, keys, in);
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("UPDATE QUERY: " + query);
+            Log.info("UPDATE QUERY: " + query);
             H2SqlUtils.executeQueryUpdate(connection, query, in);
         }
         return map;
@@ -305,7 +304,7 @@ public class H2JdbcRepository implements JdbcRepository {
             if (select_fields == null) {
                 select_fields = " * ";
             }
-            logger.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + H2SqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
+            Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + H2SqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + H2SqlUtils.escape(table)
                     + _WHERE_ + H2SqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
@@ -317,7 +316,7 @@ public class H2JdbcRepository implements JdbcRepository {
 
     public boolean delete(String table, String table_key, String uuid) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            logger.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
+            Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + H2SqlUtils.escape(table) + _WHERE_
                     + H2SqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
@@ -332,7 +331,7 @@ public class H2JdbcRepository implements JdbcRepository {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
             for (String query : queries) {
-                logger.info("BATCH QUERY: " + query);
+                Log.info("BATCH QUERY: " + query);
                 statement.addBatch(query);
                 if (++count % batchSize == 0) {
                     statement.executeBatch();
@@ -390,7 +389,7 @@ public class H2JdbcRepository implements JdbcRepository {
 //        }
 //        Map<String, Object> map = null;
 //        try (Connection connection = dataSource.getConnection()) {
-//            logger.info("login QUERY: " + LOGIN_QUERY);
+//            Log.info("login QUERY: " + LOGIN_QUERY);
 //            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
 //            preparedStatement.setObject(1, username);
 //            try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -398,7 +397,7 @@ public class H2JdbcRepository implements JdbcRepository {
 //            }
 //        }
 //        if (map == null) {
-//            logger.info("password not found for username: " + username);
+//            Log.info("password not found for username: " + username);
 //            throw new Exception("invalid username/password");
 //        }
 //        String passwordOnDb = (String) map.get(PWD_LOWERCASE);
@@ -457,7 +456,7 @@ public class H2JdbcRepository implements JdbcRepository {
             }
         }
         sb.append(", PRIMARY KEY (" + escape(metadata.table_key) + ")").append(") ;");
-        logger.info("CREATION TABLE QUERY: " + sb.toString());
+        Log.info("CREATION TABLE QUERY: " + sb.toString());
         return sb.toString();
     }
 }

@@ -1,7 +1,7 @@
 package io.snello.util;
 
 
-import org.jboss.logging.Logger;
+import io.quarkus.logging.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,9 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class ImageUtils {
-
-    static Logger logger = Logger.getLogger(ImageUtils.class);
-
+    
     public static Integer getImageWidthProportional(Object imageData,
                                                     Integer maxWidth, Integer maxHeight) {
         if (imageData == null)
@@ -95,10 +93,10 @@ public class ImageUtils {
             // Determine the shrink ratio
             double ratio = (double) maxWidthOrHeight
                     / imageIcon.getIconHeight();
-            logger.info("resize ratio: " + ratio);
+            Log.info("resize ratio: " + ratio);
             width = (int) (imageIcon.getIconWidth() * ratio);
             height = maxWidthOrHeight;
-            logger.info("imageIcon post scale width: " + width + "  height: "
+            Log.info("imageIcon post scale width: " + width + "  height: "
                     + height);
         }
 
@@ -107,10 +105,10 @@ public class ImageUtils {
                 && width > maxWidthOrHeight) {
             // Determine the shrink ratio
             double ratio = (double) maxWidthOrHeight / imageIcon.getIconWidth();
-            logger.info("resize ratio: " + ratio);
+            Log.info("resize ratio: " + ratio);
             height = (int) (imageIcon.getIconHeight() * ratio);
             width = maxWidthOrHeight;
-            logger.info("imageIcon post scale width: " + width + "  height: "
+            Log.info("imageIcon post scale width: " + width + "  height: "
                     + height);
         }
 

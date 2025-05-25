@@ -4,13 +4,11 @@ import io.quarkus.mailer.Attachment;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.Mailer;
 import io.snello.api.service.MailService;
-import org.jboss.logging.Logger;
 
 import java.util.List;
 
 public class SmtpMailService implements MailService {
 
-    Logger logger = Logger.getLogger(getClass());
     Mailer mailer;
 
     public SmtpMailService(Mailer mailer) {
