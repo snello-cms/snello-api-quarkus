@@ -3,8 +3,8 @@ package io.snello.api.service;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
+import jakarta.ws.rs.core.MultivaluedMap;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;

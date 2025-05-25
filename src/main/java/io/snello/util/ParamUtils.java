@@ -1,7 +1,7 @@
 package io.snello.util;
 
 
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;

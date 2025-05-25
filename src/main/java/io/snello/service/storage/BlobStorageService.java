@@ -3,7 +3,7 @@ package io.snello.service.storage;
 import io.snello.api.service.StorageService;
 import io.snello.model.pojo.DocumentFormData;
 
-import javax.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.core.StreamingOutput;
 import java.io.File;
 import java.util.Map;
 

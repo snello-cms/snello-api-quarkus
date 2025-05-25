@@ -1,8 +1,8 @@
 package io.snello.api.service;
 
 import io.snello.model.pojo.DocumentFormData;
+import jakarta.ws.rs.core.StreamingOutput;
 
-import javax.ws.rs.core.StreamingOutput;
 import java.io.File;
 import java.util.Map;
 

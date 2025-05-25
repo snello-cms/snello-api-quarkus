@@ -2,18 +2,17 @@ package io.snello.service;
 
 
 import io.snello.api.service.StorageService;
-import io.snello.model.Document;
 import io.snello.model.events.ImageEvent;
 import io.snello.model.pojo.DocumentFormData;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.ObservesAsync;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.StreamingOutput;
 import net.coobird.thumbnailator.Thumbnails;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.ObservesAsync;
 import javax.imageio.ImageIO;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.ws.rs.core.StreamingOutput;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

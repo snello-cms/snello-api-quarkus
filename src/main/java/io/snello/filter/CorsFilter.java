@@ -3,11 +3,11 @@ package io.snello.filter;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
-import javax.ws.rs.container.*;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.container.*;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider

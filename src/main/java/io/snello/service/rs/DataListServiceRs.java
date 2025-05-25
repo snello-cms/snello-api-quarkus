@@ -2,15 +2,15 @@ package io.snello.service.rs;
 
 import io.snello.service.MetadataService;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import static io.snello.management.AppConstants.DATALIST_PATH;
-import static javax.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.ok;
 
 @Path(DATALIST_PATH)
 @Produces(MediaType.APPLICATION_JSON)

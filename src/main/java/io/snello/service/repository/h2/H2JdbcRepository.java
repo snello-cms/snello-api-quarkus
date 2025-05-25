@@ -1,16 +1,16 @@
 package io.snello.service.repository.h2;
 
+import io.snello.api.service.JdbcRepository;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
-import io.snello.api.service.JdbcRepository;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.jboss.logging.Logger;
 
 import javax.sql.DataSource;
-import javax.ws.rs.core.MultivaluedMap;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.LinkedList;

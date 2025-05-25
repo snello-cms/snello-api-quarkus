@@ -6,19 +6,19 @@ import io.snello.service.ApiService;
 import io.snello.util.TableKeyUtils;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
-import static javax.ws.rs.core.Response.ok;
-import static javax.ws.rs.core.Response.serverError;
+import static jakarta.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.serverError;
 
 @Path(API_PATH)
 @Produces(MediaType.APPLICATION_JSON)

@@ -4,8 +4,8 @@ import io.snello.model.*;
 import io.snello.api.service.JdbcRepository;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.*;
 
 import static io.snello.management.AppConstants.*;

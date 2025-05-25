@@ -6,7 +6,7 @@ import io.snello.model.pojo.DocumentFormData;
 import io.snello.util.ResourceFileUtils;
 import org.jboss.logging.Logger;
 
-import javax.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.core.StreamingOutput;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

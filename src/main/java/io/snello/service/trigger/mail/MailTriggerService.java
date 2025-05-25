@@ -2,8 +2,8 @@ package io.snello.service.trigger.mail;
 
 import io.snello.model.events.TriggerEvent;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.ObservesAsync;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.ObservesAsync;
 
 @ApplicationScoped
 public class MailTriggerService {

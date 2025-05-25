@@ -1,6 +1,6 @@
 package io.snello.service.trigger.webhook;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class WebhookTriggerService {

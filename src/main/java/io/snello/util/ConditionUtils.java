@@ -6,7 +6,7 @@ import io.snello.service.ApiService;
 import org.jboss.logging.Logger;
 
 
-import javax.enterprise.event.Event;
+import jakarta.enterprise.event.Event;
 import java.util.List;
 import java.util.Map;
 

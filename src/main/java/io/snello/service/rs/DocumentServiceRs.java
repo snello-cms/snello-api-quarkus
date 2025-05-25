@@ -10,19 +10,19 @@ import io.snello.service.ApiService;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import java.util.Map;
 import java.util.Optional;
 
 import static io.snello.management.AppConstants.*;
-import static javax.ws.rs.core.Response.ok;
-import static javax.ws.rs.core.Response.serverError;
+import static jakarta.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.serverError;
 
 @Path(DOCUMENTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)

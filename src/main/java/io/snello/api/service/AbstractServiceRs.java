@@ -4,19 +4,19 @@ import io.snello.management.AppConstants;
 import io.snello.service.ApiService;
 import org.jboss.logging.Logger;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static io.snello.management.AppConstants.*;
-import static javax.ws.rs.core.Response.ok;
-import static javax.ws.rs.core.Response.serverError;
+import static jakarta.ws.rs.core.Response.ok;
+import static jakarta.ws.rs.core.Response.serverError;
 
 public abstract class AbstractServiceRs {
 

@@ -1,6 +1,6 @@
 package io.snello.service;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
 

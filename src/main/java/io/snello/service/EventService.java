@@ -8,10 +8,10 @@ import io.snello.model.SelectQuery;
 import io.snello.model.events.*;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.ObservesAsync;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.ObservesAsync;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 

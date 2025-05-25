@@ -3,8 +3,8 @@ package io.snello.model.pojo;
 
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.core.MediaType;
 import java.io.InputStream;
 
 public class DocumentFormData {

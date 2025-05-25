@@ -10,7 +10,7 @@ import io.snello.util.SqlHelper;
 import org.jboss.logging.Logger;
 
 import javax.sql.DataSource;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.LinkedList;
