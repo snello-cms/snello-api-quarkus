@@ -2,9 +2,9 @@ name: Maven & Docker Build Native Image & Deploy to Docker Hub
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
