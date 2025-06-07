@@ -49,7 +49,7 @@ public class PostgresqlFieldDefinitionUtils {
             case "date":
                 return escape(fieldDefinition.name) + " date default null";
             case "datetime":
-                return escape(fieldDefinition.name) + " datetime default null";
+                return escape(fieldDefinition.name) + " TIMESTAMPTZ default null";
             case "time":
                 return escape(fieldDefinition.name) + " time default null";
             case "checkbox":
