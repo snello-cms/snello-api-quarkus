@@ -18,12 +18,16 @@ public class TemplateService {
     @Inject
     Engine engine;
 
+    @Inject
+    Api api;
+
     public String parse(Map<String, Object> map, MultivaluedMap<String, String> queryParameters) {
         Log.info("creating content for template " + map);
         Template myTemplate = engine.parse((String) map.get("body"));
         return myTemplate
                 .data("values", map)
                 .data("queryParameters", queryParameters)
+                .data("api", api)
                 .render();
     }
 

@@ -3,6 +3,7 @@ package io.snello.service.rs;
 import io.quarkus.logging.Log;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
+import io.snello.service.Api;
 import io.snello.service.ApiService;
 import io.snello.util.TableKeyUtils;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,7 +29,8 @@ public class ApiServiceRs {
 
 
     @Inject
-    ApiService apiService;
+    Api api;
+
 
     @Context
     UriInfo uriInfo;
@@ -53,9 +55,7 @@ public class ApiServiceRs {
         Integer l = limit == null ? 10 : Integer.valueOf(limit);
         Integer s = start == null ? 0 : Integer.valueOf(start);
         long count = apiService.count(table, uriInfo);
-        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))
-                .header(SIZE_HEADER_PARAM, "" + count)
-                .header(TOTAL_COUNT_HEADER_PARAM, "" + count).build();
+       return api.list(table, sort, limit, start);
     }
 
 
