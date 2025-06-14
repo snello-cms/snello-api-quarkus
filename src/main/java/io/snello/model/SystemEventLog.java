@@ -50,4 +50,15 @@ public class SystemEventLog {
         return map;
     }
 
+    @Override
+    public String toString() {
+        return "SystemEventLog{" +
+               "uuid='" + uuid + '\'' +
+               ", received_date=" + received_date +
+               ", obj='" + obj + '\'' +
+               ", operation_type='" + operation_type + '\'' +
+               ", data='" + data + '\'' +
+               ", principal='" + principal + '\'' +
+               '}';
+    }
 }

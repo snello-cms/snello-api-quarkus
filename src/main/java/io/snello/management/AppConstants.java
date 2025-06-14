@@ -4,7 +4,7 @@ public class AppConstants {
 
     public static final String BASE_PATH = "/";
     public static final String API_PATH = "/api";
-    public static final String PAGES_PATH = "/p";
+    public static final String PAGES_PATH = API_PATH + "/p";
 
     public static final String BACKUP = "backup";
     public static final String CONDITIONS = "conditions";
@@ -16,7 +16,6 @@ public class AppConstants {
     public static final String PUBLIC_DATA = "publicdata";
     public static final String SELECT_QUERY = "selectqueries";
     public static final String TRIGGER_DEFINITION_QUERY = "triggerdefinitions";
-
 
 
     public static final String BACKUP_PATH = API_PATH + BASE_PATH + BACKUP;
