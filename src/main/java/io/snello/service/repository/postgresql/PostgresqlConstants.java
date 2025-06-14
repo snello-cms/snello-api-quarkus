@@ -35,6 +35,24 @@ public class PostgresqlConstants {
             "  table_key varchar(255) NOT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ";
+//    Action {
+//
+//        public String uuid;
+//        public String name;
+//        public String description;
+//        public String metadata_name; // TABLE
+//        public String condition; // PERSIST, MERGE, DELETE
+//        public String body;
+
+    public static String creationActionExtensions = "CREATE TABLE IF NOT EXISTS extensions (\n" +
+                                                   "  uuid varchar(255) NOT NULL,\n" +
+                                                   "  name varchar(255) NOT NULL,\n" +
+                                                   "  description varchar(255) NOT NULL,\n" +
+                                                   "  metadata_name varchar(255) NOT NULL,\n" +
+                                                   "  condition varchar(255) ,\n" +
+                                                   "  body varchar(1000) ,\n" +
+                                                   "  PRIMARY KEY (uuid)\n" +
+                                                   " ) ;";
 
     public static String creationQueryExtensions = "CREATE TABLE IF NOT EXISTS extensions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +

@@ -2,6 +2,7 @@ package io.snello.util;
 
 
 import jakarta.ws.rs.core.MultivaluedMap;
+
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,7 +33,9 @@ public class ParamUtils {
 
     public static final String CNT = "_contains";
     public static final String LIKE = "_like";
+    public static final String ILIKE = "_ilike";
     public static final String _CNT = " LIKE ";
+    public static final String _ICNT = " ILIKE ";
 
 
     public static final String CONTSS = "_containss";
@@ -222,6 +225,16 @@ public class ParamUtils {
                 }
                 where.append(key.substring(0, key.length() - LIKE.length()));
                 where.append(_CNT);
+                where.append(" ? ").append(SPACE);
+                in.add(_LIKE + value + _LIKE);
+                continue;
+            }
+            if (key.endsWith(ILIKE)) {
+                if (where.length() > 0) {
+                    where.append(AND);
+                }
+                where.append(key.substring(0, key.length() - LIKE.length()));
+                where.append(_ICNT);
                 where.append(" ? ").append(SPACE);
                 in.add(_LIKE + value + _LIKE);
                 continue;

@@ -4,12 +4,11 @@ public class AppConstants {
 
     public static final String BASE_PATH = "/";
     public static final String API_PATH = "/api";
+    public static final String PAGES_PATH = "/p";
 
     public static final String BACKUP = "backup";
     public static final String CONDITIONS = "conditions";
     public static final String DATALISTS = "datalist";
-    public static final String DRAGGABLES = "draggables";
-    public static final String DROPPABLES = "droppables";
     public static final String DOCUMENTS = "documents";
     public static final String EXTENSIONS = "extensions";
     public static final String FIELD_DEFINITIONS = "fielddefinitions";
@@ -54,27 +53,8 @@ public class AppConstants {
     public static final String SIZE_HEADER_PARAM = "size";
     public static final String TOTAL_COUNT_HEADER_PARAM = "x-total-count";
 
-    public static final String DB_TYPE = "micronaut.db.type";
-    public static final String EMAIL_TYPE = "micronaut.email.type";
-    public static final String STORAGE_TYPE = "micronaut.storage.type";
     public static final String SYSTEM_DOCUMENTS_BASE_PATH = "files.paths";
-    public static final String EMAIL_SMTP_PORT = "micronaut.email.smtp-port";
-    public static final String EMAIL_SMTP_AUTH = "micronaut.email.smtp-auth";
-    public static final String EMAIL_SMTP_STARTSSL_ENABLE = "micronaut.email.starttls-enable";
-    public static final String EMAIL_SMTP_HOST = "micronaut.email.smtp-host";
-    public static final String EMAIL_SMTP_USERNAME = "micronaut.email.smtp-username";
-    public static final String EMAIL_MAIL_FROM = "micronaut.email.mail-from";
-    public static final String EMAIL_SMTP_PASSWORD = "micronaut.email.smtp-password";
-    public static final String S3_ENDPOINT = "micronaut.s3.endpoint";
     public static final String JDBC_DB = "datasources.default.database";
-    public static final String S3_ACCESS_KEY = "micronaut.s3.accesskey";
-    public static final String S3_SECRET_KEY = "micronaut.s3.secretkey";
-    public static final String S3_REGION = "micronaut.s3.region";
-    public static final String S3_BUCKET_NAME = "micronaut.s3.bucketname";
-    public static final String S3_BUCKET_FOLDER = "micronaut.s3.folder";
-
-
-    public static final String DB_NAME = "micronaut.router.static-resources.default.paths[0]";
 
 
     public static final String DOCUMENT_NAME = "name";
@@ -88,10 +68,6 @@ public class AppConstants {
     public static final String TABLE_KEY = "table_key";
     public static final String CREATED = "created";
 
-    public static final String USERNAME = "username";
-    public static final String CONFIRM_PASSWORD = "confirm_password";
-    public static final String EMAIL = "email";
-    public static final String TOKEN = "token";
     public static final String CREATION_DATE = "creation_date";
     public static final String LAST_UPDATE_DATE = "last_update_date";
     public static final String ROLE = "role";
@@ -119,7 +95,6 @@ public class AppConstants {
     public static final String MSG_QUERY_NAME_IS_EMPTY = "query name is empty";
     public static final String MSG_EXTENSION_NAME_IS_EMPTY = "extension name is empty";
     public static final String MSG_QUERY_NAME_IS_RESERVED = "query name is a reserved word";
-    public static final String MSG_EXTENSION_NAME_IS_RESERVED = "extension name is a reserved word";
     public static final String MSG_USERNAME_IS_EMPTY = "username is empty";
     public static final String MSG_NOT_IMPLEMENTED = "not implemented! (please delete and after create)";
 

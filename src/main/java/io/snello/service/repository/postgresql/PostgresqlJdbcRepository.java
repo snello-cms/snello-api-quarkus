@@ -5,6 +5,7 @@ import io.snello.api.service.JdbcRepository;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
+import io.snello.service.actions.ActionEvent;
 import io.snello.util.ConditionUtils;
 import io.snello.util.ParamUtils;
 import io.snello.util.SqlHelper;
@@ -25,6 +26,7 @@ import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
 public class PostgresqlJdbcRepository implements JdbcRepository {
 
     DataSource dataSource;
+
     public PostgresqlJdbcRepository() {
     }
 
@@ -34,7 +36,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
     }
 
     public void onLoad() {
-        Log.info("Creation queries at startup: " );
+        Log.info("Creation queries at startup: ");
         try {
             batch(creationQueries());
         } catch (Exception e) {
@@ -45,6 +47,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
     @Override
     public String[] creationQueries() {
         return new String[]{
+                creationActionExtensions,
                 creationQueryMetadatas,
                 creationQueryFieldDefinitions,
                 creationQueryConditions,
@@ -259,6 +262,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
 
     }
 
+    @ActionEvent
     public Map<String, Object> create(String table, String table_key, Map<String, Object> map) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             String query = PostgresqlSqlUtils.create(table, map);
@@ -279,7 +283,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
 
     }
 
-
+    @ActionEvent
     public Map<String, Object> update(String table, String table_key, Map<String, Object> map, String key) throws
             Exception {
         Map<String, Object> keys = new HashMap<>();
@@ -300,7 +304,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
             }
             Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + PostgresqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + PostgresqlSqlUtils.escape(table)
-                    + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
+                                                                              + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return PostgresqlSqlUtils.single(resultSet);
@@ -308,11 +312,12 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         }
     }
 
+    @ActionEvent
     public boolean delete(String table, String table_key, String uuid) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + PostgresqlSqlUtils.escape(table) + _WHERE_
-                    + PostgresqlSqlUtils.escape(table_key) + " = ?");
+                                                                              + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;
@@ -359,36 +364,6 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         }
         return false;
     }
-
-//    @Override
-//    public SecurityIdentity login(String username, String password) throws Exception {
-//        if (username == null) {
-//            throw new Exception("login must contain username in 'username' field");
-//        }
-//        if (password == null) {
-//            throw new Exception("login must contain password in 'password' field");
-//        }
-//        Map<String, Object> map = null;
-//        try (Connection connection = dataSource.getConnection()) {
-//            Log.info("login QUERY: " + LOGIN_QUERY);
-//            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
-//            preparedStatement.setObject(1, username);
-//            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-//                map = PostgresqlSqlUtils.single(resultSet);
-//            }
-//        }
-//        if (map == null) {
-//            Log.info("password not found for username: " + username);
-//            throw new Exception("invalid username/password");
-//        }
-//        String passwordOnDb = (String) map.get("password");
-//        String encrPassword = PasswordUtils.createPassword(password);
-//        if (encrPassword.equals(passwordOnDb)) {
-//            return new UserDetails(username, getRoles(username));
-//        }
-//        throw new Exception("Failure in authentication");
-//    }
-
 
     @Override
     public String getJoinTableQuery() {
