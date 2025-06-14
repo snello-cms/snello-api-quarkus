@@ -12,8 +12,6 @@ public class MetadataUtils {
             case DATALISTS:
             case DOCUMENTS:
             case EXTENSIONS:
-            case DRAGGABLES:
-            case DROPPABLES:
             case FIELD_DEFINITIONS:
             case LINKS:
             case METADATAS:

@@ -38,28 +38,6 @@ public class H2Constants {
             "  PRIMARY KEY (uuid)\n" +
             ") ;";
 
-    public static String creationQueryDraggables = "CREATE TABLE IF NOT EXISTS draggables (\n" +
-            "  uuid varchar(255) NOT NULL,\n" +
-            "  name varchar(255) NOT NULL,\n" +
-            "  description varchar(255) NOT NULL,\n" +
-            "  template varchar(255) ,\n" +
-            "  style varchar(255) NOT NULL,\n" +
-            "  image int(12),\n" +
-            "  static_vars varchar(255) NOT NULL,\n" +
-            "  dynamic_vars varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (uuid)\n" +
-            ") ;";
-
-    public static String creationQueryDroppables = "CREATE TABLE IF NOT EXISTS droppables (\n" +
-            "  uuid varchar(255) NOT NULL,\n" +
-            "  name varchar(255) NOT NULL,\n" +
-            "  description varchar(255) NOT NULL,\n" +
-            "  html varchar(255) NOT NULL,\n" +
-            "  draggables varchar(255) ,\n" +
-            "  static_values varchar(255) NOT NULL,\n" +
-            "  dynamic_values varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (uuid)\n" +
-            ") ;";
     public static String creationQueryExtensions = "CREATE TABLE IF NOT EXISTS extensions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  name varchar(255) NOT NULL,\n" +

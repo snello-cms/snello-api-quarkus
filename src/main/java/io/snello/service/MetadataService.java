@@ -17,8 +17,6 @@ public class MetadataService {
     Map<String, SelectQuery> selectqueryMap;
     Map<String, Map<String, FieldDefinition>> fielddefinitionsMap;
     Map<String, List<Condition>> conditionsMap;
-    Map<String, Draggable> draggablesMap;
-    Map<String, Droppable> droppablesMap;
 
     @Inject
     JdbcRepository jdbcRepository;
@@ -97,33 +95,6 @@ public class MetadataService {
         return this.fielddefinitionsMap;
     }
 
-    public Map<String, Draggable> draggablesMap() throws Exception {
-        if (this.draggablesMap == null) {
-            this.draggablesMap = new TreeMap<>();
-            List<Map<String, Object>> liste = jdbcRepository.list(DRAGGABLES, " name asc ");
-            if (liste != null) {
-                for (Map<String, Object> map : liste) {
-                    Draggable draggable = new Draggable(map);
-                    draggablesMap.put(draggable.uuid, draggable);
-                }
-            }
-        }
-        return this.draggablesMap;
-    }
-
-    public Map<String, Droppable> droppablesMap() throws Exception {
-        if (this.droppablesMap == null) {
-            this.droppablesMap = new TreeMap<>();
-            List<Map<String, Object>> liste = jdbcRepository.list(DROPPABLES, " name asc ");
-            if (liste != null) {
-                for (Map<String, Object> map : liste) {
-                    Droppable droppable = new Droppable(map);
-                    droppablesMap.put(droppable.uuid, droppable);
-                }
-            }
-        }
-        return this.droppablesMap;
-    }
 
     public Map<String, Metadata> metadataMap() throws Exception {
         if (this.metadataMap == null) {

@@ -48,8 +48,6 @@ public class MysqlJdbcRepository implements JdbcRepository {
                 creationQueryFieldDefinitions,
                 creationQueryConditions,
                 creationQueryDocuments,
-                creationQueryDraggables,
-                creationQueryDroppables,
                 creationQueryExtensions,
                 creationQuerySelectQueries,
                 creationLinksQueries

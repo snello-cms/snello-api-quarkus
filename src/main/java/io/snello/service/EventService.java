@@ -3,8 +3,6 @@ package io.snello.service;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
 import io.snello.model.Condition;
-import io.snello.model.Draggable;
-import io.snello.model.Droppable;
 import io.snello.model.SelectQuery;
 import io.snello.model.events.*;
 import jakarta.enterprise.event.Observes;
@@ -118,52 +116,7 @@ public class EventService {
         }
     }
 
-    void createOrUpdateDraggable(@ObservesAsync DraggableCreateUpdateEvent draggableCreateUpdateEvent) {
-        Log.info("new DraggableCreateUpdateEvent " + draggableCreateUpdateEvent.toString());
-        try {
-            metadataService.draggablesMap().put(draggableCreateUpdateEvent.draggable.uuid, draggableCreateUpdateEvent.draggable);
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-    }
 
-
-    void deleteDraggable(@ObservesAsync DraggableDeleteEvent draggableDeleteEvent) {
-        Log.info("new DraggableDeleteEvent " + draggableDeleteEvent.toString());
-        try {
-            for (Draggable draggable : metadataService.draggablesMap().values()) {
-                if (draggable.uuid.equals(draggableDeleteEvent.uuid)) {
-                    metadataService.draggablesMap().remove(draggable.uuid);
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-    }
-
-    void createOrUpdateDroppable(@ObservesAsync DroppableCreateUpdateEvent droppableCreateUpdateEvent) {
-        Log.info("new DroppableCreateUpdateEvent " + droppableCreateUpdateEvent.toString());
-        try {
-            metadataService.droppablesMap().put(droppableCreateUpdateEvent.droppable.uuid, droppableCreateUpdateEvent.droppable);
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-    }
-
-    void deleteDroppable(@ObservesAsync DroppableDeleteEvent droppableDeleteEvent) {
-        Log.info("new DroppableDeleteEvent " + droppableDeleteEvent.toString());
-        try {
-            for (Droppable droppable : metadataService.droppablesMap().values()) {
-                if (droppable.uuid.equals(droppableDeleteEvent.uuid)) {
-                    metadataService.droppablesMap().remove(droppable.uuid);
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-    }
 
     void createOrUpdateSelectQuery(@ObservesAsync SelectQueryCreateUpdateEvent selectQueryCreateUpdateEvent) {
         Log.info("new SelectQueryCreateUpdateEvent " + selectQueryCreateUpdateEvent.toString());
