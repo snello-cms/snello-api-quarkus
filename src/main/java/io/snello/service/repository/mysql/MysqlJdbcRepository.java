@@ -44,11 +44,11 @@ public class MysqlJdbcRepository implements JdbcRepository {
     @Override
     public String[] creationQueries() {
         return new String[]{
+                creationActionExtensions,
                 creationQueryMetadatas,
                 creationQueryFieldDefinitions,
                 creationQueryConditions,
                 creationQueryDocuments,
-                creationQueryExtensions,
                 creationQuerySelectQueries,
                 creationLinksQueries
 
@@ -345,7 +345,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
             }
             Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + MysqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + MysqlSqlUtils.escape(table)
-                    + _WHERE_ + MysqlSqlUtils.escape(table_key) + " = ?");
+                                                                              + _WHERE_ + MysqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return MysqlSqlUtils.single(resultSet);
@@ -357,7 +357,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
         try (Connection connection = dataSource.getConnection()) {
             Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + MysqlSqlUtils.escape(table) + _WHERE_
-                    + MysqlSqlUtils.escape(table_key) + " = ?");
+                                                                              + MysqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;
@@ -396,8 +396,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
             Statement statement = connection.createStatement();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     SHOW_TABLES_INIT
-                            //+ getDbName()
-                            + SHOW_TABLES_END);
+                    //+ getDbName()
+                    + SHOW_TABLES_END);
             preparedStatement.setObject(1, tableName);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

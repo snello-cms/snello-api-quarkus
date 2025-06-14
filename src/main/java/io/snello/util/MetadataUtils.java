@@ -11,7 +11,6 @@ public class MetadataUtils {
             case CONDITIONS:
             case DATALISTS:
             case DOCUMENTS:
-            case EXTENSIONS:
             case FIELD_DEFINITIONS:
             case LINKS:
             case METADATAS:

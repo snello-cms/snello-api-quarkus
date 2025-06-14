@@ -43,11 +43,11 @@ public class H2JdbcRepository implements JdbcRepository {
     @Override
     public String[] creationQueries() {
         return new String[]{
+                creationQueryActionExtensions,
                 creationQueryMetadatas,
                 creationQueryFieldDefinitions,
                 creationQueryConditions,
                 creationQueryDocuments,
-                creationQueryExtensions,
                 creationQuerySelectQueries,
                 creationLinksQueries
         };
@@ -304,7 +304,7 @@ public class H2JdbcRepository implements JdbcRepository {
             }
             Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + H2SqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + H2SqlUtils.escape(table)
-                    + _WHERE_ + H2SqlUtils.escape(table_key) + " = ?");
+                                                                              + _WHERE_ + H2SqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return H2SqlUtils.single(resultSet);
@@ -316,7 +316,7 @@ public class H2JdbcRepository implements JdbcRepository {
         try (Connection connection = dataSource.getConnection()) {
             Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + H2SqlUtils.escape(table) + _WHERE_
-                    + H2SqlUtils.escape(table_key) + " = ?");
+                                                                              + H2SqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;

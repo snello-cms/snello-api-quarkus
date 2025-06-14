@@ -12,7 +12,19 @@ public class H2Constants {
 
 
     public static final String ESCAPE = "";
-    
+
+
+    public static String creationQueryActionExtensions = "CREATE TABLE IF NOT EXISTS actions (\n" +
+                                                         "  uuid varchar(255) NOT NULL,\n" +
+                                                         "  name varchar(255) NOT NULL,\n" +
+                                                         "  description varchar(255) NOT NULL,\n" +
+                                                         "  metadata_name varchar(255) NOT NULL,\n" +
+                                                         "  condition varchar(255) ,\n" +
+                                                         "  body varchar(1000) ,\n" +
+                                                         "  PRIMARY KEY (uuid)\n" +
+                                                         " ) ;";
+
+
     public static String creationQueryConditions = "CREATE TABLE IF NOT EXISTS conditions (\n" +
             "  uuid varchar(255) NOT NULL,\n" +
             "  metadata_uuid varchar(255) NOT NULL,\n" +
@@ -35,16 +47,6 @@ public class H2Constants {
             "  size int(12),\n" +
             "  table_name varchar(255) NOT NULL,\n" +
             "  table_key varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (uuid)\n" +
-            ") ;";
-
-    public static String creationQueryExtensions = "CREATE TABLE IF NOT EXISTS extensions (\n" +
-            "  uuid varchar(255) NOT NULL,\n" +
-            "  name varchar(255) NOT NULL,\n" +
-            "  icon varchar(255) NOT NULL,\n" +
-            "  description varchar(255) NOT NULL,\n" +
-            "  tag_name varchar(255) NOT NULL,\n" +
-            "  library_path varchar(255) ,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ;";
 

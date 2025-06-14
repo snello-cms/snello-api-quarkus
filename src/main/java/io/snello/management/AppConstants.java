@@ -10,7 +10,6 @@ public class AppConstants {
     public static final String CONDITIONS = "conditions";
     public static final String DATALISTS = "datalist";
     public static final String DOCUMENTS = "documents";
-    public static final String EXTENSIONS = "extensions";
     public static final String FIELD_DEFINITIONS = "fielddefinitions";
     public static final String LINKS = "links";
     public static final String METADATAS = "metadatas";
@@ -93,7 +92,6 @@ public class AppConstants {
     public static final String MSG_TABLE_NAME_IS_EMPTY = "table name is empty";
     public static final String MSG_TABLE_NAME_IS_RESERVED = "table name  is a reserved word";
     public static final String MSG_QUERY_NAME_IS_EMPTY = "query name is empty";
-    public static final String MSG_EXTENSION_NAME_IS_EMPTY = "extension name is empty";
     public static final String MSG_QUERY_NAME_IS_RESERVED = "query name is a reserved word";
     public static final String MSG_USERNAME_IS_EMPTY = "username is empty";
     public static final String MSG_NOT_IMPLEMENTED = "not implemented! (please delete and after create)";
