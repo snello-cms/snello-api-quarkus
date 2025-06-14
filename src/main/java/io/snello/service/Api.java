@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-@Named
+@Named("api")
 public class Api {
 
     @Inject
