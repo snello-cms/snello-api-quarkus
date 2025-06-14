@@ -52,6 +52,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: ./src/main/docker/Dockerfile.native-micro
           push: true
-          tags: snellocms/snello-api-quarkus:5.0.0-native
+          tags: snellocms/snello-api-quarkus:5.0.1-native
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
