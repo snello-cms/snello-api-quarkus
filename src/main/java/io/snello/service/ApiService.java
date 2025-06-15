@@ -1,5 +1,6 @@
 package io.snello.service;
 
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
@@ -69,12 +70,15 @@ public class ApiService {
     public long count(String table, UriInfo uriInfo) throws Exception {
         String alias_condition = null;
         List<Condition> conditions = null;
-        if (metadataService.selectqueryMap().containsKey(table) &&
-                metadataService.selectqueryMap().get(table).select_query_count != null
-                && !metadataService.selectqueryMap().get(table).select_query_count.isBlank()) {
-            return jdbcRepository.count(metadataService.selectqueryMap().get(table).select_query_count,
-                    uriInfo.getQueryParameters(),
-                    conditions);
+        var exist = metadataService.selectqueryMap().containsKey(table);
+        var query = metadataService.selectqueryMap().get(table);
+        var scq = query.select_query_count;
+        Log.info("the table: " + table + " is selectquery? " + exist + ", is count? " + scq);
+        if (exist && scq != null && !scq.isBlank()) {
+            if (query.with_params)
+                return jdbcRepository.count(scq, uriInfo.getQueryParameters(),
+                        conditions);
+            else return jdbcRepository.count(scq);
         }
         if (metadataService.metadataMap().containsKey(table)) {
             conditions = metadataService.conditionsMap().get(table);
