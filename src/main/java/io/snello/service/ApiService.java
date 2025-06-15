@@ -70,16 +70,20 @@ public class ApiService {
     public long count(String table, UriInfo uriInfo) throws Exception {
         String alias_condition = null;
         List<Condition> conditions = null;
+        String scq = null;
         var exist = metadataService.selectqueryMap().containsKey(table);
-        var query = metadataService.selectqueryMap().get(table);
-        var scq = query.select_query_count;
-        Log.info("the table: " + table + " is selectquery? " + exist + ", is count? " + scq);
-        if (exist && scq != null && !scq.isBlank()) {
-            if (query.with_params)
-                return jdbcRepository.count(scq, uriInfo.getQueryParameters(),
-                        conditions);
-            else return jdbcRepository.count(scq);
+        SelectQuery selectQuery = metadataService.selectqueryMap().get(table);
+        if (selectQuery != null) {
+            scq = selectQuery.select_query_count;
+            Log.info("the table: " + table + " is selectquery? " + exist + ", is count? " + scq);
+            if (exist && scq != null && !scq.isBlank()) {
+                if (selectQuery.with_params)
+                    return jdbcRepository.count(scq, uriInfo.getQueryParameters(),
+                            conditions);
+                else return jdbcRepository.count(scq);
+            }
         }
+
         if (metadataService.metadataMap().containsKey(table)) {
             conditions = metadataService.conditionsMap().get(table);
             Metadata metadata = metadataService.metadataMap().get(table);
