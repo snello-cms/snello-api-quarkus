@@ -76,7 +76,7 @@ public class MetadataService {
         if (this.fielddefinitionsMap == null) {
             this.fielddefinitionsMap = new TreeMap<>();
 
-            List<Map<String, Object>> liste = jdbcRepository.list(FIELD_DEFINITIONS, " metadata_name asc ");
+            List<Map<String, Object>> liste = jdbcRepository.list(FIELD_DEFINITIONS, " metadata_name asc, view_index asc ");
             if (liste != null) {
                 for (Map<String, Object> map : liste) {
                     FieldDefinition fieldDefinition = new FieldDefinition(map);
