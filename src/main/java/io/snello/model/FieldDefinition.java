@@ -26,6 +26,7 @@ public class FieldDefinition {
     public String tab_name;
     //DOPO VEDREMO COME FARLO
     public String validations;
+    public int view_index;
 
     public boolean table_key;
     public boolean input_disabled;
@@ -151,6 +152,9 @@ public class FieldDefinition {
         if (map.get("show_in_list") instanceof Boolean) {
             fieldDefinition.show_in_list = (Boolean) map.get("show_in_list");
         }
+        if (map.get("view_index") instanceof String) {
+            fieldDefinition.view_index = (Integer) map.get("view_index");
+        }
         return fieldDefinition;
     }
 
@@ -225,6 +229,7 @@ public class FieldDefinition {
             map.put("search_field_name", this.search_field_name);
         }
         map.put("show_in_list", this.show_in_list);
+        map.put("view_index", this.view_index);
         return map;
     }
 
@@ -255,6 +260,7 @@ public class FieldDefinition {
                 ", search_condition='" + search_condition + '\'' +
                 ", search_field_name='" + search_field_name + '\'' +
                 ", show_in_list='" + show_in_list + '\'' +
+                ", view_index='" + view_index + '\'' +
                 '}';
     }
 }

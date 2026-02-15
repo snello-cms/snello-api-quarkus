@@ -76,6 +76,7 @@ public class H2Constants {
             "  search_condition varchar(100) DEFAULT NULL,\n" +
             "  search_field_name varchar(100) DEFAULT NULL,\n" +
             "  show_in_list BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+            "  view_index int(12),\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ;";
 

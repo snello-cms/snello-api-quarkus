@@ -76,7 +76,8 @@ public class MysqlConstants {
                                                          "  `search_condition` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
                                                          "  `search_field_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
                                                          "  `show_in_list` BOOLEAN NOT NULL DEFAULT FALSE,\n" +
-                                                         "  PRIMARY KEY (uuid)\n" +
+                                                        "  `view_index` int(12),\n" +
+                                                        "  PRIMARY KEY (uuid)\n" +
                                                          ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
     public static String creationQueryMetadatas = "CREATE TABLE IF NOT EXISTS `metadatas` (\n" +
