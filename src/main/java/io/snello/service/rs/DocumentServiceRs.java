@@ -32,7 +32,7 @@ public class DocumentServiceRs {
 
     @Inject
     StorageService documentsService;
-    
+
     @Inject
     ApiService apiService;
 
@@ -131,6 +131,21 @@ public class DocumentServiceRs {
             documentFormData.uuid = uuid;
             Map<String, Object> map = documentsService.upload(documentFormData);
             map = apiService.merge(table, map, uuid, AppConstants.UUID);
+            return ok(map).build();
+        } catch (Exception e) {
+            Log.error(e.getMessage(), e);
+        }
+        return serverError().build();
+    }
+
+    @PUT
+    @Path("/{id}/data")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateData(@PathParam("id") String id,
+                               Map<String, Object> map) {
+        try {
+            map = apiService.merge(table, map, id, AppConstants.UUID);
             return ok(map).build();
         } catch (Exception e) {
             Log.error(e.getMessage(), e);
