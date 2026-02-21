@@ -152,7 +152,9 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         }
 
         if (sort != null) {
-            if (sort.contains(":")) {
+            if (sort.contains("random")) {
+                order_limit.append(_ORDER_BY_).append("RANDOM()");
+            } else if (sort.contains(":")) {
                 String[] sort_ = sort.split(":");
                 order_limit.append(_ORDER_BY_).append(sort_[0]).append(" ").append(sort_[1]);
             } else {
@@ -303,7 +305,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
             }
             Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + PostgresqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + PostgresqlSqlUtils.escape(table)
-                                                                              + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
+                    + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return PostgresqlSqlUtils.single(resultSet);
@@ -316,7 +318,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         try (Connection connection = dataSource.getConnection()) {
             Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + PostgresqlSqlUtils.escape(table) + _WHERE_
-                                                                              + PostgresqlSqlUtils.escape(table_key) + " = ?");
+                    + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;
