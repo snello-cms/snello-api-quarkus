@@ -130,9 +130,10 @@ public class ApiService {
                 table = metadata.alias_table;
                 alias_condition = metadata.alias_condition;
             }
-
-            if (metadata.order_by != null && !metadata.order_by.trim().isEmpty()) {
-                sort = metadata.order_by;
+            if (sort == null || sort.isEmpty()) {
+                if (metadata.order_by != null && !metadata.order_by.trim().isEmpty()) {
+                    sort = metadata.order_by;
+                }
             }
 
         }
