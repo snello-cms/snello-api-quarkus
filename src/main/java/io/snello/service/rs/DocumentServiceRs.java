@@ -89,7 +89,6 @@ public class DocumentServiceRs {
 
     @GET
     @Path(UUID_PATH_PARAM + WEBP_PATH)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response wep(@PathParam("uuid") @NotNull String uuid) throws Exception {
         Log.info("wep - " + uuid);
