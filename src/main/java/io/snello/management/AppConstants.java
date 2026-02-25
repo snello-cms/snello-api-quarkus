@@ -44,7 +44,7 @@ public class AppConstants {
     public static final String UUID_PATH_PARAM_MOGRIFY = UUID_PATH_PARAM + "/mogrify";
     public static final String UUID_PATH_PARAM_RESIZE = UUID_PATH_PARAM + "/resize";
     public static final String DOWNLOAD_PATH = "/download";
-    public static final String WEBP_PATH = "/wep";
+    public static final String WEBP_PATH = "/webp";
     public static final String SORT_PARAM = "_sort";
     public static final String DELETE_PARAM = "delete";
     public static final String LIMIT_PARAM = "_limit";
