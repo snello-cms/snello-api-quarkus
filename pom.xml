@@ -13,11 +13,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.31.3</quarkus.platform.version>
+        <quarkus.platform.version>3.31.4</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
         <commons-codec.version>1.18.0</commons-codec.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
+        <webpimageio.version>0.10.2</webpimageio.version>
         <minio-client.version>3.8.6</minio-client.version>
         <nashorn-version>15.7</nashorn-version>
     </properties>
@@ -98,6 +99,12 @@
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
             <version>${thumbnailator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.usefulness</groupId>
+            <artifactId>webp-imageio</artifactId>
+            <version>${webpimageio.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

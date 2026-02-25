@@ -88,6 +88,35 @@ public class DocumentServiceRs {
     }
 
     @GET
+    @Path(UUID_PATH_PARAM + WEBP_PATH)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response wep(@PathParam("uuid") @NotNull String uuid) throws Exception {
+        Log.info("wep - " + uuid);
+        Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
+        String path = (String) map.get(DOCUMENT_PATH);
+        String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
+        String filename = (String) map.get(DOCUMENT_NAME);
+        String formats = (String) map.get(FORMATS);
+        boolean itemExists = formats != null && formats.contains("wep");
+        if (itemExists) {
+            String duuid = uuid + "_wep";
+            String dpath = path.replace(uuid, duuid);
+            StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
+            return Response.ok(output)
+                    .header("Content-Disposition", "inline; filename=\"" + filename + "\"")
+                    .build();
+        } else {
+            imageEvent.fireAsync(new ImageEvent(uuid, "wep"));
+        }
+
+        StreamingOutput output = documentsService.streamingOutput(path, mimetype);
+        return Response.ok(output)
+                .header("Content-Disposition", "inline; filename=\"" + filename + "\"")
+                .build();
+    }
+
+    @GET
     @Path("/{uuid}/download/{name}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Consumes(MediaType.APPLICATION_JSON)

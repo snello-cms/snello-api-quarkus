@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -39,8 +40,41 @@ public class ImageService {
         }
         final String uuid = imageEvent.uuid;
         final String format = imageEvent.format;
+        if ("webp".equals(format)) {
+            webp(uuid);
+        } else {
+            //resize and upload to s3
+            resize(uuid, format);
+        }
+    }
+
+    @Transactional
+    public void webp(final String uuid) {
         //resize and upload to s3
-        resize(uuid, format);
+        try {
+            Map<String, Object> map = apiService.fetch(null, table, uuid, UUID);
+            String path = (String) map.get(DOCUMENT_PATH);
+            String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
+            if (map != null) {
+                String formats = (String) map.get(FORMATS);
+                boolean itemExists = formats != null && !formats.trim().isEmpty() && formats.contains("webp");
+                if (!itemExists) {
+                    String ruuid = uuid + "_webp";
+                    BufferedImage originalImg = downloadImageFromS3(path, mimetype);
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ImageIO.write(originalImg, "webp", outputStream);
+                    uploadImageToS3(ruuid, outputStream, map);
+                    if (formats != null && !formats.trim().isEmpty()) {
+                        map.put(FORMATS, formats + "," + "webp");
+                    } else {
+                        map.put(FORMATS, "webp");
+                    }
+                    apiService.merge(table, map, uuid, UUID);
+                }
+            }
+        } catch (Exception e) {
+            Log.error("Failed to create webp in ImageService: " + e);
+        }
     }
 
     @Transactional
