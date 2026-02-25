@@ -98,7 +98,7 @@ public class DocumentServiceRs {
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
         String filename = (String) map.get(DOCUMENT_NAME);
         String formats = (String) map.get(FORMATS);
-        boolean isConvertible = formats != null && (formats.contains("png") || formats.contains("jpg"));
+        boolean isConvertible = formats != null && (formats.toLowerCase().contains("png") || formats.toLowerCase().contains("jpg") || formats.toLowerCase().contains("jpeg"));
         boolean itemExists = formats != null && formats.contains("wep");
         if (itemExists) {
             String duuid = uuid + "_wep";
