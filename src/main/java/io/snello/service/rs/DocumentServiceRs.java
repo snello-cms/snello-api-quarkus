@@ -98,7 +98,8 @@ public class DocumentServiceRs {
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
         String filename = (String) map.get(DOCUMENT_NAME);
         String formats = (String) map.get(FORMATS);
-        boolean isConvertible = formats != null && (formats.toLowerCase().contains("png") || formats.toLowerCase().contains("jpg") || formats.toLowerCase().contains("jpeg"));
+        boolean isConvertible = (mimetype != null && (mimetype.toLowerCase().contains("png") || mimetype.toLowerCase().contains("jpg") || mimetype.toLowerCase().contains("jpeg"))) ||
+                                (filename != null && (filename.toLowerCase().contains(".png") || filename.toLowerCase().contains(".jpg") || filename.toLowerCase().contains(".jpeg")));
         boolean itemExists = formats != null && formats.contains("wep");
         if (itemExists) {
             String duuid = uuid + "_wep";
@@ -108,9 +109,10 @@ public class DocumentServiceRs {
                     .header("Content-Disposition", "inline; filename=\"" + filename + "\"")
                     .build();
         } else if (isConvertible) {
+            Log.info("WEBP - isConvertible:" + isConvertible);
             imageEvent.fireAsync(new ImageEvent(uuid, "wep"));
         } else {
-            Log.info("NO WEBP - isConvertible:" + isConvertible + ",itemExists:" + itemExists + ", mimetype: " + mimetype);
+            Log.info("NO WEBP - isConvertible:" + isConvertible + ",itemExists:" + itemExists + ", mimetype: " + mimetype + ", filename: " + filename);
         }
 
         StreamingOutput output = documentsService.streamingOutput(path, mimetype);
