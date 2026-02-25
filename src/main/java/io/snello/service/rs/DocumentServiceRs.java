@@ -91,8 +91,8 @@ public class DocumentServiceRs {
     @Path(UUID_PATH_PARAM + WEBP_PATH)
     @Consumes("*/*")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response wep(@PathParam("uuid") @NotNull String uuid) throws Exception {
-        Log.info("wep - " + uuid);
+    public Response webp(@PathParam("uuid") @NotNull String uuid) throws Exception {
+        Log.info("webp - " + uuid);
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
@@ -100,19 +100,19 @@ public class DocumentServiceRs {
         String formats = (String) map.get(FORMATS);
         boolean isConvertible = (mimetype != null && (mimetype.toLowerCase().contains("png") || mimetype.toLowerCase().contains("jpg") || mimetype.toLowerCase().contains("jpeg"))) ||
                                 (filename != null && (filename.toLowerCase().contains(".png") || filename.toLowerCase().contains(".jpg") || filename.toLowerCase().contains(".jpeg")));
-        boolean itemExists = formats != null && formats.contains("wep");
+        boolean itemExists = formats != null && formats.contains("webp");
         if (itemExists) {
-            String duuid = uuid + "_wep";
+            String duuid = uuid + "_webp";
             String dpath = path.replace(uuid, duuid);
             StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
             return Response.ok(output)
                     .header("Content-Disposition", "inline; filename=\"" + filename + "\"")
                     .build();
         } else if (isConvertible) {
-            Log.info("WEBP - isConvertible:" + isConvertible);
-            imageEvent.fireAsync(new ImageEvent(uuid, "wep"));
+            Log.info("webp - isConvertible:" + isConvertible);
+            imageEvent.fireAsync(new ImageEvent(uuid, "webp"));
         } else {
-            Log.info("NO WEBP - isConvertible:" + isConvertible + ",itemExists:" + itemExists + ", mimetype: " + mimetype + ", filename: " + filename);
+            Log.info("NO webp - isConvertible:" + isConvertible + ",itemExists:" + itemExists + ", mimetype: " + mimetype + ", filename: " + filename);
         }
 
         StreamingOutput output = documentsService.streamingOutput(path, mimetype);
