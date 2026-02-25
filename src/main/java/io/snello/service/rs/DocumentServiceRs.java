@@ -98,16 +98,19 @@ public class DocumentServiceRs {
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
         String filename = (String) map.get(DOCUMENT_NAME);
         String formats = (String) map.get(FORMATS);
+        boolean isConvertible = formats != null && (formats.contains("png") || formats.contains("jpg"));
         boolean itemExists = formats != null && formats.contains("wep");
-        if (itemExists) {
+        if (isConvertible && itemExists) {
             String duuid = uuid + "_wep";
             String dpath = path.replace(uuid, duuid);
             StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
             return Response.ok(output)
                     .header("Content-Disposition", "inline; filename=\"" + filename + "\"")
                     .build();
-        } else {
+        } else if (isConvertible) {
             imageEvent.fireAsync(new ImageEvent(uuid, "wep"));
+        } else {
+            Log.info("NO WEBP - isConvertible:" + isConvertible + ",itemExists:" + itemExists + ", mimetype: " + mimetype);
         }
 
         StreamingOutput output = documentsService.streamingOutput(path, mimetype);
