@@ -100,7 +100,7 @@ public class DocumentServiceRs {
         String formats = (String) map.get(FORMATS);
         boolean isConvertible = formats != null && (formats.contains("png") || formats.contains("jpg"));
         boolean itemExists = formats != null && formats.contains("wep");
-        if (isConvertible && itemExists) {
+        if (itemExists) {
             String duuid = uuid + "_wep";
             String dpath = path.replace(uuid, duuid);
             StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
