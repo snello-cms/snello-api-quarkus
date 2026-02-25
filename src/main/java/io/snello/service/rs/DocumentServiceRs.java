@@ -106,7 +106,7 @@ public class DocumentServiceRs {
             String dpath = path.replace(uuid, duuid);
             StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
             return Response.ok(output)
-                    .header("Content-Disposition", "inline; filename=\"" + uuid + "webp" + "\"")
+                    .header("Content-Disposition", "inline; filename=\"" + uuid + ".webp" + "\"")
                     .build();
         } else if (isConvertible) {
             Log.info("webp - isConvertible:" + isConvertible);
