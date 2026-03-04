@@ -19,7 +19,7 @@ public class SnelloTenantResolver implements TenantResolver {
         String authorizationHeader = context.request().getHeader("Authorization");
         String issuer = JwtUtils.getIssuer(objectMapper, authorizationHeader);
         Log.info("issuer: " + issuer);
-        if (issuer.contains("snello")) {
+        if (issuer.contains("accounts") || issuer.contains("snello")) {
             String tenant = "snello";
             Log.info("tenant resolved as: " + tenant);
             return tenant;
