@@ -123,9 +123,8 @@ public class ApiService {
                     select_fields = metadata.select_fields;
                 }
             } else {
-                System.out.println("uso i httpParameters:" + select_fields);
+                Log.info("uso i httpParameters:" + select_fields);
             }
-
             if (metadata.alias_table != null && !metadata.alias_table.trim().isEmpty()) {
                 table = metadata.alias_table;
                 alias_condition = metadata.alias_condition;

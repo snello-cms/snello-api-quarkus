@@ -1,5 +1,6 @@
 package io.snello.service.repository.postgresql;
 
+import io.quarkus.logging.Log;
 import io.snello.util.SqlHelper;
 
 import java.sql.*;
@@ -98,7 +99,7 @@ public class PostgresqlSqlUtils {
                     }
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
     }
@@ -124,7 +125,7 @@ public class PostgresqlSqlUtils {
                     }
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
     }
@@ -135,7 +136,7 @@ public class PostgresqlSqlUtils {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return PostgresqlSqlUtils.list(resultSet);
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
         return null;

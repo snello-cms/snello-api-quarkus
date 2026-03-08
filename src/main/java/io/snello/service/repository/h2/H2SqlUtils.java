@@ -1,5 +1,6 @@
 package io.snello.service.repository.h2;
 
+import io.quarkus.logging.Log;
 import io.snello.util.SqlHelper;
 
 import java.sql.*;
@@ -98,7 +99,7 @@ public class H2SqlUtils {
                     }
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
     }
@@ -124,7 +125,7 @@ public class H2SqlUtils {
                     }
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
     }
@@ -135,7 +136,7 @@ public class H2SqlUtils {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return H2SqlUtils.list(resultSet);
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
         return null;

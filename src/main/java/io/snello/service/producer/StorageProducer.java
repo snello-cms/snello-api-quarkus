@@ -29,7 +29,7 @@ public class StorageProducer {
     MinioClient minioClient;
 
     public StorageProducer() {
-        System.out.println("StorageProducer");
+        Log.info("StorageProducer");
     }
 
     @Produces

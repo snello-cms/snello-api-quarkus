@@ -9,7 +9,7 @@ import java.io.File;
 public class SnelloHelloTest {
 
     @Test
-    public void testHelloEndpoint() throws Exception{
+    public void testHelloEndpoint() throws Exception {
         BufferedImage png = ImageIO.read(new File("docs/snello1.png"));
         BufferedImage jpeg = ImageIO.read(new File("docs/snello3.jpeg"));
         BufferedImage svg = ImageIO.read(new File("docs/snello-logo.svg"));
@@ -17,8 +17,18 @@ public class SnelloHelloTest {
 
         ImageIO.write(png, "webp", new File("docs/webp/snello1.webp"));
         ImageIO.write(jpeg, "webp", new File("docs/webp/snello3.webp"));
-      //  ImageIO.write(svg, "webp", new File("docs/webp/snello-logo.webp"));
-       // ImageIO.write(avif, "webp", new File("docs/webp/avif.webp"));
+        //  ImageIO.write(svg, "webp", new File("docs/webp/snello-logo.webp"));
+        // ImageIO.write(avif, "webp", new File("docs/webp/avif.webp"));
+    }
+
+
+    @Test
+    public void purgeTest() {
+        String table = "kayaks&iss";
+        if (table.endsWith("&iss")) {
+            System.out.println(table.replace("&iss", ""));
+        }
+
     }
 
 

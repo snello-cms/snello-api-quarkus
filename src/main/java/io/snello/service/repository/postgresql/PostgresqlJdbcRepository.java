@@ -64,7 +64,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
 
     public long count(String table, String alias_condition, MultivaluedMap<String, String> httpParameters, List<Condition> conditions) throws Exception {
         StringBuffer where = new StringBuffer();
-        StringBuffer select = new StringBuffer();
+        StringBuilder select = new StringBuilder();
         List<Object> in = new LinkedList<>();
         select.append(COUNT_QUERY);
         if (alias_condition != null)
@@ -78,10 +78,9 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         if (!withCondition) {
             ParamUtils.where(httpParameters, where, in);
         }
-        try (
-                Connection connection = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
 
-            if (where.length() > 0) {
+            if (!where.isEmpty()) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
             Log.info("query: " + select + PostgresqlSqlUtils.escape(table) + where);
@@ -136,8 +135,8 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
 
     public List<Map<String, Object>> list(String table, String select_fields, String alias_condition, MultivaluedMap<String, String> httpParameters, List<Condition> conditions, String sort, int limit, int start) throws Exception {
         StringBuffer where = new StringBuffer();
-        StringBuffer order_limit = new StringBuffer();
-        StringBuffer select = new StringBuffer();
+        StringBuilder order_limit = new StringBuilder();
+        StringBuilder select = new StringBuilder();
         List<Object> in = new LinkedList<>();
         select.append(_SELECT_);
         if (select_fields != null) {
@@ -305,7 +304,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
             }
             Log.info("FETCH QUERY: " + "_SELECT_ * _FROM_ " + PostgresqlSqlUtils.escape(table) + " _WHERE_ " + table_key + " = ?");
             PreparedStatement preparedStatement = connection.prepareStatement(_SELECT_ + select_fields + _FROM_ + PostgresqlSqlUtils.escape(table)
-                    + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
+                                                                              + _WHERE_ + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return PostgresqlSqlUtils.single(resultSet);
@@ -318,7 +317,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         try (Connection connection = dataSource.getConnection()) {
             Log.info("DELETE QUERY: " + DELETE_FROM + table + _WHERE_ + table_key + " = ? ");
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM + PostgresqlSqlUtils.escape(table) + _WHERE_
-                    + PostgresqlSqlUtils.escape(table_key) + " = ?");
+                                                                              + PostgresqlSqlUtils.escape(table_key) + " = ?");
             preparedStatement.setObject(1, uuid);
             int result = preparedStatement.executeUpdate();
             return result > 0;

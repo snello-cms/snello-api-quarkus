@@ -411,7 +411,7 @@ public class MysqlJdbcRepository implements JdbcRepository {
     private String getDbName() throws Exception {
         ResultSet rs = dataSource.getConnection().getMetaData().getSchemas();
         while (rs.next()) {
-            System.out.println(rs.getString(1));
+            Log.info(rs.getString(1));
             return rs.getString(1);
         }
         throw new Exception();

@@ -171,8 +171,8 @@ public class ConditionUtils {
             Object obj = httpParameters.get(param).get(0);
             in.add(obj);
         }
-        if (where.length() > 0 && condition.separator != null && !condition.separator.trim().isEmpty()) {
-            where.append(" " + condition.separator + " ");
+        if (!where.isEmpty() && condition.separator != null && !condition.separator.trim().isEmpty()) {
+            where.append(" ").append(condition.separator).append(" ");
         }
         where.append(condition.sub_query);
     }

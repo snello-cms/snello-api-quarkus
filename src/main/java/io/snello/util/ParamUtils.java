@@ -103,13 +103,13 @@ public class ParamUtils {
                 continue;
             }
             if (key_value.getValue() != null && key_value.getValue().size() > 0 && key_value.getValue().get(0) != null
-                    && !key_value.getValue().get(0).trim().isEmpty()) {
+                && !key_value.getValue().get(0).trim().isEmpty()) {
                 value = key_value.getValue().get(0);
             } else {
                 // NN = "_nn";
                 // _NN = " NOT NULL ";
                 if (key.endsWith(NN)) {
-                    if (where.length() > 0) {
+                    if (!where.isEmpty()) {
                         where.append(AND);
                     }
                     where.append(key.substring(0, key.length() - NN.length()));
@@ -119,7 +119,7 @@ public class ParamUtils {
                 }
 
                 if (key.endsWith(INN)) {
-                    if (where.length() > 0) {
+                    if (!where.isEmpty()) {
                         where.append(AND);
                     }
                     where.append(key.substring(0, key.length() - INN.length()));
@@ -132,7 +132,7 @@ public class ParamUtils {
 
             if (key.endsWith(IN)) {
                 try {
-                    if (where.length() > 0) {
+                    if (!where.isEmpty()) {
                         where.append(AND);
                     }
                     // conn.prepareStatement("select * from employee where id in (?)");
@@ -285,5 +285,12 @@ public class ParamUtils {
             where.append(key).append(EQU).append(" ? ").append(SPACE);
             in.add(value);
         }
+    }
+
+    public static String purgeIss(String name) {
+        if (name != null && name.endsWith("&iss")) {
+            return name.replace("&iss", "");
+        }
+        return name;
     }
 }

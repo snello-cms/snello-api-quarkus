@@ -1,5 +1,7 @@
 package io.snello.util;
 
+import io.quarkus.logging.Log;
+
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.*;
@@ -194,7 +196,7 @@ public class SqlHelper {
 //            }
 
         } catch (RuntimeException e) {
-            System.out.println(e.getCause());
+            Log.info(e.getCause());
         }
 
         // unknown

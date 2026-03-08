@@ -25,12 +25,10 @@ public class MailProducer {
 
     @Produces
     public MailService db() throws Exception {
-        System.out.println("mailtype: " + mailtype);
-        switch (mailtype) {
-            case "smtp":
-                return new SmtpMailService(mailer);
-            default:
-                throw new Exception("no mailtype");
+        Log.info("mailtype: " + mailtype);
+        if (mailtype.equals("smtp")) {
+            return new SmtpMailService(mailer);
         }
+        throw new Exception("no mailtype");
     }
 }

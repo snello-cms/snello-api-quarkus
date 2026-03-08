@@ -86,7 +86,7 @@ public final class MavenWrapperDownloader {
 
     private static void log(String msg) {
         if (VERBOSE) {
-            System.out.println(msg);
+            Log.info(msg);
         }
     }
 

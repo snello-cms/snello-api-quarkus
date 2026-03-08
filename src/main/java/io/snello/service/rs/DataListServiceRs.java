@@ -2,6 +2,7 @@ package io.snello.service.rs;
 
 import io.snello.service.MetadataService;
 
+import io.snello.util.ParamUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -30,18 +31,21 @@ public class DataListServiceRs {
     @GET
     @Path("/metadata/{name}")
     public Response metadata(@PathParam("name") @NotNull String name) throws Exception {
+        name = ParamUtils.purgeIss(name);
         return ok(metadataService.metadata(name)).build();
     }
 
     @GET
     @Path("/metadata/{name}/fielddefinitions")
     public Response fielddefinitions(@PathParam("name") @NotNull String name) throws Exception {
+        name = ParamUtils.purgeIss(name);
         return ok(metadataService.fielddefinitions(name)).build();
     }
 
     @GET
     @Path("/metadata/{name}/condition")
     public Response conditions(@PathParam("name") @NotNull String name) throws Exception {
+        name = ParamUtils.purgeIss(name);
         return ok(metadataService.conditions(name)).build();
     }
 

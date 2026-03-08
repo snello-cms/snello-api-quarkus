@@ -1,5 +1,6 @@
 package io.snello.service.repository.mysql;
 
+import io.quarkus.logging.Log;
 import io.snello.util.SqlHelper;
 
 import java.sql.*;
@@ -98,7 +99,7 @@ public class MysqlSqlUtils {
                     }
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
     }
@@ -124,7 +125,7 @@ public class MysqlSqlUtils {
                     }
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
     }
@@ -135,7 +136,7 @@ public class MysqlSqlUtils {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return MysqlSqlUtils.list(resultSet);
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                Log.info(e.getMessage());
             }
         }
         return null;
