@@ -34,11 +34,13 @@ public class Metadata {
     public List<FieldDefinition> fields;
     public List<Condition> conditions;
 
+    public boolean api_protected;
+    public String username_field;
+
     // la tabella esiste e non deve essere gestita da SNELLO
     public boolean already_exist;
     //la tabella VA CREATA E GESTISTA DA SNELLO
     public boolean created;
-
 
 
     public Metadata(String table_name, String table_key, String creation_query, String order_by) {
@@ -60,25 +62,27 @@ public class Metadata {
     @Override
     public String toString() {
         return "Metadata{" +
-                "uuid='" + uuid + '\'' +
-                ", table_name='" + table_name + '\'' +
-                ", select_fields='" + select_fields + '\'' +
-                ", search_fields='" + search_fields + '\'' +
-                ", description='" + description + '\'' +
-                ", alias_table='" + alias_table + '\'' +
-                ", alias_condition='" + alias_condition + '\'' +
-                ", table_key='" + table_key + '\'' +
-                ", table_key_type='" + table_key_type + '\'' +
-                ", table_key_addition='" + table_key_addition + '\'' +
-                ", creation_query='" + creation_query + '\'' +
-                ", order_by='" + order_by + '\'' +
-                ", tab_groups='" + tab_groups + '\'' +
-                ", icon='" + icon + '\'' +
-                ", fields='" + fields + '\'' +
-                ", conditions='" + conditions + '\'' +
-                ", already_exist='" + already_exist + '\'' +
-                ", created='" + created + '\'' +
-                '}';
+               "uuid='" + uuid + '\'' +
+               ", table_name='" + table_name + '\'' +
+               ", select_fields='" + select_fields + '\'' +
+               ", search_fields='" + search_fields + '\'' +
+               ", description='" + description + '\'' +
+               ", alias_table='" + alias_table + '\'' +
+               ", alias_condition='" + alias_condition + '\'' +
+               ", table_key='" + table_key + '\'' +
+               ", table_key_type='" + table_key_type + '\'' +
+               ", table_key_addition='" + table_key_addition + '\'' +
+               ", creation_query='" + creation_query + '\'' +
+               ", order_by='" + order_by + '\'' +
+               ", tab_groups='" + tab_groups + '\'' +
+               ", icon='" + icon + '\'' +
+               ", fields='" + fields + '\'' +
+               ", conditions='" + conditions + '\'' +
+               ", already_exist='" + already_exist + '\'' +
+               ", created='" + created + '\'' +
+               ", api_protected='" + api_protected + '\'' +
+               ", username_field='" + username_field + '\'' +
+               '}';
     }
 
 
@@ -132,6 +136,12 @@ public class Metadata {
         if (map.get("created") instanceof Boolean) {
             metadata.created = (Boolean) map.get("created");
         }
+        if (map.get("api_protected") instanceof Boolean) {
+            metadata.api_protected = (Boolean) map.get("api_protected");
+        }
+        if (map.get("username_field") instanceof String) {
+            metadata.username_field = (String) map.get("username_field");
+        }
         return metadata;
     }
 
@@ -177,8 +187,12 @@ public class Metadata {
         if (this.icon != null) {
             map.put("icon", this.icon);
         }
+        if (this.username_field != null) {
+            map.put("username_field", this.username_field);
+        }
         map.put("already_exist", this.already_exist);
         map.put("created", this.created);
+        map.put("api_protected", this.api_protected);
 
         return map;
     }

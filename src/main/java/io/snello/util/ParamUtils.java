@@ -287,10 +287,4 @@ public class ParamUtils {
         }
     }
 
-    public static String purgeIss(String name) {
-        if (name != null && name.endsWith("&iss")) {
-            return name.replace("&iss", "");
-        }
-        return name;
-    }
 }

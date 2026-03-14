@@ -2,6 +2,7 @@ package io.snello.service;
 
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
+import io.quarkus.security.identity.SecurityIdentity;
 import io.snello.model.Condition;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
@@ -36,6 +37,9 @@ public class ApiService {
 
     @Inject
     Event<DbCreatedEvent> eventCreatedPublisher;
+
+    @Inject
+    SecurityIdentity securityIdentity;
 
     public ApiService() {
     }

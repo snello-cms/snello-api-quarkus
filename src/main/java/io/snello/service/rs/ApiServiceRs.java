@@ -44,7 +44,6 @@ public class ApiServiceRs {
                          @QueryParam(SORT_PARAM) String sort,
                          @QueryParam(LIMIT_PARAM) String limit,
                          @QueryParam(START_PARAM) String start) throws Exception {
-        table = ParamUtils.purgeIss(table);
         if (sort != null)
             Log.info(SORT_DOT_DOT + sort);
         if (limit != null)
@@ -66,7 +65,6 @@ public class ApiServiceRs {
     public Response fetch(@NotNull @PathParam("table") String table,
                           @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());
-        table = ParamUtils.purgeIss(table);
         String key = apiService.table_key(table);
         return ok(apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key)).build();
     }
@@ -81,7 +79,6 @@ public class ApiServiceRs {
                         @Null @QueryParam(LIMIT_PARAM) String limit,
                         @Null @QueryParam(START_PARAM) String start) throws Exception {
         debug(GET.class.getName());
-        table = ParamUtils.purgeIss(table);
         if (path == null) {
             throw new Exception(MSG_PATH_IS_EMPTY);
         }
@@ -117,7 +114,6 @@ public class ApiServiceRs {
     @Path(TABLE_PATH_PARAM)
     public Response post(Map<String, Object> map,
                          @NotNull @PathParam("table") String table) throws Exception {
-        table = ParamUtils.purgeIss(table);
         Metadata metadata = apiService.metadataWithFields(table);
         String key = metadata.table_key;
         TableKeyUtils.generateUUid(map, metadata, apiService);
