@@ -46,7 +46,6 @@ public class ApiServiceRs {
         if (limit != null) Log.info(LIMIT_DOT_DOT + limit);
         if (start != null) Log.info(START_DOT_DOT + start);
         debug(GET.class.getName());
-        Metadata metadata = apiService.metadataWithFields(table);
         int l = limit == null ? 10 : Integer.valueOf(limit);
         int s = start == null ? 0 : Integer.valueOf(start);
         long count = apiService.count(table, uriInfo);
