@@ -46,8 +46,11 @@ public class ApiServiceRs {
         if (limit != null) Log.info(LIMIT_DOT_DOT + limit);
         if (start != null) Log.info(START_DOT_DOT + start);
         debug(GET.class.getName());
-        int l = limit == null ? 10 : Integer.valueOf(limit);
-        int s = start == null ? 0 : Integer.valueOf(start);
+        int l = limit == null ? 10 : Integer.parseInt(limit);
+        int s = start == null ? 0 : Integer.parseInt(start);
+        if (apiService.metadata(table) != null) {
+
+        }
         long count = apiService.count(table, uriInfo);
         return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s)).header(SIZE_HEADER_PARAM, "" + count).header(TOTAL_COUNT_HEADER_PARAM, "" + count).build();
     }
@@ -58,9 +61,9 @@ public class ApiServiceRs {
     public Response fetch(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());
         String key = apiService.table_key(table);
-        Metadata metadata = apiService.metadataWithFields(table);
+        Metadata metadata = apiService.metadata(table);
         var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
-        if (metadata.api_protected) {
+        if (metadata != null && metadata.api_protected) {
             if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
                 throw new Exception("Unauthorized");
             }
@@ -73,7 +76,7 @@ public class ApiServiceRs {
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM + EXTRA_PATH_PARAM)
     public Response get(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid, @NotNull @PathParam("path") String path, @Null @QueryParam(SORT_PARAM) String sort, @Null @QueryParam(LIMIT_PARAM) String limit, @Null @QueryParam(START_PARAM) String start) throws Exception {
         debug(GET.class.getName());
-        Metadata metadata = apiService.metadataWithFields(table);
+        Metadata metadata = apiService.metadata(table);
         if (path == null) {
             throw new Exception(MSG_PATH_IS_EMPTY);
         }
@@ -95,7 +98,7 @@ public class ApiServiceRs {
                 } else {
                     parametersMap = new MultivaluedHashMap<>();
                 }
-                if (metadata.api_protected) {
+                if (metadata != null && metadata.api_protected) {
                     parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
                 }
                 return ok(apiService.list(pars[0], parametersMap, sort, Integer.valueOf(limit), Integer.valueOf(start))).build();
@@ -117,7 +120,7 @@ public class ApiServiceRs {
     @POST
     @Path(TABLE_PATH_PARAM)
     public Response post(Map<String, Object> map, @NotNull @PathParam("table") String table) throws Exception {
-        Metadata metadata = apiService.metadataWithFields(table);
+        Metadata metadata = apiService.metadata(table);
         String key = metadata.table_key;
         if (metadata.api_protected) {
             map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
@@ -150,8 +153,8 @@ public class ApiServiceRs {
     @PUT
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
     public Response put(Map<String, Object> map, @NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
-        Metadata metadata = apiService.metadataWithFields(table);
-        boolean renewSlug = TableKeyUtils.isSlug(apiService.metadata(table));
+        Metadata metadata = apiService.metadata(table);
+        boolean renewSlug = TableKeyUtils.isSlug(metadata);
         String key = apiService.table_key(table);
         if (renewSlug) {
             String fieldSluggable = apiService.slugField(table);
@@ -160,7 +163,7 @@ public class ApiServiceRs {
             Log.info("toSlugValue: " + toSlugValue + ", old slug: " + uuid);
             if (!uuid.equals(slugged)) {
                 Log.info("renew slug");
-                TableKeyUtils.generateUUid(map, apiService.metadata(table), apiService);
+                TableKeyUtils.generateUUid(map, metadata, apiService);
             } else {
                 Log.info(" slug is the same!!");
             }
