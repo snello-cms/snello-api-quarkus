@@ -48,8 +48,15 @@ public class ApiServiceRs {
         debug(GET.class.getName());
         int l = limit == null ? 10 : Integer.parseInt(limit);
         int s = start == null ? 0 : Integer.parseInt(start);
-        if (apiService.metadata(table) != null) {
-
+        Metadata metadata = apiService.metadata(table);
+        if (metadata != null && metadata.api_protected) {
+            MultivaluedMap<String, String> parametersMap = null;
+            if (uriInfo.getQueryParameters() != null) {
+                parametersMap = uriInfo.getQueryParameters();
+            } else {
+                parametersMap = new MultivaluedHashMap<>();
+            }
+            parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
         }
         long count = apiService.count(table, uriInfo);
         return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s)).header(SIZE_HEADER_PARAM, "" + count).header(TOTAL_COUNT_HEADER_PARAM, "" + count).build();
