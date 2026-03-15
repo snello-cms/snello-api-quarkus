@@ -50,7 +50,7 @@ public class PostgresqlSqlUtils {
                     values.add(PARAM);
                 }
         );
-        return columns.merge(values).toString();
+        return columns.toString() + values.toString();
     }
 
     public static String update(String table, Map<String, Object> params, Map<String, Object> keys, List<Object> in) {
