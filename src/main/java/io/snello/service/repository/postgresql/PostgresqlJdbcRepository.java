@@ -385,6 +385,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         StringBuffer sb = new StringBuffer(" CREATE TABLE " + escape(metadata.table_name) + " (");
         switch (metadata.table_key_type) {
             case "uuid":
+            case "slug":
                 sb.append(escape(metadata.table_key) + " VARCHAR(50) NOT NULL ");
                 break;
             case "autoincrement":
