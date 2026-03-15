@@ -190,7 +190,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
         }
         try (Connection connection = dataSource.getConnection()) {
 
-            if (where.length() > 0) {
+            if (!where.isEmpty()) {
                 where = new StringBuffer(_WHERE_).append(where);
             }
             Log.info("LIST query: " + select.toString() + PostgresqlSqlUtils.escape(table) + where + order_limit);
@@ -242,7 +242,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
             }
         }
         try (Connection connection = dataSource.getConnection()) {
-            if (where.length() > 0 && !select.toString().contains(_WHERE_)) {
+            if (!where.isEmpty() && !select.toString().contains(_WHERE_)) {
                 where = new StringBuffer(_WHERE_).append(where);
             } else {
                 where = new StringBuffer(where);

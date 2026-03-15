@@ -95,6 +95,8 @@ public class PostgresqlConstants {
                                                   "  order_by varchar(255) DEFAULT NULL,\n" +
                                                   "  tab_groups varchar(255) DEFAULT NULL,\n" +
                                                   "  already_exist BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                                                  "  api_protected BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                                                  "  username_field varchar(255) DEFAULT NULL,\n" +
                                                   "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                                                   "  PRIMARY KEY (uuid)\n" +
                                                   ") ";

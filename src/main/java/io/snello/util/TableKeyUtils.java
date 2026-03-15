@@ -26,7 +26,6 @@ public class TableKeyUtils {
                 slug(map, metadata, apiService);
                 return;
             default:
-                return;
         }
     }
 
