@@ -383,10 +383,15 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
     @Override
     public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) {
         StringBuffer sb = new StringBuffer(" CREATE TABLE " + escape(metadata.table_name) + " (");
-        if (metadata.table_key_type.equals("autoincrement")) {
-            sb.append(escape(metadata.table_key) + " SERIAL ");
-        } else {
-            sb.append(escape(metadata.table_key) + " VARCHAR(50) NOT NULL ");
+        switch (metadata.table_key_type) {
+            case "uuid":
+                sb.append(escape(metadata.table_key) + " VARCHAR(50) NOT NULL ");
+                break;
+            case "autoincrement":
+                sb.append(escape(metadata.table_key) + " SERIAL ");
+                break;
+            case "userdefined":
+            default:
         }
 
         for (FieldDefinition fieldDefinition : fields) {
