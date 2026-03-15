@@ -383,6 +383,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
     @Override
     public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) {
         StringBuffer sb = new StringBuffer(" CREATE TABLE " + escape(metadata.table_name) + " (");
+        boolean escape = false;
         switch (metadata.table_key_type) {
             case "uuid":
             case "slug":
@@ -393,13 +394,20 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 break;
             case "userdefined":
             default:
+                escape = true;
         }
 
         for (FieldDefinition fieldDefinition : fields) {
-            if (fieldDefinition.sql_definition != null && !fieldDefinition.sql_definition.trim().isEmpty()) {
-                sb.append(",").append(fieldDefinition.sql_definition);
+            if (escape) {
+                // skip the first comma
+                escape = false;
             } else {
-                sb.append(",").append(fieldDefinition2Sql(fieldDefinition));
+                sb.append(",");
+            }
+            if (fieldDefinition.sql_definition != null && !fieldDefinition.sql_definition.trim().isEmpty()) {
+                sb.append(fieldDefinition.sql_definition);
+            } else {
+                sb.append(fieldDefinition2Sql(fieldDefinition));
             }
             if ("multijoin".equals(fieldDefinition.type)) {
                 String join_table_name = metadata.table_name + "_" + fieldDefinition.join_table_name;
