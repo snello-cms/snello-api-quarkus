@@ -130,6 +130,10 @@ public class ApiServiceRs {
         Metadata metadata = apiService.metadata(table);
         String key = metadata.table_key;
         if (metadata.api_protected) {
+            Log.info("api protected: " + securityContext.getUserPrincipal().getName());
+            Log.info("user roles admin: " + securityContext.isUserInRole("admin"));
+            Log.info("user roles user: " + securityContext.isUserInRole("user"));
+            Log.info("user roles manager: " + securityContext.isUserInRole("manager"));
             map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
         }
         TableKeyUtils.generateUUid(map, metadata, apiService);
