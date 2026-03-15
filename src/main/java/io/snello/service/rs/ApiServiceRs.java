@@ -52,7 +52,7 @@ public class ApiServiceRs {
         if (metadata != null && metadata.api_protected) {
             MultivaluedMap<String, String> parametersMap = null;
             if (uriInfo.getQueryParameters() != null) {
-                parametersMap = uriInfo.getQueryParameters();
+                parametersMap = new MultivaluedHashMap<>(uriInfo.getQueryParameters());
             } else {
                 parametersMap = new MultivaluedHashMap<>();
             }
@@ -101,7 +101,7 @@ public class ApiServiceRs {
             } else {
                 MultivaluedMap<String, String> parametersMap = null;
                 if (uriInfo.getQueryParameters() != null) {
-                    parametersMap = uriInfo.getQueryParameters();
+                    parametersMap = new MultivaluedHashMap<>(uriInfo.getQueryParameters());
                 } else {
                     parametersMap = new MultivaluedHashMap<>();
                 }
