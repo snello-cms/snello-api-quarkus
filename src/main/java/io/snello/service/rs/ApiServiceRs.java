@@ -56,7 +56,10 @@ public class ApiServiceRs {
             } else {
                 parametersMap = new MultivaluedHashMap<>();
             }
-            parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
+            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
+                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
+            }
         }
         long count = apiService.count(table, uriInfo);
         return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s)).header(SIZE_HEADER_PARAM, "" + count).header(TOTAL_COUNT_HEADER_PARAM, "" + count).build();
@@ -71,8 +74,11 @@ public class ApiServiceRs {
         Metadata metadata = apiService.metadata(table);
         var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
         if (metadata != null && metadata.api_protected) {
-            if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
-                throw new Exception("Unauthorized");
+            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
+                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
+                    throw new Exception("Unauthorized");
+                }
             }
         }
         return ok(result).build();
@@ -106,7 +112,10 @@ public class ApiServiceRs {
                     parametersMap = new MultivaluedHashMap<>();
                 }
                 if (metadata != null && metadata.api_protected) {
-                    parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
+                    if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
+                        || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                        parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
+                    }
                 }
                 return ok(apiService.list(pars[0], parametersMap, sort, Integer.valueOf(limit), Integer.valueOf(start))).build();
             }
@@ -132,9 +141,15 @@ public class ApiServiceRs {
         if (metadata != null && metadata.api_protected) {
             Log.info("api protected: " + securityContext.getUserPrincipal().getName());
             Log.info("user roles admin: " + securityContext.isUserInRole("admin"));
+            Log.info("user roles Admin: " + securityContext.isUserInRole("Admin"));
             Log.info("user roles user: " + securityContext.isUserInRole("user"));
+            Log.info("user roles User: " + securityContext.isUserInRole("User"));
             Log.info("user roles manager: " + securityContext.isUserInRole("manager"));
-            map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
+            Log.info("user roles Manager: " + securityContext.isUserInRole("Manager"));
+            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
+                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
+            }
         } else {
             Log.info("api NOT protected");
         }
@@ -182,7 +197,10 @@ public class ApiServiceRs {
             }
         }
         if (metadata.api_protected) {
-            map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
+            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
+                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
+            }
         }
         // CI VUOLE UNA TRANSAZIONE PER TENERE TUTTO INSIEME
         map = apiService.merge(table, map, uuid, key);
@@ -215,7 +233,19 @@ public class ApiServiceRs {
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
     public Response delete(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(DELETE.class.getName());
+        Metadata metadata = apiService.metadata(table);
         String key = apiService.table_key(table);
+        if (metadata != null && metadata.api_protected) {
+            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
+                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
+                if (metadata != null && metadata.api_protected) {
+                    if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
+                        throw new Exception("Unauthorized");
+                    }
+                }
+            }
+        }
         boolean result = apiService.delete(table, uuid, key);
         if (result) return ok().build();
         return serverError().build();
@@ -226,6 +256,8 @@ public class ApiServiceRs {
         Log.info("------------");
         Log.info("METHOD: " + method);
         Log.info("RELATIVE PATH: " + uriInfo.getPath());
+        Log.info("username: " +
+                 ((securityContext != null && securityContext.getUserPrincipal() != null) ? securityContext.getUserPrincipal().getName() : ""));
         uriInfo.getPathParameters().forEach((key, value) -> Log.info(key + ":" + value));
         Log.info("------------");
         Log.info("------------");
