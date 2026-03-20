@@ -267,7 +267,7 @@ public class ApiServiceRs {
 
 
     private void debugMe() {
-        if (securityContext == null) {
+        if (securityContext == null || securityContext.getUserPrincipal() == null) {
             Log.info("api not protected");
             return;
         }
