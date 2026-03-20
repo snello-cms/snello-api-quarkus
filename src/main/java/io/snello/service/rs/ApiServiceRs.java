@@ -46,6 +46,7 @@ public class ApiServiceRs {
         if (limit != null) Log.info(LIMIT_DOT_DOT + limit);
         if (start != null) Log.info(START_DOT_DOT + start);
         debug(GET.class.getName());
+        debugMe();
         int l = limit == null ? 10 : Integer.parseInt(limit);
         int s = start == null ? 0 : Integer.parseInt(start);
         Metadata metadata = apiService.metadata(table);
@@ -56,9 +57,10 @@ public class ApiServiceRs {
             } else {
                 parametersMap = new MultivaluedHashMap<>();
             }
-            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
-                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+            if (!isAdminOrManager()) {
                 parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
+            } else {
+                Log.info("admin or manager");
             }
         }
         long count = apiService.count(table, uriInfo);
@@ -70,15 +72,17 @@ public class ApiServiceRs {
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
     public Response fetch(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());
+        debugMe();
         String key = apiService.table_key(table);
         Metadata metadata = apiService.metadata(table);
         var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
         if (metadata != null && metadata.api_protected) {
-            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
-                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+            if (!isAdminOrManager()) {
                 if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
                     throw new Exception("Unauthorized");
                 }
+            } else {
+                Log.info("admin or manager");
             }
         }
         return ok(result).build();
@@ -89,6 +93,7 @@ public class ApiServiceRs {
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM + EXTRA_PATH_PARAM)
     public Response get(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid, @NotNull @PathParam("path") String path, @Null @QueryParam(SORT_PARAM) String sort, @Null @QueryParam(LIMIT_PARAM) String limit, @Null @QueryParam(START_PARAM) String start) throws Exception {
         debug(GET.class.getName());
+        debugMe();
         Metadata metadata = apiService.metadata(table);
         if (path == null) {
             throw new Exception(MSG_PATH_IS_EMPTY);
@@ -112,9 +117,10 @@ public class ApiServiceRs {
                     parametersMap = new MultivaluedHashMap<>();
                 }
                 if (metadata != null && metadata.api_protected) {
-                    if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
-                        || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+                    if (!isAdminOrManager()) {
                         parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
+                    } else {
+                        Log.info("admin or manager");
                     }
                 }
                 return ok(apiService.list(pars[0], parametersMap, sort, Integer.valueOf(limit), Integer.valueOf(start))).build();
@@ -136,19 +142,15 @@ public class ApiServiceRs {
     @POST
     @Path(TABLE_PATH_PARAM)
     public Response post(Map<String, Object> map, @NotNull @PathParam("table") String table) throws Exception {
+        debug(POST.class.getName());
+        debugMe();
         Metadata metadata = apiService.metadataWithFields(table);
         String key = metadata.table_key;
         if (metadata != null && metadata.api_protected) {
-            Log.info("api protected: " + securityContext.getUserPrincipal().getName());
-            Log.info("user roles admin: " + securityContext.isUserInRole("admin"));
-            Log.info("user roles Admin: " + securityContext.isUserInRole("Admin"));
-            Log.info("user roles user: " + securityContext.isUserInRole("user"));
-            Log.info("user roles User: " + securityContext.isUserInRole("User"));
-            Log.info("user roles manager: " + securityContext.isUserInRole("manager"));
-            Log.info("user roles Manager: " + securityContext.isUserInRole("Manager"));
-            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
-                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+            if (!isAdminOrManager()) {
                 map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
+            } else {
+                Log.info("admin or manager");
             }
         } else {
             Log.info("api NOT protected");
@@ -181,6 +183,8 @@ public class ApiServiceRs {
     @PUT
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
     public Response put(Map<String, Object> map, @NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
+        debug(PUT.class.getName());
+        debugMe();
         Metadata metadata = apiService.metadataWithFields(table);
         boolean renewSlug = TableKeyUtils.isSlug(metadata);
         String key = apiService.table_key(table);
@@ -197,9 +201,10 @@ public class ApiServiceRs {
             }
         }
         if (metadata.api_protected) {
-            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
-                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+            if (!isAdminOrManager()) {
                 map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
+            } else {
+                Log.info("admin or manager");
             }
         }
         // CI VUOLE UNA TRANSAZIONE PER TENERE TUTTO INSIEME
@@ -233,22 +238,42 @@ public class ApiServiceRs {
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
     public Response delete(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(DELETE.class.getName());
+        debugMe();
         Metadata metadata = apiService.metadata(table);
         String key = apiService.table_key(table);
         if (metadata != null && metadata.api_protected) {
-            if (!securityContext.isUserInRole("admin") || !securityContext.isUserInRole("Admin")
-                || !securityContext.isUserInRole("manager") || !securityContext.isUserInRole("Manager")) {
+            if (!isAdminOrManager()) {
                 var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
-                if (metadata != null && metadata.api_protected) {
-                    if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
-                        throw new Exception("Unauthorized");
-                    }
+                if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
+                    throw new Exception("Unauthorized");
                 }
+            } else {
+                Log.info("admin or manager");
             }
         }
         boolean result = apiService.delete(table, uuid, key);
         if (result) return ok().build();
         return serverError().build();
+    }
+
+
+    private boolean isAdminOrManager() {
+        return securityContext != null &&
+               (securityContext.isUserInRole("admin")
+                || securityContext.isUserInRole("Admin")
+                || securityContext.isUserInRole("manager")
+                || securityContext.isUserInRole("Manager"));
+    }
+
+
+    private void debugMe() {
+        Log.info("api protected: " + securityContext.getUserPrincipal().getName());
+        Log.info("user roles admin: " + securityContext.isUserInRole("admin"));
+        Log.info("user roles Admin: " + securityContext.isUserInRole("Admin"));
+        Log.info("user roles user: " + securityContext.isUserInRole("user"));
+        Log.info("user roles User: " + securityContext.isUserInRole("User"));
+        Log.info("user roles manager: " + securityContext.isUserInRole("manager"));
+        Log.info("user roles Manager: " + securityContext.isUserInRole("Manager"));
     }
 
 
