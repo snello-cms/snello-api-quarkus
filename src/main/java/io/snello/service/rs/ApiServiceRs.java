@@ -271,10 +271,10 @@ public class ApiServiceRs {
 
     private void debugMe() {
         if (securityContext == null || securityContext.getUserPrincipal() == null) {
-            Log.info("api not protected");
+            Log.info("securityContext is null");
             return;
         }
-        Log.info("api protected: " + securityContext.getUserPrincipal().getName());
+        Log.info("user principal name: " + securityContext.getUserPrincipal().getName());
         Log.info("user roles admin: " + securityContext.isUserInRole("admin"));
         Log.info("user roles Admin: " + securityContext.isUserInRole("Admin"));
         Log.info("user roles user: " + securityContext.isUserInRole("user"));
