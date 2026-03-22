@@ -65,7 +65,7 @@ public class ConditionUtils {
                         if ("AND".equals(conditionType)) break;
                         continue;
                     } else {
-                        value = httpParameters.get(keySimple1).get(0);
+                        value = httpParameters.get(keySimple1).getFirst();
                         if (value == null) {
                             if ("AND".equals(conditionType)) break;
                             continue;
@@ -77,7 +77,7 @@ public class ConditionUtils {
                         if ("AND".equals(conditionType)) break;
                         continue;
                     } else {
-                        value = httpParameters.get(keySimple2).get(0);
+                        value = httpParameters.get(keySimple2).getFirst();
                         if (value == null || value.trim().isEmpty()) {
                             if ("AND".equals(conditionType)) break;
                             continue;
@@ -92,7 +92,7 @@ public class ConditionUtils {
                         if ("AND".equals(conditionType)) break;
                         continue;
                     } else {
-                        value = httpParameters.get(keySimple3).get(0);
+                        value = httpParameters.get(keySimple3).getFirst();
                         if (value == null || Integer.valueOf(value) <= Integer.valueOf(value3)) {
                             if ("AND".equals(conditionType)) break;
                             continue;
@@ -107,7 +107,7 @@ public class ConditionUtils {
                         if ("AND".equals(conditionType)) break;
                         continue;
                     } else {
-                        value = httpParameters.get(keySimple3).get(0);
+                        value = httpParameters.get(keySimple3).getFirst();
                         if (value == null || Integer.valueOf(value) < Integer.valueOf(value3)) {
                             if ("AND".equals(conditionType)) break;
                             continue;
@@ -122,7 +122,7 @@ public class ConditionUtils {
                         if ("AND".equals(conditionType)) break;
                         continue;
                     } else {
-                        value = httpParameters.get(keySimple4).get(0);
+                        value = httpParameters.get(keySimple4).getFirst();
                         if (value == null || Integer.valueOf(value) >= Integer.valueOf(value4)) {
                             if ("AND".equals(conditionType)) break;
                             continue;
@@ -137,7 +137,7 @@ public class ConditionUtils {
                         if ("AND".equals(conditionType)) break;
                         continue;
                     } else {
-                        value = httpParameters.get(keySimple4).get(0);
+                        value = httpParameters.get(keySimple4).getFirst();
                         if (value == null || Integer.valueOf(value) > Integer.valueOf(value4)) {
                             if ("AND".equals(conditionType)) break;
                             continue;
@@ -168,7 +168,7 @@ public class ConditionUtils {
         //PERCHE VUOTARE IN??
         String[] params = condition.query_params.split(",|;");
         for (String param : params) {
-            Object obj = httpParameters.get(param).get(0);
+            Object obj = httpParameters.get(param).getFirst();
             in.add(obj);
         }
         if (!where.isEmpty() && condition.separator != null && !condition.separator.trim().isEmpty()) {

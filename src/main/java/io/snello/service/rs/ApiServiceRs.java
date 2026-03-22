@@ -64,7 +64,10 @@ public class ApiServiceRs {
             }
         }
         long count = apiService.count(table, uriInfo);
-        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s)).header(SIZE_HEADER_PARAM, "" + count).header(TOTAL_COUNT_HEADER_PARAM, "" + count).build();
+        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))
+                .header(SIZE_HEADER_PARAM, "" + count)
+                .header(TOTAL_COUNT_HEADER_PARAM, "" + count)
+                .build();
     }
 
 
