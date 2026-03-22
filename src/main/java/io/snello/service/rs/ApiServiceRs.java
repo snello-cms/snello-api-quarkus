@@ -64,10 +64,7 @@ public class ApiServiceRs {
             }
         }
         long count = apiService.count(table, uriInfo);
-        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))
-                .header(SIZE_HEADER_PARAM, "" + count)
-                .header(TOTAL_COUNT_HEADER_PARAM, "" + count)
-                .build();
+        return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s)).header(SIZE_HEADER_PARAM, "" + count).header(TOTAL_COUNT_HEADER_PARAM, "" + count).build();
     }
 
 
@@ -204,6 +201,10 @@ public class ApiServiceRs {
             }
         }
         if (metadata.api_protected) {
+            if (!isAuthenticated()) {
+                Log.info("Unauthorized");
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
             if (!isAdminOrManager()) {
                 map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
             } else {
@@ -259,13 +260,13 @@ public class ApiServiceRs {
         return serverError().build();
     }
 
+    private boolean isAuthenticated() {
+        return securityContext != null && securityContext.getUserPrincipal() != null;
+    }
+
 
     private boolean isAdminOrManager() {
-        return securityContext != null &&
-               (securityContext.isUserInRole("admin")
-                || securityContext.isUserInRole("Admin")
-                || securityContext.isUserInRole("manager")
-                || securityContext.isUserInRole("Manager"));
+        return securityContext != null && (securityContext.isUserInRole("admin") || securityContext.isUserInRole("Admin") || securityContext.isUserInRole("manager") || securityContext.isUserInRole("Manager"));
     }
 
 
@@ -288,8 +289,7 @@ public class ApiServiceRs {
         Log.info("------------");
         Log.info("METHOD: " + method);
         Log.info("RELATIVE PATH: " + uriInfo.getPath());
-        Log.info("username: " +
-                 ((securityContext != null && securityContext.getUserPrincipal() != null) ? securityContext.getUserPrincipal().getName() : ""));
+        Log.info("username: " + ((securityContext != null && securityContext.getUserPrincipal() != null) ? securityContext.getUserPrincipal().getName() : ""));
         uriInfo.getPathParameters().forEach((key, value) -> Log.info(key + ":" + value));
         Log.info("------------");
         Log.info("------------");
