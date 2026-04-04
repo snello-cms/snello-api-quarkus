@@ -23,20 +23,20 @@ public class PostgresqlFieldDefinitionUtils {
                     case "text":
                     case "password":
                     case "email":
-                        sb.append(escape(fieldDefinition.name)).append(" varchar(200)  NOT NULL ");
-                        if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
+                        sb.append(escape(fieldDefinition.name)).append(" varchar(200) default null ");
+                        if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(" DEFAULT '" + fieldDefinition.default_value + "' ");
                         }
                         return sb.toString();
                     case "number":
                         sb.append(fieldDefinition.name + " NUMERIC(10) ");
-                        if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
+                        if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(fieldDefinition.default_value + " ");
                         }
                         return sb.toString();
                     case "decimal":
                         sb.append(fieldDefinition.name + " DOUBLE PRECISION ");
-                        if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
+                        if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
                             sb.append(fieldDefinition.default_value + " ");
                         }
                         return sb.toString();
@@ -54,7 +54,7 @@ public class PostgresqlFieldDefinitionUtils {
                 return escape(fieldDefinition.name) + " time default null";
             case "checkbox":
                 sb.append(escape(fieldDefinition.name) + " boolean");
-                if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
+                if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
                     sb.append(" DEFAULT " + fieldDefinition.default_value + " ");
                 } else {
                     sb.append("  default false ");
