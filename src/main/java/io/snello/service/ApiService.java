@@ -57,6 +57,9 @@ public class ApiService {
 
     public Metadata metadataWithFields(String metadata_name) throws Exception {
         Metadata metadata = metadataService.metadataMap().get(metadata_name);
+        if (metadata == null) {
+            return null;
+        }
         metadata.fields = metadataService.fielddefinitions(metadata.table_name);
         return metadata;
     }

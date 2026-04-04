@@ -57,6 +57,10 @@ public class ApiServiceRs {
                 parametersMap = new MultivaluedHashMap<>();
             }
             if (!isAdminOrManager()) {
+                if (!isAuthenticated()) {
+                    Log.info("Unauthorized");
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
                 parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
             } else {
                 Log.info("admin or manager");
@@ -72,8 +76,11 @@ public class ApiServiceRs {
     public Response fetch(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());
         debugMe();
-        String key = apiService.table_key(table);
         Metadata metadata = apiService.metadata(table);
+        if (metadata == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        String key = metadata.table_key;
         var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
         if (result == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -126,6 +133,10 @@ public class ApiServiceRs {
                 }
                 if (metadata != null && metadata.api_protected) {
                     if (!isAdminOrManager()) {
+                        if (!isAuthenticated()) {
+                            Log.info("Unauthorized");
+                            return Response.status(Response.Status.UNAUTHORIZED).build();
+                        }
                         parametersMap.put(metadata.username_field, List.of(securityContext.getUserPrincipal().getName()));
                     } else {
                         Log.info("admin or manager");
@@ -153,9 +164,16 @@ public class ApiServiceRs {
         debug(POST.class.getName());
         debugMe();
         Metadata metadata = apiService.metadataWithFields(table);
+        if (metadata == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         String key = metadata.table_key;
         if (metadata != null && metadata.api_protected) {
             if (!isAdminOrManager()) {
+                if (!isAuthenticated()) {
+                    Log.info("Unauthorized");
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
                 map.put(metadata.username_field, securityContext.getUserPrincipal().getName());
             } else {
                 Log.info("admin or manager");
@@ -194,6 +212,9 @@ public class ApiServiceRs {
         debug(PUT.class.getName());
         debugMe();
         Metadata metadata = apiService.metadataWithFields(table);
+        if (metadata == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         boolean renewSlug = TableKeyUtils.isSlug(metadata);
         String key = apiService.table_key(table);
         if (renewSlug) {
@@ -252,9 +273,16 @@ public class ApiServiceRs {
         debug(DELETE.class.getName());
         debugMe();
         Metadata metadata = apiService.metadata(table);
-        String key = apiService.table_key(table);
+        if (metadata == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        String key = metadata.table_key;
         if (metadata != null && metadata.api_protected) {
             if (!isAdminOrManager()) {
+                if (!isAuthenticated()) {
+                    Log.info("Unauthorized");
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
                 var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
                 if (result == null) {
                     return Response.status(Response.Status.NOT_FOUND).build();
