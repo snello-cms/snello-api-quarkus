@@ -5,6 +5,7 @@ This folder contains the functional and technical documentation for the project.
 ## Index
 
 - [Metadata](metadata.md)
+- [Metadata: Ownership Protection](metadata.md#ownership-protection-api_protected-and-username_field)
 - [Field Definitions](field-definitions.md)
 
 ## Where to Start

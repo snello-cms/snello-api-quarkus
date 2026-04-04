@@ -67,6 +67,34 @@ Practical rule:
 - If a client sends a different owner in JSON, the API normalizes it to the principal for non-admin/manager users.
 - Therefore, clients should send `username_field` consistent with token identity to keep payloads explicit and aligned with persisted data.
 
+### Protected Metadata Example
+
+Example metadata configuration for an owner-protected resource:
+
+```json
+{
+  "table_name": "user_actions",
+  "table_key": "uuid",
+  "description": "Track user interactions",
+  "api_protected": true,
+  "username_field": "action_username",
+  "select_fields": "uuid,action_username,action_name,data_table_name,data_table_key,creation_date",
+  "search_fields": "action_username,data_table_name,data_table_key"
+}
+```
+
+### Request vs Persisted Value
+
+Assume authenticated principal is `snello@snello.io`.
+
+| Scenario | JSON request value for `action_username` | Persisted value (`action_username`) |
+|---|---|---|
+| Non-admin/manager user, matching value | `snello@snello.io` | `snello@snello.io` |
+| Non-admin/manager user, different value | `other.user@example.com` | `snello@snello.io` |
+| Admin/Manager user | `other.user@example.com` | not forced by owner filter in this layer |
+
+For non-admin/manager users, owner is enforced from the token principal in protected metadata flows.
+
 ## Endpoint API
 
 Metadata base path:
