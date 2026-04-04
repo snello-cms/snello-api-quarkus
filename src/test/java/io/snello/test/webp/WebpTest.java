@@ -1,4 +1,4 @@
-package io.snello;
+package io.snello.test.webp;
 
 import org.junit.jupiter.api.Test;
 
@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-public class SnelloHelloTest {
+public class WebpTest {
 
     @Test
     public void testHelloEndpoint() throws Exception {

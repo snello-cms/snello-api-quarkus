@@ -1,11 +1,11 @@
-package io.snello;
+package io.snello.test.metadata;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.snello.model.Metadata;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
@@ -32,7 +32,7 @@ class MetadataRestTest {
 
     @Test
     void metadataShouldBeAvailableThroughDatalistEndpoint() {
-        List<Map> metadatas =
+        List<Metadata> metadatas =
                 given()
                         .accept(ContentType.JSON)
                         .queryParam("_limit", 50)
@@ -42,16 +42,16 @@ class MetadataRestTest {
                         .statusCode(200)
                         .extract()
                         .jsonPath()
-                        .getList("", Map.class);
+                        .getList("", Metadata.class);
 
         assertNotNull(metadatas);
         assertFalse(metadatas.isEmpty());
 
-        String metadataName = String.valueOf(metadatas.get(0).get("table_name"));
+        String metadataName = metadatas.get(0).table_name;
         assertNotNull(metadataName);
         assertFalse(metadataName.isBlank());
 
-        Map<String, Object> metadata =
+        Metadata metadata =
                 given()
                         .accept(ContentType.JSON)
                         .when()
@@ -60,9 +60,10 @@ class MetadataRestTest {
                         .statusCode(200)
                         .extract()
                         .jsonPath()
-                        .getMap("$");
+                        .getObject("$", Metadata.class);
 
         assertNotNull(metadata);
-        assertTrue(metadata.containsKey("table_name"));
+        assertNotNull(metadata.table_name);
+        assertTrue(!metadata.table_name.isBlank());
     }
 }

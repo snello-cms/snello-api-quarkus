@@ -1,4 +1,4 @@
-package io.snello;
+package io.snello.test.webp;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 
 public class WebpResizeTest {
 
