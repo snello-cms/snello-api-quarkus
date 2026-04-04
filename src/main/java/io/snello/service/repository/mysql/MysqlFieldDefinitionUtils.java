@@ -18,9 +18,15 @@ public class MysqlFieldDefinitionUtils {
 //                    enum => type: select, input_type: null,
 //                    media => type: media(todo), input_type: null
     public static String sql(FieldDefinition fieldDefinition) {
+        if (fieldDefinition == null || fieldDefinition.type == null) {
+            return null;
+        }
         StringBuffer sb = new StringBuffer();
         switch (fieldDefinition.type) {
             case "input": {
+                if (fieldDefinition.input_type == null) {
+                    return escape(fieldDefinition.name) + " varchar(200) default null";
+                }
                 switch (fieldDefinition.input_type) {
                     case "text":
                     case "password":

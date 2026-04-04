@@ -1,6 +1,5 @@
 package io.snello.service.repository.h2;
 
-import io.quarkus.logging.Log;
 import io.snello.model.FieldDefinition;
 
 import static io.snello.service.repository.h2.H2SqlUtils.escape;
@@ -19,12 +18,14 @@ public class H2FieldDefinitionUtils {
 //                    enum => type: select, input_type: null,
 //                    media => type: media(todo), input_type: null
     public static String sql(FieldDefinition fieldDefinition) throws Exception {
+        if (fieldDefinition == null || fieldDefinition.type == null) {
+            return null;
+        }
         StringBuffer sb = new StringBuffer();
         switch (fieldDefinition.type) {
             case "input": {
                 if (fieldDefinition.input_type == null) {
-                    Log.info("fieldDefinition.input_type  IS NULL: " + fieldDefinition.toString());
-                    throw new Exception(" fieldDefinition.input_type  IS NULL");
+                    return escape(fieldDefinition.name) + " varchar(200) default null";
                 }
                 switch (fieldDefinition.input_type) {
                     case "text":
