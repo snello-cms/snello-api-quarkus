@@ -75,9 +75,18 @@ public class ApiServiceRs {
         String key = apiService.table_key(table);
         Metadata metadata = apiService.metadata(table);
         var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
-        if (result != null && metadata != null && metadata.api_protected) {
+        if (result == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        if (metadata != null && metadata.api_protected) {
+            if (!isAuthenticated()) {
+                Log.info("Unauthorized");
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
             if (!isAdminOrManager()) {
-                if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
+                Object owner = result.get(metadata.username_field);
+                String currentUser = securityContext.getUserPrincipal().getName();
+                if (!Objects.equals(owner, currentUser)) {
                     throw new Exception("Unauthorized");
                 }
             } else {
@@ -129,7 +138,7 @@ public class ApiServiceRs {
             if (uriInfo.getQueryParameters() != null) {
                 parametersMap = uriInfo.getQueryParameters();
             } else {
-                parametersMap = null;
+                parametersMap = new MultivaluedHashMap<>();
             }
             parametersMap.put(table + "_id", Collections.singletonList(uuid));
             parametersMap.put("join_table", List.of(table + "_" + path));
@@ -247,7 +256,12 @@ public class ApiServiceRs {
         if (metadata != null && metadata.api_protected) {
             if (!isAdminOrManager()) {
                 var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
-                if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
+                if (result == null) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+                Object owner = result.get(metadata.username_field);
+                String currentUser = securityContext.getUserPrincipal().getName();
+                if (!Objects.equals(owner, currentUser)) {
                     throw new Exception("Unauthorized");
                 }
             } else {
