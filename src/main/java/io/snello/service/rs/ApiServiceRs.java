@@ -75,7 +75,7 @@ public class ApiServiceRs {
         String key = apiService.table_key(table);
         Metadata metadata = apiService.metadata(table);
         var result = apiService.fetch(uriInfo.getQueryParameters(), table, uuid, key);
-        if (metadata != null && metadata.api_protected) {
+        if (result != null && metadata != null && metadata.api_protected) {
             if (!isAdminOrManager()) {
                 if (!result.get(metadata.username_field).equals(securityContext.getUserPrincipal().getName())) {
                     throw new Exception("Unauthorized");
