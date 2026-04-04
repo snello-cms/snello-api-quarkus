@@ -1,22 +1,16 @@
 services:
-  mysql:
-    image: mysql:8.4
+  postgresql:
+    image: postgres:18.3
     environment:
-      MYSQL_DATABASE: snello
-      MYSQL_USER: snello
-      MYSQL_PASSWORD: snello
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_DB: snello
+      POSTGRES_USER: snello
+      POSTGRES_PASSWORD: snello
     ports:
-      - "3306:3306"
+      - "5432:5432"
     healthcheck:
       test:
-        - CMD
-        - mysqladmin
-        - ping
-        - -h
-        - localhost
-        - -uroot
-        - -proot
+        - CMD-SHELL
+        - pg_isready -U snello -d snello
       interval: 5s
       timeout: 5s
       retries: 20

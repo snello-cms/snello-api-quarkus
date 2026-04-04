@@ -17,7 +17,7 @@ When you run the app in dev mode, Docker Compose is used to start local dependen
 
 ### Services started in DEV
 
-- MySQL
+- PostgreSQL
 - MinIO
 - Keycloak
 
