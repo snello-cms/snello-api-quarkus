@@ -4,7 +4,6 @@ import io.quarkus.logging.Log;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
-import io.snello.util.ParamUtils;
 import io.snello.util.TableKeyUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
