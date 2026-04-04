@@ -16,19 +16,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.snello.management.DbConstants.*;
 import static io.snello.service.repository.mysql.MysqlConstants.*;
 
 public class MysqlJdbcRepository implements JdbcRepository {
 
-    DataSource dataSource;
-
-    public MysqlJdbcRepository() {
-    }
+    private final DataSource dataSource;
 
     public MysqlJdbcRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.dataSource = Objects.requireNonNull(dataSource, "dataSource cannot be null");
     }
 
 

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.snello.management.DbConstants.*;
 import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
@@ -25,14 +26,11 @@ import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
 //@Requires(property = DB_TYPE, value = "postgresql")
 public class PostgresqlJdbcRepository implements JdbcRepository {
 
-    DataSource dataSource;
-
-    public PostgresqlJdbcRepository() {
-    }
+    private final DataSource dataSource;
 
 
     public PostgresqlJdbcRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.dataSource = Objects.requireNonNull(dataSource, "dataSource cannot be null");
     }
 
     public void onLoad() {
@@ -200,6 +198,9 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
     }
 
     public List<Map<String, Object>> list(String query, MultivaluedMap<String, String> httpParameters, List<Condition> conditions, String sort, int limit, int start) throws Exception {
+        if (query == null || query.trim().isEmpty()) {
+            throw new IllegalArgumentException("query cannot be null or empty");
+        }
         StringBuffer where = new StringBuffer();
         StringBuffer order_limit = new StringBuffer();
         StringBuffer select = new StringBuffer(query);
@@ -382,9 +383,13 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
 
     @Override
     public String createTableSql(Metadata metadata, List<FieldDefinition> fields, List<String> joiQueries, List<Condition> conditions) {
+        if (metadata == null) {
+            throw new IllegalArgumentException("metadata cannot be null");
+        }
         StringBuffer sb = new StringBuffer(" CREATE TABLE " + escape(metadata.table_name) + " (");
         boolean escape = false;
-        switch (metadata.table_key_type) {
+        String tableKeyType = metadata.table_key_type == null ? "userdefined" : metadata.table_key_type;
+        switch (tableKeyType) {
             case "uuid":
             case "slug":
                 sb.append(escape(metadata.table_key) + " VARCHAR(50) NOT NULL ");
@@ -397,12 +402,16 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 escape = true;
         }
 
-        for (FieldDefinition fieldDefinition : fields) {
+        List<FieldDefinition> safeFields = fields == null ? List.of() : fields;
+        for (FieldDefinition fieldDefinition : safeFields) {
             if (escape) {
                 // skip the first comma
                 escape = false;
             } else {
                 sb.append(",");
+            }
+            if (fieldDefinition == null) {
+                continue;
             }
             if (fieldDefinition.sql_definition != null && !fieldDefinition.sql_definition.trim().isEmpty()) {
                 sb.append(fieldDefinition.sql_definition);
@@ -413,7 +422,9 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 String join_table_name = metadata.table_name + "_" + fieldDefinition.join_table_name;
                 String table_id = metadata.table_name + "_id";
                 String join_table_id = fieldDefinition.join_table_name + "_id";
-                joiQueries.add(String.format(getJoinTableQuery(), join_table_name, table_id, join_table_id));
+                if (joiQueries != null) {
+                    joiQueries.add(String.format(getJoinTableQuery(), join_table_name, table_id, join_table_id));
+                }
                 Condition condition = new Condition();
                 condition.metadata_multijoin_uuid = metadata.uuid;
                 condition.uuid = java.util.UUID.randomUUID().toString();
@@ -422,7 +433,9 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 condition.condition = metadata.table_name + "_id_nn && join_table_nn";
                 condition.query_params = metadata.table_name + "_id";
                 condition.sub_query = fieldDefinition.join_table_key + " in (select " + join_table_id + " from " + join_table_name + " where " + table_id + " = ?)";
-                conditions.add(condition);
+                if (conditions != null) {
+                    conditions.add(condition);
+                }
             }
         }
         sb.append(", PRIMARY KEY (" + escape(metadata.table_key) + ")").append(") ;");

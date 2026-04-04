@@ -16,19 +16,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.snello.management.DbConstants.*;
 import static io.snello.service.repository.h2.H2Constants.*;
 
 public class H2JdbcRepository implements JdbcRepository {
 
-    DataSource dataSource;
-
-    public H2JdbcRepository() {
-    }
+    private final DataSource dataSource;
 
     public H2JdbcRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.dataSource = Objects.requireNonNull(dataSource, "dataSource cannot be null");
     }
 
     public void onLoad() {

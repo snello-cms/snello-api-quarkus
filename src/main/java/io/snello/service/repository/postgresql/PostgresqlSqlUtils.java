@@ -42,6 +42,9 @@ public class PostgresqlSqlUtils {
     }
 
     public static String create(String table, Map<String, Object> params) {
+        if (params == null) {
+            throw new IllegalArgumentException("params cannot be null");
+        }
         StringJoiner columns = new StringJoiner(DELIMITER, INSERT_INTO + escape(table) + _OPEN_, _CLOSE_);
         StringJoiner values = new StringJoiner(DELIMITER, _VALUES_ + _OPEN_, _CLOSE_);
         params.forEach(
@@ -54,6 +57,12 @@ public class PostgresqlSqlUtils {
     }
 
     public static String update(String table, Map<String, Object> params, Map<String, Object> keys, List<Object> in) {
+        if (params == null) {
+            throw new IllegalArgumentException("params cannot be null");
+        }
+        if (keys == null) {
+            throw new IllegalArgumentException("keys cannot be null");
+        }
         StringJoiner toSet = new StringJoiner(PARAM_COND_SEPARED_, UPDATE_ + escape(table) + _SET_, PARAM_COND_);
         StringJoiner where = new StringJoiner(DELIMITER, _WHERE_, SPACE);
         params.forEach(
@@ -73,6 +82,12 @@ public class PostgresqlSqlUtils {
 
 
     public static String find(String table, Map<String, Object> keys, Map<String, Object> in) {
+        if (keys == null) {
+            throw new IllegalArgumentException("keys cannot be null");
+        }
+        if (in == null) {
+            throw new IllegalArgumentException("in cannot be null");
+        }
         StringJoiner where = new StringJoiner(DELIMITER, _WHERE_, SPACE);
         keys.forEach(
                 (key, value) -> {
@@ -139,7 +154,7 @@ public class PostgresqlSqlUtils {
                 Log.info(e.getMessage());
             }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public static String escape(String name) {
