@@ -1,5 +1,11 @@
 # Snello API (Quarkus)
 
+![Snello Logo](docs/images/snello-logo.svg)
+
+[![Built with Maven](https://img.shields.io/badge/Built%20with-Maven-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![Quarkus](https://img.shields.io/badge/Quarkus-3.34.2-4695EB?logo=quarkus&logoColor=white)](https://quarkus.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+
 Snello is a metadata-driven headless CMS API.
 
 It lets you model entities, fields, and query behavior through metadata, then expose REST endpoints without writing one controller per business table.
@@ -37,6 +43,25 @@ Stop local dev dependencies:
 
 ```bash
 docker compose -f compose-devservices.yml down
+```
+
+## Docker Image Reference
+
+Suggested image reference for this project:
+
+- `ghcr.io/snello-cms/snello-api-quarkus:latest`
+
+Example commands:
+
+```bash
+# Pull (if published)
+docker pull ghcr.io/snello-cms/snello-api-quarkus:latest
+
+# Build locally from this repository
+docker build -f src/main/docker/Dockerfile.jvm -t snello-api-quarkus:local .
+
+# Run local image
+docker run --rm -p 8080:8080 snello-api-quarkus:local
 ```
 
 ## Local Development Stack
