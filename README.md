@@ -1,17 +1,50 @@
 # snello-api-quarkus3
-TODO:
-- update the management of s3 parameters:
-- The "quarkus.minio.url" config property is deprecated and should not be used anymore.
-The "quarkus.mailer.ssl" config property is deprecated and should not be used anymore.
-- complete the pre/post events of insert/update/delete
-- add langchain4j for RAG using pgvector:
-- https://quarkus.io/blog/movie-similarity-search-using-vector-databases/
 
-- add order by for field definitions
-- add listables to field values
+## Project Overview
 
-BUG:
-- datetime in postgresql dont works
+Snello is a headless CMS designed to expose data structures and REST APIs without writing application code.
 
-TODO:
-- add news_sites (to web scraping)
+The project was originally created in Java using Micronaut in 2019 and has been rewritten in Quarkus in recent years.
+
+Its core idea is metadata-driven development: you define metadata and Snello can create database tables and serve REST queries automatically.
+
+Project TODO and BUG notes are tracked in `TODO.md`.
+
+## Development Setup (Docker Compose Dev Services)
+
+In development mode, the application is configured to use Quarkus Compose Dev Services.
+When you run the app in dev mode, Docker Compose is used to start local dependencies automatically.
+
+### Services started in DEV
+
+- MySQL
+- MinIO
+- Keycloak
+
+Compose definition:
+
+- `compose-devservices.yml`
+
+Keycloak realm imports:
+
+- `dev/keycloak/realm-snello.json`
+- `dev/keycloak/realm-lovers.json`
+
+### OIDC realms configured for DEV
+
+- `snello` realm
+	- client: `snello-api`
+- `lovers` realm
+	- client: `accounting`
+
+### Quick start
+
+```bash
+./mvnw quarkus:dev
+```
+
+To stop all local DEV services:
+
+```bash
+docker compose -f compose-devservices.yml down
+```

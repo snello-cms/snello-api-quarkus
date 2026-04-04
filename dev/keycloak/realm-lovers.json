@@ -1,0 +1,76 @@
+{
+  "realm": "lovers",
+  "enabled": true,
+  "displayName": "Lovers Dev Realm",
+  "roles": {
+    "realm": [
+      {
+        "name": "Admin"
+      },
+      {
+        "name": "Manager"
+      },
+      {
+        "name": "User"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "accounting-admin",
+      "enabled": true,
+      "firstName": "Accounting",
+      "lastName": "Admin",
+      "email": "accounting-admin@snello.local",
+      "emailVerified": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "Admin"
+      ]
+    },
+    {
+      "username": "snello@snello.io",
+      "enabled": true,
+      "firstName": "Snello",
+      "lastName": "User",
+      "email": "snello@snello.io",
+      "emailVerified": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "snello",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "User"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "accounting",
+      "name": "accounting",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ]
+}

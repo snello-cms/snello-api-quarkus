@@ -1,0 +1,57 @@
+{
+  "realm": "snello",
+  "enabled": true,
+  "displayName": "Snello Dev Realm",
+  "roles": {
+    "realm": [
+      {
+        "name": "Admin"
+      },
+      {
+        "name": "Manager"
+      },
+      {
+        "name": "User"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "firstName": "Dev",
+      "lastName": "Admin",
+      "email": "admin@snello.local",
+      "emailVerified": true,
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "Admin"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "snello-api",
+      "name": "snello-api",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ]
+}
