@@ -1,50 +1,82 @@
-# snello-api-quarkus3
+# Snello API (Quarkus)
 
-## Project Overview
+Snello is a metadata-driven headless CMS API.
 
-Snello is a headless CMS designed to expose data structures and REST APIs without writing application code.
+It lets you model entities, fields, and query behavior through metadata, then expose REST endpoints without writing one controller per business table.
 
-The project was originally created in Java using Micronaut in 2019 and has been rewritten in Quarkus in recent years.
+## Why Snello
 
-Its core idea is metadata-driven development: you define metadata and Snello can create database tables and serve REST queries automatically.
+- Metadata-first API design
+- Dynamic table and field management
+- Generic REST layer for CRUD and query operations
+- Pluggable document storage (filesystem, S3-compatible)
+- Built-in support for derived media generation (formats and webp)
 
-Project TODO and BUG notes are tracked in `TODO.md`.
+## Documentation for Final Users
 
-## Development Setup (Docker Compose Dev Services)
+Start here:
 
-In development mode, the application is configured to use Quarkus Compose Dev Services.
-When you run the app in dev mode, Docker Compose is used to start local dependencies automatically.
+- [Documentation Index](docs/index.md)
 
-### Services started in DEV
+Feature pages:
 
-- PostgreSQL
-- MinIO
-- Keycloak
+- [Metadata](docs/metadata.md)
+- [Field Definitions](docs/field-definitions.md)
+- [SelectQuery](docs/select-query.md)
+- [Document Management](docs/document-management.md)
 
-Compose definition:
+## Quick Start
 
-- `compose-devservices.yml`
-
-Keycloak realm imports:
-
-- `dev/keycloak/realm-snello.json`
-- `dev/keycloak/realm-lovers.json`
-
-### OIDC realms configured for DEV
-
-- `snello` realm
-	- client: `snello-api`
-- `lovers` realm
-	- client: `accounting`
-
-### Quick start
+Run the API in development mode:
 
 ```bash
 ./mvnw quarkus:dev
 ```
 
-To stop all local DEV services:
+Stop local dev dependencies:
 
 ```bash
 docker compose -f compose-devservices.yml down
 ```
+
+## Local Development Stack
+
+In development mode, Quarkus Compose Dev Services starts local dependencies automatically.
+
+Services used in DEV:
+
+- PostgreSQL
+- MinIO
+- Keycloak
+
+Main compose file:
+
+- compose-devservices.yml
+
+Keycloak realm imports:
+
+- dev/keycloak/realm-snello.json
+- dev/keycloak/realm-lovers.json
+
+OIDC realms configured in dev:
+
+- snello realm -> client snello-api
+- lovers realm -> client accounting
+
+## Testing
+
+Run all tests:
+
+```bash
+./mvnw test
+```
+
+Run one test class:
+
+```bash
+./mvnw -Dtest=io.snello.test.metadata.ProgramsMetadataCreationTest test
+```
+
+## Notes
+
+- TODO and bug backlog is tracked in TODO.md.
