@@ -8,6 +8,7 @@ This folder contains the functional and technical documentation for the project.
 - [Metadata: Ownership Protection](metadata.md#ownership-protection-api_protected-and-username_field)
 - [Field Definitions](field-definitions.md)
 - [SelectQuery](select-query.md)
+- [Document Management](document-management.md)
 
 ## Where to Start
 

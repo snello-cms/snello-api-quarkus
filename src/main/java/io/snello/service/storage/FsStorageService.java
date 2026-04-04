@@ -5,8 +5,6 @@ import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
 import io.snello.model.pojo.DocumentFormData;
 import io.snello.util.ResourceFileUtils;
-import org.jboss.logging.Logger;
-
 import jakarta.ws.rs.core.StreamingOutput;
 import java.io.File;
 import java.io.FileOutputStream;
