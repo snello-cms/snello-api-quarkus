@@ -1,0 +1,113 @@
+# Metadata
+
+`Metadata` describe a logical resource in the system (for example `brands`, `users`, `orders`) and define how SNELLO must manage it in terms of API behavior, queries, and data structure.
+
+## Role in the System
+
+A metadata entry represents the configuration of a table/entity:
+
+- table name (`table_name`)
+- primary key (`table_key`)
+- fields shown in list or search
+- conditions and sorting
+- details used to create or manage the table
+
+In code, the model is defined in [src/main/java/io/snello/model/Metadata.java](../src/main/java/io/snello/model/Metadata.java).
+
+## Main Fields
+
+- `uuid`: unique metadata identifier
+- `table_name`: table/resource name (required)
+- `table_key`: table key field (required)
+- `table_key_type`: key type
+- `table_key_addition`: key extensions
+- `description`: functional description
+- `select_fields`: field list used in select queries
+- `search_fields`: field list used in search
+- `order_by`: default ordering
+- `creation_query`: SQL table creation query
+- `tab_groups`: tab/wizard group definition
+- `icon`: icon associated with the resource
+- `already_exist`: true if the table already exists and is not created by SNELLO
+- `created`: true if the table was created by the system
+- `api_protected`: enables API protection for the resource
+- `username_field`: user ownership/authorization field
+- `fields`: linked `FieldDefinition` list
+- `conditions`: linked condition list
+
+## Ownership Protection: `api_protected` and `username_field`
+
+When `api_protected=true`, access to resource data is owner-aware.
+
+- `username_field` is the column/property used to store the owner username.
+- The owner value is taken from the token principal (`securityContext.getUserPrincipal().getName()`).
+- For non-admin and non-manager users, this principal drives data visibility and write ownership.
+
+Behavior implemented in API resource layer (`ApiServiceRs`):
+
+1. `POST /api/{table}`
+- For protected metadata, the server sets `username_field` to the authenticated principal.
+- This guarantees that the stored owner matches the token identity, even if the JSON payload contains a different value.
+
+2. `PUT /api/{table}/{uuid}`
+- For protected metadata, the server again forces `username_field` to the authenticated principal for non-admin/manager users.
+
+3. `GET /api/{table}`
+- For protected metadata, non-admin/manager users are filtered by owner (`username_field = principal`).
+
+4. `GET /api/{table}/{uuid}` and `DELETE /api/{table}/{uuid}`
+- For protected metadata, non-admin/manager users can fetch/delete only records where owner equals principal.
+
+5. Admin/Manager roles
+- Admin/Manager users are not constrained by owner filtering in these flows.
+
+Practical rule:
+
+- For protected metadata, each record owner must match the token principal.
+- If a client sends a different owner in JSON, the API normalizes it to the principal for non-admin/manager users.
+- Therefore, clients should send `username_field` consistent with token identity to keep payloads explicit and aligned with persisted data.
+
+## Endpoint API
+
+Metadata base path:
+
+- `GET /api/metadatas`
+- `GET /api/metadatas/{uuid}`
+- `POST /api/metadatas`
+- `PUT /api/metadatas/{uuid}`
+- `DELETE /api/metadatas/{uuid}`
+
+Additional table actions:
+
+- `GET /api/metadatas/{uuid}/create`
+- `GET /api/metadatas/{uuid}/delete`
+- `GET /api/metadatas/{uuid}/truncate`
+
+Related datalist endpoints:
+
+- `GET /api/datalist/metadata/{name}`
+- `GET /api/datalist/metadata/{name}/fielddefinitions`
+
+## Example Payload
+
+```json
+{
+  "table_name": "brands",
+  "table_key": "uuid",
+  "table_key_type": "varchar(255)",
+  "description": "Brand catalog",
+  "select_fields": "uuid,name",
+  "search_fields": "name",
+  "order_by": "name asc",
+  "already_exist": false,
+  "created": false,
+  "api_protected": false
+}
+```
+
+## Guidelines
+
+- Avoid reserved names for `table_name` (service-side validation).
+- Always define `table_key` consistently with field definitions.
+- Use `already_exist=true` when the table is managed externally.
+- Use `created=true` only after actual table creation (`/create`).
