@@ -7,6 +7,9 @@ services:
       POSTGRES_PASSWORD: snello
     ports:
       - "5432:5432"
+    volumes:
+      - ./docs/db/backup_04_04_2026.backup.sql:/tmp/backup_04_04_2026.backup.sql:ro
+      - ./docs/db/init-postgresql-restore.sh:/docker-entrypoint-initdb.d/10-restore.sh:ro
     healthcheck:
       test:
         - CMD-SHELL
