@@ -24,6 +24,12 @@ public class ScriptService {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 
     public void execute(String js, Action action) throws Exception {
+        if (js == null || js.trim().isEmpty()) {
+            throw new Exception("javascript source is null or empty");
+        }
+        if (engine == null) {
+            throw new Exception("nashorn engine is not available");
+        }
         Map<String, Object> values = new HashMap<>();
         Log.info("executeJs javascript_function : ");
         Bindings bindings = engine.createBindings();

@@ -27,8 +27,9 @@ public class MetadataService {
     }
 
     public Metadata byUUid(String uuid) throws Exception {
-        for (Metadata metadata : metadataMap.values()) {
-            if (metadata.uuid.equals(uuid)) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+        for (Metadata metadata : metadataMap().values()) {
+            if (metadata != null && uuid.equals(metadata.uuid)) {
                 return metadata;
             }
         }
@@ -36,6 +37,9 @@ public class MetadataService {
     }
 
     public Metadata createTableFromMetadataAndFields(Metadata metadata, List<FieldDefinition> fieldDefinitions) throws Exception {
+        if (metadata == null) {
+            throw new Exception("metadata is null");
+        }
         if (jdbcRepository.verifyTable(metadata.table_name)) {
             throw new Exception("table already existent!");
         }
@@ -156,11 +160,16 @@ public class MetadataService {
     }
 
     public List<FieldDefinition> fielddefinitions(String metadata_name) throws Exception {
-        return new ArrayList<>(fielddefinitionsMap().get(metadata_name).values());
+        Map<String, FieldDefinition> defs = fielddefinitionsMap().get(metadata_name);
+        if (defs == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(defs.values());
     }
 
     public List<Condition> conditions(String metadata_name) throws Exception {
-        return conditionsMap().get(metadata_name);
+        List<Condition> conds = conditionsMap().get(metadata_name);
+        return conds == null ? new ArrayList<>() : conds;
     }
 
     public String initTableKey(String table, String table_key) throws Exception {

@@ -23,7 +23,14 @@ public class TemplateService {
 
     public String parse(Map<String, Object> map, MultivaluedMap<String, String> queryParameters) {
         Log.info("creating content for template " + map);
-        Template myTemplate = engine.parse((String) map.get("body"));
+        if (map == null) {
+            return "";
+        }
+        Object body = map.get("body");
+        if (!(body instanceof String) || ((String) body).trim().isEmpty()) {
+            return "";
+        }
+        Template myTemplate = engine.parse((String) body);
         return myTemplate
                 .data("values", map)
                 .data("queryParameters", queryParameters)
@@ -34,11 +41,17 @@ public class TemplateService {
     @TemplateExtension
     public static String dateFormat(LocalDateTime date, String pattern) {
         try {
+            if (date == null) {
+                return "";
+            }
+            if (pattern == null || pattern.trim().isEmpty()) {
+                return date.toString();
+            }
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern);
             return date.format(dtf);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return date.toString();
+        return date != null ? date.toString() : "";
     }
 }

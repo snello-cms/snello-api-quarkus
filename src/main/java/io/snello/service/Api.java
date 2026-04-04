@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Singleton
 @Named("api")
@@ -27,6 +28,8 @@ public class Api {
     public Map<String, Object> single(String table,
                                       String uuid,
                                       MultivaluedMap<String, String> queryParameters) throws Exception {
+        Objects.requireNonNull(table, "table cannot be null");
+        Objects.requireNonNull(uuid, "uuid cannot be null");
         String key = apiService.table_key(table);
         return apiService.fetch(queryParameters, table, uuid, key);
     }

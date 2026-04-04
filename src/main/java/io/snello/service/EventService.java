@@ -144,15 +144,16 @@ public class EventService {
 
     void createOrUpdateCondition(@ObservesAsync ConditionCreateUpdateEvent conditionCreateUpdateEvent) {
         Log.info("new ConditionCreateUpdateEvent " + conditionCreateUpdateEvent.toString());
-        List<Condition> conditions = null;
+        List<Condition> conditions = new ArrayList<>();
         try {
             if (metadataService.conditionsMap().containsKey(conditionCreateUpdateEvent.condition.metadata_name)) {
                 conditions = metadataService.conditionsMap().get(conditionCreateUpdateEvent.condition.metadata_name);
-            } else {
-                conditions = new ArrayList<>();
             }
         } catch (Exception e) {
             Log.error(e.getMessage(), e);
+        }
+        if (conditions == null) {
+            conditions = new ArrayList<>();
         }
         if (!conditions.contains(conditionCreateUpdateEvent.condition)) {
             conditions.add(conditionCreateUpdateEvent.condition);

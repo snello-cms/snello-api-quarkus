@@ -65,12 +65,19 @@ public class ApiService {
     }
 
     public String slugField(String metadata_name) throws Exception {
-        return metadataService.metadataMap().get(metadata_name).table_key_addition;
+        Metadata metadata = metadataService.metadataMap().get(metadata_name);
+        if (metadata == null) {
+            throw new Exception("metadata not found for table: " + metadata_name);
+        }
+        return metadata.table_key_addition;
     }
 
 
     public String table_key(String metadata_name) throws Exception {
         Metadata metadata = metadataService.metadataMap().get(metadata_name);
+        if (metadata == null) {
+            throw new Exception("metadata not found for table: " + metadata_name);
+        }
         return metadata.table_key;
     }
 
@@ -164,6 +171,9 @@ public class ApiService {
 
     public boolean truncateTable(String uuid) throws Exception {
         Metadata metadata = metadataService.byUUid(uuid);
+        if (metadata == null) {
+            return false;
+        }
         String table;
         if (metadata.alias_table != null && !metadata.alias_table.trim().isEmpty()) {
             table = metadata.alias_table;
@@ -174,8 +184,12 @@ public class ApiService {
 
     public boolean deleteTable(String uuid) throws Exception {
         Metadata metadata = metadataService.byUUid(uuid);
+        if (metadata == null) {
+            return false;
+        }
         metadata.fields = metadataService.fielddefinitions(metadata.table_name);
-        for (FieldDefinition fd : metadata.fields) {
+        List<FieldDefinition> fields = metadata.fields == null ? List.of() : metadata.fields;
+        for (FieldDefinition fd : fields) {
             if ("multijoin".equals(fd.type)) {
                 String join_table_name = metadata.table_name + "_" + fd.join_table_name;
                 jdbcRepository.query(DROP_TABLE + join_table_name, null);
