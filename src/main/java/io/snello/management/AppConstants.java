@@ -22,6 +22,7 @@ public class AppConstants {
     public static final String CONDITIONS_PATH = API_PATH + BASE_PATH + CONDITIONS;
     public static final String DATALIST_PATH = API_PATH + BASE_PATH + DATALISTS;
     public static final String DOCUMENTS_PATH = API_PATH + BASE_PATH + DOCUMENTS;
+    public static final String CACHE_DOCUMENTS_PATH = DOCUMENTS_PATH + "/cache";
     public static final String FIELD_DEFINITIONS_PATH = API_PATH + BASE_PATH + FIELD_DEFINITIONS;
     public static final String LINKS_PATH = API_PATH + BASE_PATH + LINKS;
     public static final String METADATA_PATH = API_PATH + BASE_PATH + METADATAS;
