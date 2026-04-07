@@ -16,7 +16,7 @@ import static java.time.format.DateTimeFormatter.*;
 public class SqlHelper {
 
     //    static final String ESCAPE = "`";
-    private static final Pattern DATETIME = Pattern.compile("^\\d{4}-(?:0[0-9]|1[0-2])-[0-9]{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})?Z$");
+    private static final Pattern DATETIME = Pattern.compile("^\\d{4}-(?:0[0-9]|1[0-2])-[0-9]{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})?(Z|[+-]\\d{2}:\\d{2})?$");
     private static final Pattern DATE = Pattern.compile("^\\d{4}-(?:0[0-9]|1[0-2])-[0-9]{2}$");
     private static final Pattern TIME = Pattern.compile("^\\d{2}:\\d{2}:\\d{2}$");
     private static final Pattern UUID = Pattern.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
@@ -178,8 +178,13 @@ public class SqlHelper {
 
             // sql timestamp
             if (DATETIME.matcher(value).matches()) {
-                Instant instant = Instant.from(ISO_INSTANT.parse(value));
-                return Timestamp.from(instant);
+                try {
+                    Instant instant = OffsetDateTime.parse(value, ISO_OFFSET_DATE_TIME).toInstant();
+                    return Timestamp.from(instant);
+                } catch (RuntimeException ignored) {
+                    Instant instant = LocalDateTime.parse(value, ISO_LOCAL_DATE_TIME).toInstant(ZoneOffset.UTC);
+                    return Timestamp.from(instant);
+                }
             }
 
             // sql uuid
