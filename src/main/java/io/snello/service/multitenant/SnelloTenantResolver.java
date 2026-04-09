@@ -7,9 +7,16 @@ import io.snello.util.JwtUtils;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class SnelloTenantResolver implements TenantResolver {
+
+    @ConfigProperty(name = "quarkus.oidc.auth-server-url")
+    String snello_auth;
+
+    @ConfigProperty(name = "quarkus.oidc.snello.auth-server-url")
+    String accounting_auth;
 
     @Inject
     ObjectMapper objectMapper;
@@ -19,7 +26,7 @@ public class SnelloTenantResolver implements TenantResolver {
         String authorizationHeader = context.request().getHeader("Authorization");
         String issuer = JwtUtils.getIssuer(objectMapper, authorizationHeader);
         Log.info("issuer: " + issuer);
-        if (issuer.contains("accounts") || issuer.contains("snello")) {
+        if (issuer.equals(accounting_auth)) {
             String tenant = "snello";
             Log.info("tenant resolved as: " + tenant);
             return tenant;
