@@ -70,6 +70,8 @@ public class PostgresqlFieldDefinitionUtils {
             case "media":
             case "tags":
             case "multijoin":
+            case "relationship":
+            case "relationships":
             case "join":
                 return escape(fieldDefinition.name) + " varchar(2048) default null  ";
         }
