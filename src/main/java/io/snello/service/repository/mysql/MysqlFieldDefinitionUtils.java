@@ -73,6 +73,8 @@ public class MysqlFieldDefinitionUtils {
             case "tags":
             case "multijoin":
             case "join":
+            case "realtionship":
+            case "realtionships":
             case "relationship":
             case "relationships":
                 return escape(fieldDefinition.name) + " varchar(2048) default null  ";

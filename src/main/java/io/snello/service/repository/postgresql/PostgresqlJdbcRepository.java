@@ -416,7 +416,11 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
             if (fieldDefinition.sql_definition != null && !fieldDefinition.sql_definition.trim().isEmpty()) {
                 sb.append(fieldDefinition.sql_definition);
             } else {
-                sb.append(fieldDefinition2Sql(fieldDefinition));
+                String columnSql = fieldDefinition2Sql(fieldDefinition);
+                if (columnSql == null || columnSql.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Unsupported field type in createTableSql: name='" + fieldDefinition.name + "', type='" + fieldDefinition.type + "'");
+                }
+                sb.append(columnSql);
             }
             if ("multijoin".equals(fieldDefinition.type)) {
                 String join_table_name = metadata.table_name + "_" + fieldDefinition.join_table_name;

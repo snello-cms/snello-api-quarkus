@@ -70,6 +70,8 @@ public class PostgresqlFieldDefinitionUtils {
             case "media":
             case "tags":
             case "multijoin":
+            case "realtionship":
+            case "realtionships":
             case "relationship":
             case "relationships":
             case "join":
