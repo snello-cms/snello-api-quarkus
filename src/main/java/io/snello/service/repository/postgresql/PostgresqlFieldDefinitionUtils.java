@@ -28,6 +28,7 @@ public class PostgresqlFieldDefinitionUtils {
                 switch (fieldDefinition.input_type) {
                     case "text":
                     case "password":
+                    case "gmaplocation":
                     case "email":
                         sb.append(escape(fieldDefinition.name)).append(" varchar(200) default null ");
                         if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
@@ -48,6 +49,7 @@ public class PostgresqlFieldDefinitionUtils {
                         return sb.toString();
                 }
             }
+            case "gmappath":
             case "monaco":
             case "textarea":
             case "tinymce":

@@ -29,6 +29,7 @@ public class H2FieldDefinitionUtils {
                 }
                 switch (fieldDefinition.input_type) {
                     case "text":
+                    case "gmaplocation":
                     case "password":
                     case "email":
                         sb.append(escape(fieldDefinition.name)).append(" varchar(200)  NOT NULL ");
@@ -50,6 +51,7 @@ public class H2FieldDefinitionUtils {
                         return sb.toString();
                 }
             }
+            case "gmappath":
             case "monaco":
             case "textarea":
             case "tinymce":
