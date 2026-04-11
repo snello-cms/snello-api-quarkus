@@ -30,7 +30,6 @@ public class MysqlFieldDefinitionUtils {
                 switch (fieldDefinition.input_type) {
                     case "text":
                     case "password":
-                    case "gmaplocation":
                     case "email":
                         sb.append(escape(fieldDefinition.name)).append(" varchar(200)  NOT NULL ");
                         if (fieldDefinition.default_value != null && fieldDefinition.default_value.trim().isEmpty()) {
@@ -52,6 +51,7 @@ public class MysqlFieldDefinitionUtils {
                 }
             }
             case "gmappath":
+            case "gmaplocation":
             case "monaco":
             case "textarea":
             case "tinymce":
