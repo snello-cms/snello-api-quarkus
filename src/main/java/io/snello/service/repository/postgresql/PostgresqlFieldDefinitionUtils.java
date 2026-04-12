@@ -70,6 +70,7 @@ public class PostgresqlFieldDefinitionUtils {
                 return sb.toString();
             case "select":
             case "media":
+            case "image":
             case "tags":
             case "multijoin":
             case "realtionship":

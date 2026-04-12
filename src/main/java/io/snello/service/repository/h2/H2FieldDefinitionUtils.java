@@ -72,6 +72,7 @@ public class H2FieldDefinitionUtils {
                 return sb.toString();
             case "select":
             case "media":
+            case "image":
             case "tags":
             case "multijoin":
             case "join":

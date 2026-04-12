@@ -15,13 +15,14 @@ import static java.time.format.DateTimeFormatter.*;
 
 public class SqlHelper {
 
-    //    static final String ESCAPE = "`";
-    private static final Pattern DATETIME = Pattern.compile("^\\d{4}-(?:0[0-9]|1[0-2])-[0-9]{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})?(Z|[+-]\\d{2}:\\d{2})?$");
+    // static final String ESCAPE = "`";
+    private static final Pattern DATETIME = Pattern
+            .compile("^\\d{4}-(?:0[0-9]|1[0-2])-[0-9]{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,9})?(Z|[+-]\\d{2}:\\d{2})?$");
     private static final Pattern DATE = Pattern.compile("^\\d{4}-(?:0[0-9]|1[0-2])-[0-9]{2}$");
     private static final Pattern TIME = Pattern.compile("^\\d{2}:\\d{2}:\\d{2}$");
-    private static final Pattern UUID = Pattern.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
+    private static final Pattern UUID = Pattern
+            .compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
     private static final boolean castUUID = false;
-    
 
     public static void fillStatement(PreparedStatement statement, Map<String, Object> in) throws SQLException {
         if (in == null) {
@@ -97,7 +98,8 @@ public class SqlHelper {
         }
 
         if (value instanceof Timestamp) {
-            return OffsetDateTime.ofInstant(((Timestamp) value).toInstant(), ZoneOffset.UTC).format(ISO_OFFSET_DATE_TIME);
+            return OffsetDateTime.ofInstant(((Timestamp) value).toInstant(), ZoneOffset.UTC)
+                    .format(ISO_OFFSET_DATE_TIME);
         }
 
         // large objects
@@ -129,22 +131,22 @@ public class SqlHelper {
             }
         }
 
-//        // arrays
-//        if (value instanceof Array) {
-//            Array a = (Array) value;
-//            try {
-//                Object[] arr = (Object[]) a.getArray();
-//                if (arr != null) {
-//                    JsonArray jsonArray = new JsonArray();
-//                    for (Object o : arr) {
-//                        jsonArray.add(convertSqlValue(o));
-//                    }
-//                    return jsonArray;
-//                }
-//            } finally {
-//                a.free();
-//            }
-//        }
+        // // arrays
+        // if (value instanceof Array) {
+        // Array a = (Array) value;
+        // try {
+        // Object[] arr = (Object[]) a.getArray();
+        // if (arr != null) {
+        // JsonArray jsonArray = new JsonArray();
+        // for (Object o : arr) {
+        // jsonArray.add(convertSqlValue(o));
+        // }
+        // return jsonArray;
+        // }
+        // } finally {
+        // a.free();
+        // }
+        // }
 
         // fallback to String
         return value.toString();
@@ -192,13 +194,13 @@ public class SqlHelper {
                 return java.util.UUID.fromString(value);
             }
 
-//            if ("true".equals(value)) {
-//                return Boolean.TRUE;
-//            }
-//
-//            if ("false".equals(value)) {
-//                return Boolean.FALSE;
-//            }
+            // if ("true".equals(value)) {
+            // return Boolean.TRUE;
+            // }
+            //
+            // if ("false".equals(value)) {
+            // return Boolean.FALSE;
+            // }
 
         } catch (RuntimeException e) {
             Log.info(e.getCause());
@@ -207,6 +209,5 @@ public class SqlHelper {
         // unknown
         return value;
     }
-
 
 }

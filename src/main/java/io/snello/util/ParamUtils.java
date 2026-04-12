@@ -1,6 +1,5 @@
 package io.snello.util;
 
-
 import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.sql.Array;
@@ -8,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class ParamUtils {
 
@@ -37,7 +37,6 @@ public class ParamUtils {
     public static final String _CNT = " LIKE ";
     public static final String _ICNT = " ILIKE ";
 
-
     public static final String CONTSS = "_containss";
     public static final String _LIKE = "%";
 
@@ -48,7 +47,7 @@ public class ParamUtils {
     public static final String _NCNT = " NOT LIKE ";
 
     public static final String IN = "_in";
-    public static final String _IN = " IN ANY(?) ";
+    public static final String _IN = " IN ";
 
     public static final String NN = "_nn";
     public static final String _NN = " IS NOT NULL ";
@@ -62,7 +61,6 @@ public class ParamUtils {
     public static final String IE = "_ie";
     public static final String _IE = " = '' ";
 
-
     public static final String SPACE = " ";
 
     // _limit=2 _start=1 _sort=page_title:desc
@@ -71,12 +69,12 @@ public class ParamUtils {
     public static final String _SORT = "_sort";
     public static final String _SELECT_FIELDS = "select_fields";
 
-
     public static String select_fields(MultivaluedMap<String, String> httpParameters) {
         if (httpParameters == null || httpParameters.isEmpty()) {
             return null;
         }
-        if (httpParameters.containsKey("select_fields") && httpParameters.get("select_fields") != null && !httpParameters.get("select_fields").isEmpty()) {
+        if (httpParameters.containsKey("select_fields") && httpParameters.get("select_fields") != null
+                && !httpParameters.get("select_fields").isEmpty()) {
             return httpParameters.get("select_fields").get(0);
         }
         return null;
@@ -87,14 +85,14 @@ public class ParamUtils {
             return;
         }
         /*
-            =: Equals
-            _ne: Not equals
-            _lt: Lower than
-            _gt: Greater than
-            _lte: Lower than or equal to
-            _gte: Greater than or equal to
-            _contains: Contains
-            _containss: Contains case sensitive
+         * =: Equals
+         * _ne: Not equals
+         * _lt: Lower than
+         * _gt: Greater than
+         * _lte: Lower than or equal to
+         * _gte: Greater than or equal to
+         * _contains: Contains
+         * _containss: Contains case sensitive
          */
         for (Map.Entry<String, List<String>> key_value : httpParameters.entrySet()) {
             String key = key_value.getKey();
@@ -103,7 +101,7 @@ public class ParamUtils {
                 continue;
             }
             if (key_value.getValue() != null && key_value.getValue().size() > 0 && key_value.getValue().get(0) != null
-                && !key_value.getValue().get(0).trim().isEmpty()) {
+                    && !key_value.getValue().get(0).trim().isEmpty()) {
                 value = key_value.getValue().get(0);
             } else {
                 // NN = "_nn";
@@ -114,7 +112,7 @@ public class ParamUtils {
                     }
                     where.append(key.substring(0, key.length() - NN.length()));
                     where.append(_NN).append(SPACE);
-//                    in.add(null);
+                    // in.add(null);
                     continue;
                 }
 
@@ -124,28 +122,32 @@ public class ParamUtils {
                     }
                     where.append(key.substring(0, key.length() - INN.length()));
                     where.append(_INN).append(SPACE);
-//                    in.add(null);
+                    // in.add(null);
                     continue;
                 }
                 continue;
             }
 
             if (key.endsWith(IN)) {
-                try {
-                    if (!where.isEmpty()) {
-                        where.append(AND);
-                    }
-                    // conn.prepareStatement("select * from employee where id in (?)");
-                    //Array array = conn.createArrayOf("VARCHAR", list.toArray());
-                    //pstmt.setArray(1, array);
-                    Connection connection = null;
-                    Array array = connection.createArrayOf("VARCHAR", value.split(","));
-                    in.add(array);
-                    where.append(key.substring(0, key.length() - IN.length()));
-                    where.append(_IN).append(SPACE);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (!where.isEmpty()) {
+                    where.append(AND);
                 }
+                where.append("( ").append(SPACE);
+                where.append(key.substring(0, key.length() - IN.length()));
+                where.append(_IN).append(SPACE);
+                if (value != null && value.contains(",")) {
+                    String[] values = value.split(",");
+                    StringJoiner sj = new StringJoiner(",", "(", ")");
+                    for (String v : values) {
+                        sj.add("?");
+                        in.add(v == null ? null : v.trim());
+                    }
+                    where.append(sj.toString()).append(SPACE);
+                } else {
+                    where.append(" ( ? ) ").append(SPACE);
+                    in.add(value == null ? null : value.trim());
+                }
+                where.append(") ").append(SPACE);
                 continue;
             }
 

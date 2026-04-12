@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <mirrors>
+    <mirror>
+      <id>snello-central-mirror</id>
+      <name>Mirror all external repos to Maven Central</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <mirrorOf>external:*</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>snello-central-only</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://repo.maven.apache.org/maven2</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>central</id>
+          <url>https://repo.maven.apache.org/maven2</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>snello-central-only</activeProfile>
+  </activeProfiles>
+</settings>
