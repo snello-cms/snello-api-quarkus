@@ -68,7 +68,7 @@ public class MetadataService {
 
     public Metadata createTableFromMetadata(String uuid) throws Exception {
         Metadata metadata = byUUid(uuid);
-        Map<String, FieldDefinition> fields = fielddefinitionsMap().get(metadata.table_name);
+        Map<String, FieldDefinition> fields = fielddefinitionsMap().get(metadata.uuid);
         if (fields == null || fields.size() == 0) {
             throw new Exception("selectQuery without fields: " + metadata.toString());
         }
@@ -84,14 +84,14 @@ public class MetadataService {
             if (liste != null) {
                 for (Map<String, Object> map : liste) {
                     FieldDefinition fieldDefinition = new FieldDefinition(map);
-                    if (fielddefinitionsMap.containsKey(fieldDefinition.metadata_name)) {
-                        Map<String, FieldDefinition> fieldDefinitions = fielddefinitionsMap.get(fieldDefinition.metadata_name);
+                    if (fielddefinitionsMap.containsKey(fieldDefinition.metadata_uuid)) {
+                        Map<String, FieldDefinition> fieldDefinitions = fielddefinitionsMap.get(fieldDefinition.metadata_uuid);
                         fieldDefinitions.put(fieldDefinition.uuid, fieldDefinition);
-                        fielddefinitionsMap.put(fieldDefinition.metadata_name, fieldDefinitions);
+                        fielddefinitionsMap.put(fieldDefinition.metadata_uuid, fieldDefinitions);
                     } else {
                         Map<String, FieldDefinition> fieldDefinitions = new HashMap<>();
                         fieldDefinitions.put(fieldDefinition.uuid, fieldDefinition);
-                        fielddefinitionsMap.put(fieldDefinition.metadata_name, fieldDefinitions);
+                        fielddefinitionsMap.put(fieldDefinition.metadata_uuid, fieldDefinitions);
                     }
                 }
             }
@@ -160,7 +160,11 @@ public class MetadataService {
     }
 
     public List<FieldDefinition> fielddefinitions(String metadata_name) throws Exception {
-        Map<String, FieldDefinition> defs = fielddefinitionsMap().get(metadata_name);
+        Metadata metadata = metadataMap().get(metadata_name);
+        if (metadata == null) {
+            return new ArrayList<>();
+        }
+        Map<String, FieldDefinition> defs = fielddefinitionsMap().get(metadata.uuid);
         if (defs == null) {
             return new ArrayList<>();
         }
