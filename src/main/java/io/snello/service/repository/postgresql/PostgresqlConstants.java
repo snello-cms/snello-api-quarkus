@@ -76,6 +76,8 @@ public class PostgresqlConstants {
                                                          "  search_field_name varchar(100) DEFAULT NULL,\n" +
                                                          "  show_in_list BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                                                          "  view_index NUMERIC(12),\n" +
+                                                         "  mandatory BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                                                         "  order_num NUMERIC(12),\n" +
                                                          "  PRIMARY KEY (uuid)\n" +
                                                          ") ";
 

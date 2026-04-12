@@ -16,7 +16,8 @@ public class FieldDefinition {
     public String label;
     // input|button|select|date|radiobutton|checkbox
     public String type;
-    // html password, text, number, radio, checkbox, color, date, datetime-local, email, month, number, range, search, tel, time, url, week
+    // html password, text, number, radio, checkbox, color, date, datetime-local,
+    // email, month, number, range, search, tel, time, url, week
     public String input_type;
     // stringa seperata da ","
     public String options;
@@ -24,7 +25,7 @@ public class FieldDefinition {
     public String group_name;
     // SERVE X IL RAGGRUPPAMENTO A WIZARD
     public String tab_name;
-    //DOPO VEDREMO COME FARLO
+    // DOPO VEDREMO COME FARLO
     public String validations;
     public int view_index;
 
@@ -36,33 +37,34 @@ public class FieldDefinition {
     public String join_table_key;
     public String join_table_select_fields;
 
-
     public String sql_type;
     public String sql_definition;
     public String default_value;
     public String pattern;
 
-    //definisce se è il campo cercabile nella lista
+    // definisce se è il campo cercabile nella lista
     public boolean searchable;
-    //    static final String EQU = "=";
-    //    static final String NE = "_ne";
-    //    static final String LT = "_lt";
-    //    static final String GT = "_gt";
-    //    static final String LTE = "_lte";
-    //    static final String GTE = "_gte";
-    //    static final String CNT = "_contains";
-    //    static final String NCNT = "_ncontains";
+    // static final String EQU = "=";
+    // static final String NE = "_ne";
+    // static final String LT = "_lt";
+    // static final String GT = "_gt";
+    // static final String LTE = "_lte";
+    // static final String GTE = "_gte";
+    // static final String CNT = "_contains";
+    // static final String NCNT = "_ncontains";
     public String search_condition;
     // composizione del name + la codiione scelta
-    // -> es: search on "name": (EQU) name, (LIKE) name_contains,(NOT LIKE) name_ncontains,
-    // -> es: search on  "age": (EQU) age, (<) age_lt,(>) age_gt, (<=) age_lte, (>=) age_gte
+    // -> es: search on "name": (EQU) name, (LIKE) name_contains,(NOT LIKE)
+    // name_ncontains,
+    // -> es: search on "age": (EQU) age, (<) age_lt,(>) age_gt, (<=) age_lte, (>=)
+    // age_gte
     public String search_field_name;
 
-    //definisce se il campo deve essere visto nella lista
+    // definisce se il campo deve essere visto nella lista
     public boolean show_in_list;
 
-
-
+    public boolean mandatory;
+    public int order_num;
 
     public FieldDefinition() {
     }
@@ -155,13 +157,20 @@ public class FieldDefinition {
         if (map.get("view_index") instanceof String) {
             fieldDefinition.view_index = (Integer) map.get("view_index");
         }
+         if (map.get("mandatory") instanceof String) {
+            fieldDefinition.mandatory = (Boolean) map.get("mandatory");
+        }
+        if (map.get("order_num") instanceof String) {
+            fieldDefinition.order_num = (Integer) map.get("order_num");
+        }
+
         return fieldDefinition;
     }
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         if (this.uuid != null) {
-           map.put("uuid", this.uuid);
+            map.put("uuid", this.uuid);
         }
         if (this.metadata_uuid != null) {
             map.put("metadata_uuid", this.metadata_uuid);
@@ -221,7 +230,7 @@ public class FieldDefinition {
         if (this.join_table_select_fields != null) {
             map.put("join_table_select_fields", this.join_table_select_fields);
         }
-            map.put("searchable", this.searchable);
+        map.put("searchable", this.searchable);
         if (this.search_condition != null) {
             map.put("search_condition", this.search_condition);
         }
@@ -230,6 +239,9 @@ public class FieldDefinition {
         }
         map.put("show_in_list", this.show_in_list);
         map.put("view_index", this.view_index);
+        map.put("mandatory", this.mandatory);
+        map.put("order_num", this.order_num);
+
         return map;
     }
 
@@ -261,6 +273,8 @@ public class FieldDefinition {
                 ", search_field_name='" + search_field_name + '\'' +
                 ", show_in_list='" + show_in_list + '\'' +
                 ", view_index='" + view_index + '\'' +
+                ", mandatory='" + mandatory + '\'' +
+                ", order_num='" + order_num + '\'' +
                 '}';
     }
 }
