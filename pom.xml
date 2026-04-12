@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.snello</groupId>
-    <artifactId>snello-api-quarkus</artifactId>
+    <artifactId>snello-api</artifactId>
     <version>5.0.3</version>
 
     <properties>
