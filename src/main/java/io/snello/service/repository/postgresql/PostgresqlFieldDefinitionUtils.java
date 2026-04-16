@@ -30,7 +30,7 @@ public class PostgresqlFieldDefinitionUtils {
                     case "password":
                     case "email":
                         sb.append(escape(fieldDefinition.name)).append(" varchar(200) default null ");
-                        // if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
+                        // if (w != null && !fieldDefinition.default_value.trim().isEmpty()) {
                         //     sb.append(" DEFAULT '" + fieldDefinition.default_value + "' ");
                         // }
                         return sb.toString();
@@ -45,7 +45,6 @@ public class PostgresqlFieldDefinitionUtils {
                         // if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
                         //     sb.append(fieldDefinition.default_value + " ");
                         // }
-                        }
                         return sb.toString();
                 }
             }
