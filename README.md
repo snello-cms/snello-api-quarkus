@@ -1,4 +1,4 @@
-# Snello API (Quarkus)
+# Snello API
 
 ![Snello Logo](docs/images/snello-logo.svg)
 
