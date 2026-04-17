@@ -30,6 +30,7 @@ Feature pages:
 - [Field Definitions](docs/field-definitions.md)
 - [SelectQuery](docs/select-query.md)
 - [Document Management](docs/document-management.md)
+- [REST Query Params](docs/rest-query-params.md)
 
 ## Quick Start
 
