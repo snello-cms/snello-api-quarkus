@@ -75,7 +75,7 @@ public class Action {
 
     @Override
     public String toString() {
-        return "Template{" +
+        return "Action{" +
                "uuid='" + uuid + '\'' +
                ", name='" + name + '\'' +
                ", description='" + description + '\'' +
