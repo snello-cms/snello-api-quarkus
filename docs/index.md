@@ -9,6 +9,7 @@ This folder contains the functional and technical documentation for the project.
 - [Field Definitions](field-definitions.md)
 - [SelectQuery](select-query.md)
 - [Document Management](document-management.md)
+- [REST Query Params](rest-query-params.md)
 
 ## Where to Start
 
