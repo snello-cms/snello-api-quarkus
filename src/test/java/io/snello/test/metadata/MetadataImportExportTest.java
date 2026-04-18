@@ -205,7 +205,7 @@ class MetadataImportExportTest {
         byte[] jsonBytes = MAPPER.writeValueAsBytes(importBody);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> imported =
+        List<Map<String, Object>> imported = (List<Map<String, Object>>) (List<?>)
                 given()
                         .multiPart("file", "export.json", jsonBytes, "application/octet-stream")
                         .when()
