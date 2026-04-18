@@ -75,7 +75,7 @@ public class ApiService {
     public boolean isPassivable(List<FieldDefinition> fields) throws Exception {
         if (fields == null || fields.isEmpty()) return false;
         for (FieldDefinition fd : fields) {
-            if ("passivation".equals(fd.type)) {
+            if ("passivation".equals(fd.input_type)) {
                 return true;
             }
         }
@@ -84,7 +84,7 @@ public class ApiService {
 
     public String getPassivableField(List<FieldDefinition> fields) throws Exception {
         for (FieldDefinition fd : fields) {
-            if ("passivation".equals(fd.type)) {
+            if ("passivation".equals(fd.input_type)) {
                 return fd.name;
             }
         }
