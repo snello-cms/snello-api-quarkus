@@ -125,6 +125,12 @@
             <artifactId>quarkus-test-security</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- AI / LangChain4j -->
+        <dependency>
+            <groupId>io.quarkiverse.langchain4j</groupId>
+            <artifactId>quarkus-langchain4j-openai</artifactId>
+            <version>0.24.0</version>
+        </dependency>
     </dependencies>
 
     <build>

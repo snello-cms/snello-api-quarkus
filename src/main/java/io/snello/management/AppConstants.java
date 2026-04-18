@@ -28,6 +28,7 @@ public class AppConstants {
     public static final String METADATA_PATH = API_PATH + BASE_PATH + METADATAS;
     public static final String SELECT_QUERY_PATH = API_PATH + BASE_PATH + SELECT_QUERY;
     public static final String TRIGGER_DEFINITION_PATH = API_PATH + BASE_PATH + TRIGGER_DEFINITION_QUERY;
+    public static final String CHAT_PATH = API_PATH + BASE_PATH + "chat";
 
     public static final String _0 = "0";
     public static final String _10 = "10";
