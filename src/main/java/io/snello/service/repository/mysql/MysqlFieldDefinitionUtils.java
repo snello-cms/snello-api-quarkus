@@ -54,6 +54,7 @@ public class MysqlFieldDefinitionUtils {
             case "time":
                 return escape(fieldDefinition.name) + " time default null";
             case "checkbox":
+            case "passivation":
                 sb.append(escape(fieldDefinition.name) + " boolean");
                 sb.append("  default false ");
                 return sb.toString();

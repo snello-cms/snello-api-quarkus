@@ -61,6 +61,7 @@ public class PostgresqlFieldDefinitionUtils {
             case "time":
                 return escape(fieldDefinition.name) + " time default null";
             case "checkbox":
+            case "passivation":
                 sb.append(escape(fieldDefinition.name) + " boolean");
                 // if (fieldDefinition.default_value != null && !fieldDefinition.default_value.trim().isEmpty()) {
                 //     sb.append(" DEFAULT " + fieldDefinition.default_value + " ");

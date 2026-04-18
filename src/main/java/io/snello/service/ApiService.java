@@ -49,7 +49,6 @@ public class ApiService {
         eventCreatedPublisher.fireAsync(new DbCreatedEvent());
     }
 
-
     public Metadata metadata(String metadata_name) throws Exception {
         Metadata metadata = metadataService.metadataMap().get(metadata_name);
         return metadata;
@@ -64,6 +63,33 @@ public class ApiService {
         return metadata;
     }
 
+    public boolean isPassivable(String metadata_name) throws Exception {
+        Metadata metadata = metadataService.metadataMap().get(metadata_name);
+        if (metadata == null) {
+            throw new Exception("metadata not found for table: " + metadata_name);
+        }
+        metadata.fields = metadataService.fielddefinitions(metadata.table_name);
+        return isPassivable(metadata.fields);
+    }
+
+    public boolean isPassivable(List<FieldDefinition> fields) throws Exception {
+        for (FieldDefinition fd : fields) {
+            if ("passivation".equals(fd.type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getPassivableField(List<FieldDefinition> fields) throws Exception {
+        for (FieldDefinition fd : fields) {
+            if ("passivation".equals(fd.type)) {
+                return fd.name;
+            }
+        }
+        return null;
+    }
+
     public String slugField(String metadata_name) throws Exception {
         Metadata metadata = metadataService.metadataMap().get(metadata_name);
         if (metadata == null) {
@@ -71,7 +97,6 @@ public class ApiService {
         }
         return metadata.table_key_addition;
     }
-
 
     public String table_key(String metadata_name) throws Exception {
         Metadata metadata = metadataService.metadataMap().get(metadata_name);
@@ -94,7 +119,8 @@ public class ApiService {
                 if (selectQuery.with_params)
                     return jdbcRepository.count(scq, uriInfo.getQueryParameters(),
                             conditions);
-                else return jdbcRepository.count(scq);
+                else
+                    return jdbcRepository.count(scq);
             }
         }
 
@@ -113,9 +139,9 @@ public class ApiService {
         return jdbcRepository.exist(table, table_key, uuid);
     }
 
-
-    public List<Map<String, Object>> list(String table, MultivaluedMap<String, String> httpParameters, String sort, int limit,
-                                          int start) throws Exception {
+    public List<Map<String, Object>> list(String table, MultivaluedMap<String, String> httpParameters, String sort,
+            int limit,
+            int start) throws Exception {
         // select fields:
         String select_fields = ParamUtils.select_fields(httpParameters);
         String alias_condition = null;
@@ -133,7 +159,7 @@ public class ApiService {
             conditions = metadataService.conditionsMap().get(table);
             if (select_fields == null) {
                 if (metadata.select_fields != null && !metadata.select_fields.trim().isEmpty()) {
-                    //"_SELECT_ * _FROM_ "
+                    // "_SELECT_ * _FROM_ "
                     select_fields = metadata.select_fields;
                 }
             } else {
@@ -150,7 +176,8 @@ public class ApiService {
             }
 
         }
-        return jdbcRepository.list(table, select_fields, alias_condition, httpParameters, conditions, sort, limit, start);
+        return jdbcRepository.list(table, select_fields, alias_condition, httpParameters, conditions, sort, limit,
+                start);
     }
 
     public Map<String, Object> create(String table, Map<String, Object> map, String table_key) throws Exception {
@@ -163,7 +190,8 @@ public class ApiService {
         return jdbcRepository.create(table, UUID, map);
     }
 
-    public Map<String, Object> merge(String table, Map<String, Object> map, String key, String table_key) throws Exception {
+    public Map<String, Object> merge(String table, Map<String, Object> map, String key, String table_key)
+            throws Exception {
         table = initTable(table);
         table_key = metadataService.initTableKey(table, table_key);
         return jdbcRepository.update(table, table_key, map, key);
@@ -195,7 +223,7 @@ public class ApiService {
                 jdbcRepository.query(DROP_TABLE + join_table_name, null);
             }
         }
-        //DEVO ELIMINARE TUTTE LE CONDITIONS COLLEGATE
+        // DEVO ELIMINARE TUTTE LE CONDITIONS COLLEGATE
         jdbcRepository.delete(CONDITIONS, "metadata_multijoin_uuid", metadata.uuid);
         if (metadata.already_exist) {
             throw new Exception("metadata was already_exist: we can't destroy!");
@@ -208,17 +236,17 @@ public class ApiService {
         return jdbcRepository.query(DROP_TABLE + table, null);
     }
 
-
-    public Map<String, Object> createIfNotExists(String table, Map<String, Object> map, String table_key) throws Exception {
+    public Map<String, Object> createIfNotExists(String table, Map<String, Object> map, String table_key)
+            throws Exception {
         alreadyExists(table);
         return jdbcRepository.create(table, table_key, map);
     }
 
-    public Map<String, Object> mergeIfNotExists(String table, Map<String, Object> map, String key, String table_key) throws Exception {
+    public Map<String, Object> mergeIfNotExists(String table, Map<String, Object> map, String key, String table_key)
+            throws Exception {
         alreadyExists(table);
         return jdbcRepository.update(table, table_key, map, key);
     }
-
 
     public void alreadyExists(String table) throws Exception {
         if (metadataService.metadataMap().containsKey(table) || metadataService.selectqueryMap().containsKey(table)) {
@@ -237,8 +265,8 @@ public class ApiService {
         return table;
     }
 
-
-    public Map<String, Object> fetch(MultivaluedMap<String, String> queryParameters, String table, String uuid, String table_key) throws Exception {
+    public Map<String, Object> fetch(MultivaluedMap<String, String> queryParameters, String table, String uuid,
+            String table_key) throws Exception {
         String select_fields = ParamUtils.select_fields(queryParameters);
         if (metadataService.metadataMap().containsKey(table)) {
             Metadata metadata = metadataService.metadataMap().get(table);
@@ -253,6 +281,14 @@ public class ApiService {
     public boolean delete(String table, String uuid, String table_key) throws Exception {
         if (metadataService.metadataMap().containsKey(table)) {
             Metadata metadata = metadataService.metadataMap().get(table);
+            if (isPassivable(metadata.fields)) {
+                String passivableField = getPassivableField(metadata.fields);
+                if (passivableField != null) {
+                    Map<String, Object> map = Map.of(passivableField, true);
+                    jdbcRepository.update(table, table_key, map, uuid);
+                    return true;
+                }
+            }
             if (metadata.alias_table != null && !metadata.alias_table.trim().isEmpty()) {
                 table = metadata.alias_table;
                 table_key = metadata.table_key;
