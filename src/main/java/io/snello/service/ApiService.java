@@ -73,6 +73,7 @@ public class ApiService {
     }
 
     public boolean isPassivable(List<FieldDefinition> fields) throws Exception {
+        if (fields == null || fields.isEmpty()) return false;
         for (FieldDefinition fd : fields) {
             if ("passivation".equals(fd.type)) {
                 return true;
@@ -281,6 +282,9 @@ public class ApiService {
     public boolean delete(String table, String uuid, String table_key) throws Exception {
         if (metadataService.metadataMap().containsKey(table)) {
             Metadata metadata = metadataService.metadataMap().get(table);
+            if (metadata.fields == null || metadata.fields.isEmpty()) {
+                metadata.fields = metadataService.fielddefinitions(metadata.table_name);
+            }
             if (isPassivable(metadata.fields)) {
                 String passivableField = getPassivableField(metadata.fields);
                 if (passivableField != null) {
