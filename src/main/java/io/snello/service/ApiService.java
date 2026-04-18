@@ -288,7 +288,7 @@ public class ApiService {
             if (isPassivable(metadata.fields)) {
                 String passivableField = getPassivableField(metadata.fields);
                 if (passivableField != null) {
-                    Map<String, Object> map = Map.of(passivableField, true);
+                    Map<String, Object> map = Map.of(passivableField, false);
                     jdbcRepository.update(table, table_key, map, uuid);
                     return true;
                 }
