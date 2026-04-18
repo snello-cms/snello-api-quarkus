@@ -8,7 +8,6 @@ import io.snello.util.TableKeyUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -106,7 +105,7 @@ public class ApiServiceRs {
 
     @GET
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM + EXTRA_PATH_PARAM)
-    public Response get(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid, @NotNull @PathParam("path") String path, @Null @QueryParam(SORT_PARAM) String sort, @Null @QueryParam(LIMIT_PARAM) String limit, @Null @QueryParam(START_PARAM) String start) throws Exception {
+    public Response get(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid, @NotNull @PathParam("path") String path, @QueryParam(SORT_PARAM) String sort, @QueryParam(LIMIT_PARAM) String limit, @QueryParam(START_PARAM) String start) throws Exception {
         debug(GET.class.getName());
         debugMe();
         Metadata metadata = apiService.metadata(table);

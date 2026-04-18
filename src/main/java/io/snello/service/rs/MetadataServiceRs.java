@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.reactive.MultipartForm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -186,12 +186,23 @@ public class MetadataServiceRs extends AbstractServiceRs {
             Map<String, Object> metaMap = (Map<String, Object>) entry.get("metadata");
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> fieldsList = (List<Map<String, Object>>) entry.get("fields");
+            // Genera UUID per il metadata se mancante
+            if (metaMap.get(UUID) == null || metaMap.get(UUID).toString().isBlank()) {
+                metaMap.put(UUID, java.util.UUID.randomUUID().toString());
+            }
+            String metaUuid = metaMap.get(UUID).toString();
             // Salva il metadata
             Map<String, Object> savedMeta = getApiService().createIfNotExists(METADATAS, metaMap, UUID);
             eventCreateUpdatePublisher.fireAsync(new MetadataCreateUpdateEvent(savedMeta));
             // Salva le field definitions
             if (fieldsList != null) {
                 for (Map<String, Object> fdMap : fieldsList) {
+                    // Genera UUID per la field definition se mancante
+                    if (fdMap.get(UUID) == null || fdMap.get(UUID).toString().isBlank()) {
+                        fdMap.put(UUID, java.util.UUID.randomUUID().toString());
+                    }
+                    // Assicura il riferimento al metadata
+                    fdMap.put("metadata_uuid", metaUuid);
                     getApiService().createFromMap(FIELD_DEFINITIONS, fdMap);
                 }
             }

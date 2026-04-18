@@ -1,10 +1,9 @@
 package io.snello.model.pojo;
 
-
-import org.jboss.resteasy.annotations.providers.multipart.PartType;
-
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.PartType;
+
 import java.io.InputStream;
 
 public class ZipFormData {

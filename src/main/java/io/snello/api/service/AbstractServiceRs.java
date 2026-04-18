@@ -4,7 +4,6 @@ import io.quarkus.logging.Log;
 import io.snello.management.AppConstants;
 import io.snello.service.ApiService;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -78,9 +77,9 @@ public abstract class AbstractServiceRs {
 
     @GET
     public Response list(
-            @Null @QueryParam(SORT_PARAM) String sort,
-            @Null @QueryParam(LIMIT_PARAM) String limit,
-            @Null @QueryParam(START_PARAM) String start,
+            @QueryParam(SORT_PARAM) String sort,
+            @QueryParam(LIMIT_PARAM) String limit,
+            @QueryParam(START_PARAM) String start,
             @Context UriInfo uriInfo) throws Exception {
         if (sort != null)
             Log.info(SORT_DOT_DOT + sort);
