@@ -194,13 +194,13 @@ public class SqlHelper {
                 return java.util.UUID.fromString(value);
             }
 
-            // if ("true".equals(value)) {
-            // return Boolean.TRUE;
-            // }
-            //
-            // if ("false".equals(value)) {
-            // return Boolean.FALSE;
-            // }
+            if ("true".equals(value)) {
+                return Boolean.TRUE;
+            }
+
+            if ("false".equals(value)) {
+                return Boolean.FALSE;
+            }
 
         } catch (RuntimeException e) {
             Log.info(e.getCause());
