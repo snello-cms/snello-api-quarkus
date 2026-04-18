@@ -1,9 +1,12 @@
 package io.snello.service.rs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.snello.api.service.AbstractServiceRs;
+import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.model.events.MetadataCreateUpdateEvent;
 import io.snello.model.events.MetadataDeleteEvent;
+import io.snello.model.pojo.JsonFormData;
 import io.snello.service.ApiService;
 import io.snello.util.MetadataUtils;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,8 +16,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
@@ -120,5 +126,78 @@ public class MetadataServiceRs extends AbstractServiceRs {
         }
     }
 
+    @POST
+    @Path("/export")
+    public Response export(Map<String, Object> body) throws Exception {
+        @SuppressWarnings("unchecked")
+        List<String> uuids = (List<String>) body.get("metadatas");
+        if (uuids == null || uuids.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("metadatas list is required").build();
+        }
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (String uuid : uuids) {
+            Map<String, Object> raw = getApiService().fetch(null, METADATAS, uuid, UUID);
+            if (raw != null) {
+                String tableName = (String) raw.get(TABLE_NAME);
+                Metadata full = getApiService().metadataWithFields(tableName);
+                if (full != null) {
+                    result.add(Map.of("metadata", full, "fields", full.fields != null ? full.fields : List.of()));
+                }
+            }
+        }
+        String filename = "metadatas-export.json";
+        return Response.ok(Map.of("metadatas", result))
+                .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                .build();
+    }
+
+    @POST
+    @Path("/import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response importMetadatas(@MultipartForm JsonFormData formData) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = mapper.readValue(formData.data, Map.class);
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> metadatasList = (List<Map<String, Object>>) body.get("metadatas");
+        if (metadatasList == null || metadatasList.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("metadatas list is empty or missing").build();
+        }
+        // Fase 1: verifica che nessun metadata esista già
+        for (Map<String, Object> entry : metadatasList) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> metaMap = (Map<String, Object>) entry.get("metadata");
+            if (metaMap == null) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("invalid entry: missing 'metadata' object").build();
+            }
+            String tableName = (String) metaMap.get(TABLE_NAME);
+            if (tableName == null || tableName.isBlank()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("metadata missing table_name").build();
+            }
+            if (getApiService().metadata(tableName) != null) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("metadata already exists: " + tableName).build();
+            }
+        }
+        // Fase 2: salva i metadati e le field definitions
+        List<Map<String, Object>> saved = new ArrayList<>();
+        for (Map<String, Object> entry : metadatasList) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> metaMap = (Map<String, Object>) entry.get("metadata");
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> fieldsList = (List<Map<String, Object>>) entry.get("fields");
+            // Salva il metadata
+            Map<String, Object> savedMeta = getApiService().createIfNotExists(METADATAS, metaMap, UUID);
+            eventCreateUpdatePublisher.fireAsync(new MetadataCreateUpdateEvent(savedMeta));
+            // Salva le field definitions
+            if (fieldsList != null) {
+                for (Map<String, Object> fdMap : fieldsList) {
+                    getApiService().createFromMap(FIELD_DEFINITIONS, fdMap);
+                }
+            }
+            saved.add(savedMeta);
+        }
+        return ok(Map.of("imported", saved)).build();
+    }
 
 }
