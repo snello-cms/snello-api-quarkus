@@ -1,6 +1,7 @@
 package io.snello.service.ai;
 
 import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
 
@@ -16,5 +17,5 @@ public interface SnelloAssistant {
             When listing or fetching records, use the available tools instead of guessing.
             Respond in the same language used by the user.
             """)
-    String chat(@UserMessage String message);
+    String chat(@MemoryId Object conversationId, @UserMessage String message);
 }
