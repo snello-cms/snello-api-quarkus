@@ -1,0 +1,30 @@
+name: Update ai_latest Tag
+
+on:
+  push:
+    branches:
+      - ai
+
+permissions:
+  contents: write
+
+jobs:
+  tag-ai-latest:
+    name: Move ai_latest to current commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Update tag ai_latest
+        run: |
+          git tag -f ai_latest
+          git push origin refs/tags/ai_latest --force
