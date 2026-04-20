@@ -7,11 +7,11 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.ext.Provider;
+import org.jboss.resteasy.reactive.common.core.BlockingNotAllowedException;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.StringJoiner;
+import java.nio.charset.StandardCharsets;
 
 
 @Provider
@@ -36,13 +36,13 @@ public class LogFilter implements ContainerRequestFilter {
             Log.info("LogFilter: getMediaType " + requestContext.getHeaderString("accept"));
         }
         byte[] bytes = null;
+        boolean bodyConsumed = false;
         switch (requestContext.getMethod()) {
             case "POST":
             case "PUT":
             case "DELETE":
                 Log.info("LogFilter: method " + requestContext.getRequest().getMethod());
                 try {
-                    StringJoiner sj = new StringJoiner(",");
                     if (requestContext.getSecurityContext() != null
                             && requestContext.getSecurityContext().getUserPrincipal() != null
                             && requestContext.getSecurityContext().getUserPrincipal().getName() != null
@@ -52,21 +52,22 @@ public class LogFilter implements ContainerRequestFilter {
                     String method = requestContext.getMethod();
                     int initialOffset = "/api/v1/".length(); // length of `/v1/`
                     String path = requestContext.getUriInfo().getPath();
-                    sj.add("path: " + path);
                     String newPath = path.substring(initialOffset);
                     if (newPath.contains("/") || newPath.contains("?")) {
                         String[] split = newPath.split("/|\\?");
                         String prefix = split[0];
                         newPath = prefix;
                     }
-                    sj.add("principal: " + principal);
-                    sj.add("method: " + method);
-                    sj.add("entity: " + newPath);
-                    sj.add("path params: " + requestContext.getUriInfo().getPathParameters());
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     if (requestContext != null && requestContext.getEntityStream() != null) {
-                        bytes = requestContext.getEntityStream().readAllBytes();
-                        String jsonObject = new String(bytes, "UTF-8");
+                        try {
+                            bytes = requestContext.getEntityStream().readAllBytes();
+                            bodyConsumed = true;
+                        } catch (BlockingNotAllowedException e) {
+                            // In RESTEasy Reactive i filtri possono girare su IO thread: in quel caso non leggere il body.
+                            Log.debug("LogFilter: skip body logging on IO thread for path " + path);
+                            break;
+                        }
+                        String jsonObject = new String(bytes, StandardCharsets.UTF_8);
                         systemEventLogService.persistSystemLog(newPath, method, jsonObject, principal);
                     } else {
                         Log.info("LogFilter: entity vuoto??");
@@ -74,7 +75,9 @@ public class LogFilter implements ContainerRequestFilter {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                requestContext.setEntityStream(new ByteArrayInputStream(bytes));
+                if (bodyConsumed && bytes != null) {
+                    requestContext.setEntityStream(new ByteArrayInputStream(bytes));
+                }
                 break;
             default:
                 break;
