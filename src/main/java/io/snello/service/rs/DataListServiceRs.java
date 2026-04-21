@@ -36,7 +36,12 @@ public class DataListServiceRs {
     @GET
     @Path("/metadata/{name}")
     public Response metadata(@PathParam("name") @NotNull String name) throws Exception {
-        return ok(metadataService.metadata(name)).build();
+        io.snello.model.Metadata metadata = metadataService.metadata(name);
+        if (metadata != null) {
+            // Esclude table_key dalla risposta al frontend
+            metadata.table_key = null;
+        }
+        return ok(metadata).build();
     }
 
     @GET
