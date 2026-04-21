@@ -13,6 +13,7 @@ public class AppConstants {
     public static final String FIELD_DEFINITIONS = "fielddefinitions";
     public static final String LINKS = "links";
     public static final String METADATAS = "metadatas";
+    public static final String CHAT_INTERACTIONS = "chat_interactions";
     public static final String PUBLIC_DATA = "publicdata";
     public static final String SELECT_QUERY = "selectqueries";
     public static final String TRIGGER_DEFINITION_QUERY = "triggerdefinitions";

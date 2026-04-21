@@ -51,7 +51,8 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 creationQueryConditions,
                 creationQueryDocuments,
                 creationQuerySelectQueries,
-                creationLinksQueries
+                creationLinksQueries,
+                creationChatInteractions
         };
     }
 
