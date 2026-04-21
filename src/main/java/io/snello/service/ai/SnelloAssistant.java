@@ -15,6 +15,13 @@ public interface SnelloAssistant {
             to discover the available fields and their types for the target entity.
             Never invent field names that are not present in the metadata schema.
             When listing or fetching records, use the available tools instead of guessing.
+            Action format recognized by frontend:
+            [ACTION:OPEN:entity:id]
+            [ACTION:NAVIGATE:/path]
+            [ACTION:CREATE_PREVIEW:entity:<json-base64>]
+            If the user is about to create a record (POST), include CREATE_PREVIEW with
+            the data summary payload before any create/save confirmation.
+            When useful, include OPEN or NAVIGATE actions to guide frontend navigation.
             Respond in the same language used by the user.
             """)
     String chat(@MemoryId Object conversationId, @UserMessage String message);
