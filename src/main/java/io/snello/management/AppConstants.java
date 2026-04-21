@@ -21,6 +21,7 @@ public class AppConstants {
 
     public static final String BACKUP_PATH = API_PATH + BASE_PATH + BACKUP;
     public static final String CONDITIONS_PATH = API_PATH + BASE_PATH + CONDITIONS;
+    public static final String CHAT_INTERACTIONS_PATH = API_PATH + BASE_PATH + CHAT_INTERACTIONS;
     public static final String DATALIST_PATH = API_PATH + BASE_PATH + DATALISTS;
     public static final String DOCUMENTS_PATH = API_PATH + BASE_PATH + DOCUMENTS;
     public static final String CACHE_DOCUMENTS_PATH = DOCUMENTS_PATH + "/cache";
