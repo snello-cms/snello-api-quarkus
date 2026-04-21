@@ -10,7 +10,7 @@ public class ChatInteraction {
 
     public String uuid;
     public String conversation_uuid;
-    public String session_user;
+    public String user_id;
     public String user_message;
     public String ai_response;
 
@@ -22,8 +22,8 @@ public class ChatInteraction {
         if (conversation_uuid != null) {
             map.put("conversation_uuid", conversation_uuid);
         }
-        if (session_user != null) {
-            map.put("session_user", session_user);
+        if (user_id != null) {
+            map.put("user_id", user_id);
         }
         if (user_message != null) {
             map.put("user_message", user_message);

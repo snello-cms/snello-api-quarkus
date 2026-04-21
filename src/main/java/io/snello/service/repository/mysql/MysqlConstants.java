@@ -124,7 +124,7 @@ public class MysqlConstants {
     public static String creationChatInteractions = "CREATE TABLE IF NOT EXISTS `chat_interactions` (\n" +
             "  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `conversation_uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
-            "  `session_user` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `user_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `user_message` text COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `ai_response` text COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  PRIMARY KEY (uuid)\n" +

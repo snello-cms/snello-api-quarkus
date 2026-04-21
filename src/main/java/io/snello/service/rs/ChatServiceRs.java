@@ -60,7 +60,7 @@ public class ChatServiceRs {
         ChatInteraction interaction = new ChatInteraction();
         interaction.uuid = java.util.UUID.randomUUID().toString();
         interaction.conversation_uuid = conversationId;
-        interaction.session_user = extractSessionUser();
+        interaction.user_id = extractSessionUser();
         interaction.user_message = userMessage;
         interaction.ai_response = aiResponse;
         apiService.create(CHAT_INTERACTIONS, interaction.toMap(), UUID);

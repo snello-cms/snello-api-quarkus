@@ -127,7 +127,7 @@ public class PostgresqlConstants {
     public static String creationChatInteractions = "CREATE TABLE IF NOT EXISTS chat_interactions (\n" +
                                                     "  uuid varchar(255) NOT NULL,\n" +
                                                     "  conversation_uuid varchar(255) NOT NULL,\n" +
-                                                    "  session_user varchar(255) DEFAULT NULL,\n" +
+                                                    "  user_id varchar(255) DEFAULT NULL,\n" +
                                                     "  user_message varchar(4000) NOT NULL,\n" +
                                                     "  ai_response varchar(4000) NOT NULL,\n" +
                                                     "  PRIMARY KEY (uuid)\n" +
