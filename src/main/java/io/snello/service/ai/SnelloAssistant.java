@@ -19,6 +19,9 @@ public interface SnelloAssistant {
             [ACTION:OPEN:entity:id]
             [ACTION:NAVIGATE:/path]
             [ACTION:CREATE_PREVIEW:entity:<json-base64>]
+            Whenever a result includes one or more metadata records, ALWAYS include
+            at least one [ACTION:OPEN:entity:id] action using the real entity name
+            and record id returned by tools (one OPEN action per metadata record when possible).
             If the user is about to create a record (POST), include CREATE_PREVIEW with
             the data summary payload before any create/save confirmation.
             When useful, include OPEN or NAVIGATE actions to guide frontend navigation.
