@@ -134,6 +134,7 @@ public class ChatServiceRs {
         interaction.user_id = extractSessionUser();
         interaction.user_message = userMessage;
         interaction.ai_response = aiResponse;
+        interaction.creation_date = java.time.LocalDateTime.now();
         apiService.create(CHAT_INTERACTIONS, interaction.toMap(), UUID);
     }
 

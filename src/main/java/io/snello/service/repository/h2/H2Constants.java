@@ -126,6 +126,7 @@ public class H2Constants {
                         "  user_id varchar(255) DEFAULT NULL,\n" +
                         "  user_message varchar(4000) NOT NULL,\n" +
                         "  ai_response varchar(4000) NOT NULL,\n" +
+                        "  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
                         "  PRIMARY KEY (uuid)\n" +
                         ") ;";
 

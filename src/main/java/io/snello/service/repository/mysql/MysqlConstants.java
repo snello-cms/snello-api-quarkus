@@ -127,6 +127,7 @@ public class MysqlConstants {
             "  `user_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `user_message` text COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `ai_response` text COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `creation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 

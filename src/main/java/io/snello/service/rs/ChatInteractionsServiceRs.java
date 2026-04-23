@@ -20,7 +20,7 @@ public class ChatInteractionsServiceRs extends AbstractServiceRs {
 
     @Inject
     public ChatInteractionsServiceRs(ApiService apiService) {
-        super(apiService, CHAT_INTERACTIONS, "");
+        super(apiService, CHAT_INTERACTIONS, "creation_date desc");
     }
 
     public ChatInteractionsServiceRs() {

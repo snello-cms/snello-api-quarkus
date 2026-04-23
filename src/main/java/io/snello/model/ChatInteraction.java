@@ -2,6 +2,7 @@ package io.snello.model;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ public class ChatInteraction {
     public String user_id;
     public String user_message;
     public String ai_response;
+    public LocalDateTime creation_date;
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
@@ -30,6 +32,9 @@ public class ChatInteraction {
         }
         if (ai_response != null) {
             map.put("ai_response", ai_response);
+        }
+        if (creation_date != null) {
+            map.put("creation_date", creation_date);
         }
         return map;
     }

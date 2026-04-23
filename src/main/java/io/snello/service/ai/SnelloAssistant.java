@@ -4,6 +4,7 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
+import io.snello.service.ai.tools.SnelloCmsTools;
 
 @RegisterAiService(tools = SnelloCmsTools.class)
 public interface SnelloAssistant {

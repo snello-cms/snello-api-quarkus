@@ -1,4 +1,4 @@
-package io.snello.service.ai;
+package io.snello.service.ai.tools;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.Tool;
