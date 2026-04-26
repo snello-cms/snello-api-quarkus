@@ -15,6 +15,7 @@ import io.quarkus.logging.Log;
 import io.snello.api.service.JdbcRepository;
 import io.snello.model.AiTool;
 import io.snello.service.MetadataService;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+@ApplicationScoped
 public class DbAiToolsProviderSupplier implements Supplier<ToolProvider> {
 
     @Override

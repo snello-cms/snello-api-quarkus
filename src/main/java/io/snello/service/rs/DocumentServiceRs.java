@@ -11,9 +11,9 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-import org.jboss.resteasy.reactive.MultipartForm;
 
 import java.util.Map;
 import java.util.Optional;
@@ -139,7 +139,7 @@ public class DocumentServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response persist(@MultipartForm DocumentFormData documentFormData) {
+    public Response persist(@BeanParam DocumentFormData documentFormData) {
         try {
             String uuid = java.util.UUID.randomUUID().toString();
             documentFormData.uuid = uuid;
@@ -157,7 +157,7 @@ public class DocumentServiceRs {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@MultipartForm DocumentFormData documentFormData,
+    public Response update(@BeanParam DocumentFormData documentFormData,
                            @PathParam("uuid") @NotNull String uuid) {
         try {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);

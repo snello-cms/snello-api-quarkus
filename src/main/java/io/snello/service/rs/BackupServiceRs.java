@@ -2,10 +2,10 @@ package io.snello.service.rs;
 
 import io.snello.model.pojo.ZipFormData;
 import io.snello.service.BackupService;
-import org.jboss.resteasy.reactive.MultipartForm;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -45,7 +45,7 @@ public class BackupServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/data")
-    public Response upload(@MultipartForm ZipFormData zipFormData) {
+    public Response upload(@BeanParam ZipFormData zipFormData) {
         backupService.importData(zipFormData.data);
         return Response.ok().build();
     }
@@ -53,7 +53,7 @@ public class BackupServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/files")
-    public Response uploadFiles(@MultipartForm ZipFormData zipFormData) {
+    public Response uploadFiles(@BeanParam ZipFormData zipFormData) {
         backupService.importData(zipFormData.data);
         return Response.ok().build();
     }
