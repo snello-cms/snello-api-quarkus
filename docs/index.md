@@ -10,6 +10,8 @@ This folder contains the functional and technical documentation for the project.
 - [SelectQuery](select-query.md)
 - [Document Management](document-management.md)
 - [REST Query Params](rest-query-params.md)
+- [AI Agent](ai-agent.md)
+- [AI Tools Schema](ai-tools-schema.md)
 
 ## Where to Start
 
