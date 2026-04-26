@@ -124,11 +124,16 @@ public class H2Constants {
                         "  uuid varchar(255) NOT NULL,\n" +
                         "  conversation_uuid varchar(255) NOT NULL,\n" +
                         "  user_id varchar(255) DEFAULT NULL,\n" +
-                        "  user_message varchar(4000) NOT NULL,\n" +
-                        "  ai_response varchar(4000) NOT NULL,\n" +
+                        "  user_message CLOB NOT NULL,\n" +
+                        "  ai_response CLOB NOT NULL,\n" +
                         "  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
                         "  PRIMARY KEY (uuid)\n" +
                         ") ;";
+
+        // Upgrade legacy schemas with varchar(4000) limits on chat messages.
+        public static String upgradeChatInteractionsTextColumns = "ALTER TABLE chat_interactions " +
+                        "ALTER COLUMN user_message CLOB; " +
+                        "ALTER COLUMN ai_response CLOB";
 
         public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( %2$s varchar_ignorecase(100), %3$s varchar_ignorecase(100), id IDENTITY NOT NULL PRIMARY KEY )";
 }
