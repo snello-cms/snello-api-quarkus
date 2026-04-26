@@ -47,7 +47,8 @@ public class H2JdbcRepository implements JdbcRepository {
                 creationQueryConditions,
                 creationQueryDocuments,
                 creationQuerySelectQueries,
-                creationLinksQueries
+                creationLinksQueries,
+                creationChatInteractions
         };
     }
 

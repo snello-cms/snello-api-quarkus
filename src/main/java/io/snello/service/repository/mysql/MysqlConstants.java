@@ -121,6 +121,16 @@ public class MysqlConstants {
             "  PRIMARY KEY (name)\n" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
+    public static String creationChatInteractions = "CREATE TABLE IF NOT EXISTS `chat_interactions` (\n" +
+            "  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `conversation_uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `user_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `user_message` text COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `ai_response` text COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `creation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+            "  PRIMARY KEY (uuid)\n" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
     public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS `%1$s` ( " +
             "`%2$s` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL, " +
             "%3$s varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL, " +

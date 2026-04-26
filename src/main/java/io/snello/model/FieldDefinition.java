@@ -64,6 +64,7 @@ public class FieldDefinition {
     public boolean show_in_list;
 
     public boolean mandatory;
+    public boolean required;
     public int order_num;
 
     public FieldDefinition() {
@@ -160,6 +161,9 @@ public class FieldDefinition {
          if (map.get("mandatory") instanceof String) {
             fieldDefinition.mandatory = (Boolean) map.get("mandatory");
         }
+        if (map.get("required") instanceof Boolean) {
+            fieldDefinition.required = (Boolean) map.get("required");
+        }
         if (map.get("order_num") instanceof String) {
             fieldDefinition.order_num = (Integer) map.get("order_num");
         }
@@ -240,6 +244,7 @@ public class FieldDefinition {
         map.put("show_in_list", this.show_in_list);
         map.put("view_index", this.view_index);
         map.put("mandatory", this.mandatory);
+        map.put("required", this.required);
         map.put("order_num", this.order_num);
 
         return map;
@@ -274,6 +279,7 @@ public class FieldDefinition {
                 ", show_in_list='" + show_in_list + '\'' +
                 ", view_index='" + view_index + '\'' +
                 ", mandatory='" + mandatory + '\'' +
+                ", required='" + required + '\'' +
                 ", order_num='" + order_num + '\'' +
                 '}';
     }

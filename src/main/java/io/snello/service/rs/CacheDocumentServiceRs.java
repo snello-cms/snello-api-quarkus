@@ -4,7 +4,6 @@ import io.quarkus.cache.CacheResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
@@ -57,9 +56,9 @@ public class CacheDocumentServiceRs {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response list(@Null @QueryParam(SORT_PARAM) String sort,
-                         @Null @QueryParam(LIMIT_PARAM) String limit,
-                         @Null @QueryParam(START_PARAM) String start,
+    public Response list(@QueryParam(SORT_PARAM) String sort,
+                         @QueryParam(LIMIT_PARAM) String limit,
+                         @QueryParam(START_PARAM) String start,
                          @Context UriInfo uriInfo) throws Exception {
         return documentServiceRs.list(sort, limit, start, uriInfo);
     }

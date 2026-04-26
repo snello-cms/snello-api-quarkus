@@ -120,5 +120,15 @@ public class H2Constants {
                         "  PRIMARY KEY (name)\n" +
                         ") ;";
 
+        public static String creationChatInteractions = "CREATE TABLE IF NOT EXISTS chat_interactions (\n" +
+                        "  uuid varchar(255) NOT NULL,\n" +
+                        "  conversation_uuid varchar(255) NOT NULL,\n" +
+                        "  user_id varchar(255) DEFAULT NULL,\n" +
+                        "  user_message varchar(4000) NOT NULL,\n" +
+                        "  ai_response varchar(4000) NOT NULL,\n" +
+                        "  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                        "  PRIMARY KEY (uuid)\n" +
+                        ") ;";
+
         public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( %2$s varchar_ignorecase(100), %3$s varchar_ignorecase(100), id IDENTITY NOT NULL PRIMARY KEY )";
 }

@@ -108,6 +108,13 @@ public class ApiService {
     }
 
     public long count(String table, UriInfo uriInfo) throws Exception {
+        MultivaluedMap<String, String> queryParameters = uriInfo != null
+                ? uriInfo.getQueryParameters()
+                : null;
+        return count(table, queryParameters);
+    }
+
+    public long count(String table, MultivaluedMap<String, String> queryParameters) throws Exception {
         String alias_condition = null;
         List<Condition> conditions = null;
         String scq = null;
@@ -118,7 +125,7 @@ public class ApiService {
             Log.info("the table: " + table + " is selectquery? " + exist + ", is count? " + scq);
             if (exist && scq != null && !scq.isBlank()) {
                 if (selectQuery.with_params)
-                    return jdbcRepository.count(scq, uriInfo.getQueryParameters(),
+                    return jdbcRepository.count(scq, queryParameters,
                             conditions);
                 else
                     return jdbcRepository.count(scq);
@@ -133,7 +140,7 @@ public class ApiService {
                 alias_condition = metadata.alias_condition;
             }
         }
-        return jdbcRepository.count(table, alias_condition, uriInfo.getQueryParameters(), conditions);
+        return jdbcRepository.count(table, alias_condition, queryParameters, conditions);
     }
 
     public boolean exist(String table, String table_key, Object uuid) throws Exception {

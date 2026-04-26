@@ -2,7 +2,7 @@ package io.snello.service.rs;
 
 import io.snello.model.pojo.ZipFormData;
 import io.snello.service.BackupService;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.reactive.MultipartForm;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

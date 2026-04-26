@@ -81,6 +81,9 @@ public class PostgresqlConstants {
                                                          "  PRIMARY KEY (uuid)\n" +
                                                          ") ";
 
+    // Compatibility fix for legacy schemas where order_num was created with too-small precision.
+    public static String upgradeFieldDefinitionsOrderNum = "ALTER TABLE IF EXISTS fielddefinitions ALTER COLUMN order_num TYPE NUMERIC(12)";
+
     public static String creationQueryMetadatas = "CREATE TABLE IF NOT EXISTS metadatas (\n" +
                                                   "  uuid varchar(255) NOT NULL,\n" +
                                                   "  table_name varchar(255) NOT NULL,\n" +
@@ -123,6 +126,16 @@ public class PostgresqlConstants {
                                                 "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                                                 "  PRIMARY KEY (name)\n" +
                                                 ") ";
+
+    public static String creationChatInteractions = "CREATE TABLE IF NOT EXISTS chat_interactions (\n" +
+                                                    "  uuid varchar(255) NOT NULL,\n" +
+                                                    "  conversation_uuid varchar(255) NOT NULL,\n" +
+                                                    "  user_id varchar(255) DEFAULT NULL,\n" +
+                                                    "  user_message varchar(4000) NOT NULL,\n" +
+                                                    "  ai_response varchar(4000) NOT NULL,\n" +
+                                                    "  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                                                    "  PRIMARY KEY (uuid)\n" +
+                                                    ") ";
 
     public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( " +
                                           "%2$s varchar(255) NOT NULL, " +

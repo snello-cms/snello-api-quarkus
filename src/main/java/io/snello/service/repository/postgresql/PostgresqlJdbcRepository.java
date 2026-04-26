@@ -48,10 +48,12 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 creationActionExtensions,
                 creationQueryMetadatas,
                 creationQueryFieldDefinitions,
+                upgradeFieldDefinitionsOrderNum,
                 creationQueryConditions,
                 creationQueryDocuments,
                 creationQuerySelectQueries,
-                creationLinksQueries
+                creationLinksQueries,
+                creationChatInteractions
         };
     }
 
