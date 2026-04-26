@@ -6,12 +6,14 @@ import io.quarkus.logging.Log;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
+import io.snello.model.SearchResult;
 import io.snello.service.ApiService;
 import io.snello.service.MetadataService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,21 +88,93 @@ public class SnelloCmsTools {
 
     // ── Data tools ────────────────────────────────────────────────────────────
 
-    @Tool("Lists records from a CMS entity. Provide the entity name and the maximum number of records to return (default 10).")
-    public String listRecords(String entityName, int limit) {
-        checkAuthenticated();
+    @Tool("Lists records from a CMS entity with filters and pagination. " +
+          "Arguments: entityName, params, limit, start. " +
+          "params is a simple HashMap<String, String> and is converted internally to a multivalued map. " +
+          "Use params for filters with the same syntax as REST query params: " +
+          "field=value (exact), field_ne, field_lt, field_lte, field_gt, field_gte, " +
+          "field_contains/field_like, field_ilike, field_containss, field_rlike, field_llike, field_ncontains, " +
+          "field_in=a,b,c, field_nn, field_inn, field_nie, field_ie. " +
+          "Examples: params={\"status\":\"published\",\"price_gte\":\"50\",\"title_ilike\":\"java\"}. " +
+          "Returns a SearchResult JSON with load-more metadata (hasMore, remaining, nextStart). " +
+          "Maximum limit is 10.")
+    public String listRecords(String entityName, HashMap<String, String> params, int limit, int start) {
         try {
-            if (limit <= 0 || limit > 100) limit = 10;
-            MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
-            List<Map<String, Object>> records = apiService.list(entityName, params, null, limit, 0);
-            if (records == null || records.isEmpty()) {
-                return "No records found in entity '" + entityName + "'.";
+            Metadata metadata = apiService.metadata(entityName);
+            if (metadata == null) {
+                return "Entity '" + entityName + "' not found. Use listEntities() to see available entities.";
             }
-            return objectMapper.writeValueAsString(records);
+
+            if (limit <= 0) {
+                limit = 10;
+            }
+            if (limit > 10) {
+                limit = 10;
+            }
+            if (start < 0) {
+                start = 0;
+            }
+
+            MultivaluedHashMap<String, String> effectiveParams = new MultivaluedHashMap<>();
+            if (params != null) {
+                params.forEach((key, value) -> effectiveParams.putSingle(key, value == null ? "" : value));
+            }
+
+            if (metadata.api_protected) {
+                if (!isAdminOrManager()) {
+                    checkAuthenticated();
+                    effectiveParams.put(metadata.username_field, List.of(currentUsername()));
+                } else {
+                    Log.info("admin or manager");
+                }
+            }
+
+            long count = apiService.count(entityName, effectiveParams);
+            List<Map<String, Object>> records = apiService.list(entityName, effectiveParams, null, limit, start);
+            int currentSize = records == null ? 0 : records.size();
+            long remaining = Math.max(0L, count - (start + currentSize));
+            boolean hasMore = remaining > 0;
+            int nextStart = start + currentSize;
+            SearchResult result = new SearchResult(count, count, start, limit, hasMore, remaining, nextStart, records);
+            return objectMapper.writeValueAsString(result);
         } catch (Exception e) {
             Log.error("listRecords error for: " + entityName, e);
             return "Error listing records for '" + entityName + "': " + e.getMessage();
         }
+    }
+
+    @Tool("Explains how to build filters for listRecords params using REST query-param syntax.")
+    public String explainFilters() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Filter guide for listRecords(entityName, params, limit, start):\n\n");
+        sb.append("1) Pagination and sorting\n");
+        sb.append("- limit and start are supported\n");
+        sb.append("- maximum limit is 10 (if limit > 10, limit is forced to 10)\n");
+        sb.append("- Use hasMore/remaining/nextStart in response to ask for additional data\n");
+        sb.append("- sort is supported via params['_sort'] with format field:asc|desc\n\n");
+
+        sb.append("2) params format\n");
+        sb.append("- params is a simple map: field -> single value\n");
+        sb.append("- Example: {status:published, price_gte:50, title_ilike:java}\n\n");
+
+        sb.append("3) Supported filter suffixes\n");
+        sb.append("- Equality: field=value\n");
+        sb.append("- Comparison: _ne, _lt, _lte, _gt, _gte\n");
+        sb.append("- Text: _contains, _like, _ilike, _containss, _rlike, _llike, _ncontains\n");
+        sb.append("- Set: _in (comma-separated values)\n");
+        sb.append("- Null checks: _nn (IS NOT NULL), _inn (IS NULL)\n");
+        sb.append("- Empty checks: _nie (not empty), _ie (empty)\n\n");
+
+        sb.append("4) Examples\n");
+        sb.append("- status exact match: {status:published}\n");
+        sb.append("- numeric range: {price_gte:50, price_lte:200}\n");
+        sb.append("- contains case-insensitive: {title_ilike:spring}\n");
+        sb.append("- IN list: {status_in:[draft,published,review]}\n");
+        sb.append("- pagination call: limit=10, start=20\n");
+        sb.append("- if hasMore=true, client can show: 'Carica altri dati'\n\n");
+
+        sb.append("All filters are combined with logical AND.");
+        return sb.toString();
     }
 
     @Tool("Fetches a single record from a CMS entity by its UUID.")
@@ -168,5 +242,17 @@ public class SnelloCmsTools {
             throw new SecurityException(
                 "You do not have permission to write data to entity '" + entityName + "'.");
         }
+    }
+
+    private boolean isAdminOrManager() {
+        return securityIdentity.hasRole("admin") || securityIdentity.hasRole("Admin")
+                || securityIdentity.hasRole("manager") || securityIdentity.hasRole("Manager");
+    }
+
+    private String currentUsername() {
+        if (securityIdentity.getPrincipal() == null) {
+            throw new SecurityException("Authentication required to access CMS data.");
+        }
+        return securityIdentity.getPrincipal().getName();
     }
 }

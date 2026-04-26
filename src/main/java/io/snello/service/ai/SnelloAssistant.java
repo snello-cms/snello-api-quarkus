@@ -16,6 +16,9 @@ public interface SnelloAssistant {
             to discover the available fields and their types for the target entity.
             Never invent field names that are not present in the metadata schema.
             When listing or fetching records, use the available tools instead of guessing.
+            For list operations, always use first-page pagination only (10 records).
+            If tool output indicates more data is available (e.g. hasMore=true), state it clearly
+            and suggest that the client can trigger "carica altri dati".
             Action format recognized by frontend:
             [ACTION:OPEN:entity:id]
             [ACTION:NAVIGATE:/path]
