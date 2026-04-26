@@ -16,6 +16,7 @@ public class MetadataUtils {
             case METADATAS:
             case PUBLIC_DATA:
             case SELECT_QUERY:
+            case AI_TOOLS:
                 return true;
             default:
                 return false;

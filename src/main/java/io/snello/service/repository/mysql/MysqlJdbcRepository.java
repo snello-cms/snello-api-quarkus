@@ -49,7 +49,8 @@ public class MysqlJdbcRepository implements JdbcRepository {
                 creationQueryDocuments,
                 creationQuerySelectQueries,
                 creationLinksQueries,
-                creationChatInteractions
+                creationChatInteractions,
+                creationAiTools
 
         };
     }

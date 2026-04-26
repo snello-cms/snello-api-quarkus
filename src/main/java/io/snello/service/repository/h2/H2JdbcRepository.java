@@ -49,7 +49,8 @@ public class H2JdbcRepository implements JdbcRepository {
                 creationQuerySelectQueries,
                 creationLinksQueries,
                 creationChatInteractions,
-                upgradeChatInteractionsTextColumns
+                upgradeChatInteractionsTextColumns,
+                creationAiTools
         };
     }
 

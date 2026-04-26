@@ -135,5 +135,16 @@ public class H2Constants {
                         "ALTER COLUMN user_message CLOB; " +
                         "ALTER COLUMN ai_response CLOB";
 
+        public static String creationAiTools = "CREATE TABLE IF NOT EXISTS ai_tools (\n" +
+                        "  uuid varchar(255) NOT NULL,\n" +
+                        "  name varchar(255) NOT NULL,\n" +
+                        "  method_name varchar(255) DEFAULT NULL,\n" +
+                        "  description CLOB DEFAULT NULL,\n" +
+                        "  sql_query CLOB DEFAULT NULL,\n" +
+                        "  parameters_schema CLOB DEFAULT NULL,\n" +
+                        "  active BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                        "  PRIMARY KEY (uuid)\n" +
+                        ") ;";
+
         public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( %2$s varchar_ignorecase(100), %3$s varchar_ignorecase(100), id IDENTITY NOT NULL PRIMARY KEY )";
 }

@@ -2,6 +2,7 @@ package io.snello.service;
 
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
+import io.snello.model.AiTool;
 import io.snello.model.Condition;
 import io.snello.model.SelectQuery;
 import io.snello.model.events.*;
@@ -33,9 +34,11 @@ public class EventService {
         // null to maps
         metadataService.conditionsMap = null;
         metadataService.selectqueryMap = null;
+        metadataService.aiToolsMap = null;
         // reset
         metadataService.conditionsMap();
         metadataService.selectqueryMap();
+        metadataService.aiToolsMap();
     }
 
     public void resetMetadata() throws Exception {
@@ -133,6 +136,29 @@ public class EventService {
             for (SelectQuery selectQuery : metadataService.selectqueryMap().values()) {
                 if (selectQuery.uuid.equals(selectQueryDeleteEvent.uuid)) {
                     metadataService.selectqueryMap().remove(selectQuery.query_name);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            Log.error(e.getMessage(), e);
+        }
+    }
+
+    void createOrUpdateAiTool(@ObservesAsync AiToolCreateUpdateEvent aiToolCreateUpdateEvent) {
+        Log.info("new AiToolCreateUpdateEvent " + aiToolCreateUpdateEvent.toString());
+        try {
+            metadataService.aiToolsMap().put(aiToolCreateUpdateEvent.aiTool.name, aiToolCreateUpdateEvent.aiTool);
+        } catch (Exception e) {
+            Log.error(e.getMessage(), e);
+        }
+    }
+
+    void deleteAiTool(@ObservesAsync AiToolDeleteEvent aiToolDeleteEvent) {
+        Log.info("new AiToolDeleteEvent " + aiToolDeleteEvent.toString());
+        try {
+            for (AiTool aiTool : metadataService.aiToolsMap().values()) {
+                if (aiTool.uuid.equals(aiToolDeleteEvent.uuid)) {
+                    metadataService.aiToolsMap().remove(aiTool.name);
                     break;
                 }
             }

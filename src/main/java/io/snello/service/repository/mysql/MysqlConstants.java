@@ -136,6 +136,17 @@ public class MysqlConstants {
             "%3$s varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL, " +
             "id int NOT NULL AUTO_INCREMENT, PRIMARY KEY (id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
+    public static String creationAiTools = "CREATE TABLE IF NOT EXISTS `ai_tools` (\n" +
+            "  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
+            "  `method_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `sql_query` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `parameters_schema` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `active` BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+            "  PRIMARY KEY (uuid)\n" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
     public static String creationQuerySystemEventLogs = "CREATE TABLE IF NOT EXISTS `systemeventlogs` (\n" +
             "  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `query_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +

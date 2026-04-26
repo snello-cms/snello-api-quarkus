@@ -15,6 +15,7 @@ public class MetadataService {
     
     Map<String, Metadata> metadataMap;
     Map<String, SelectQuery> selectqueryMap;
+    Map<String, AiTool> aiToolsMap;
     Map<String, Map<String, FieldDefinition>> fielddefinitionsMap;
     Map<String, List<Condition>> conditionsMap;
 
@@ -126,6 +127,20 @@ public class MetadataService {
             }
         }
         return this.selectqueryMap;
+    }
+
+    public Map<String, AiTool> aiToolsMap() throws Exception {
+        if (this.aiToolsMap == null) {
+            this.aiToolsMap = new TreeMap<>();
+            List<Map<String, Object>> liste = jdbcRepository.list(AI_TOOLS, " name asc ");
+            if (liste != null) {
+                for (Map<String, Object> map : liste) {
+                    AiTool aiTool = new AiTool(map);
+                    aiToolsMap.put(aiTool.name, aiTool);
+                }
+            }
+        }
+        return this.aiToolsMap;
     }
 
     public Map<String, List<Condition>> conditionsMap() throws Exception {

@@ -17,20 +17,22 @@ public class AppConstants {
     public static final String PUBLIC_DATA = "publicdata";
     public static final String SELECT_QUERY = "selectqueries";
     public static final String TRIGGER_DEFINITION_QUERY = "triggerdefinitions";
+    public static final String AI_TOOLS = "ai_tools";
 
 
+    public static final String AI_TOOLS_PATH = API_PATH + BASE_PATH + AI_TOOLS;
     public static final String BACKUP_PATH = API_PATH + BASE_PATH + BACKUP;
-    public static final String CONDITIONS_PATH = API_PATH + BASE_PATH + CONDITIONS;
+    public static final String CACHE_DOCUMENTS_PATH = API_PATH + BASE_PATH + DOCUMENTS + "/cache";
     public static final String CHAT_INTERACTIONS_PATH = API_PATH + BASE_PATH + CHAT_INTERACTIONS;
+    public static final String CHAT_PATH = API_PATH + BASE_PATH + "chat";
+    public static final String CONDITIONS_PATH = API_PATH + BASE_PATH + CONDITIONS;
     public static final String DATALIST_PATH = API_PATH + BASE_PATH + DATALISTS;
     public static final String DOCUMENTS_PATH = API_PATH + BASE_PATH + DOCUMENTS;
-    public static final String CACHE_DOCUMENTS_PATH = DOCUMENTS_PATH + "/cache";
     public static final String FIELD_DEFINITIONS_PATH = API_PATH + BASE_PATH + FIELD_DEFINITIONS;
     public static final String LINKS_PATH = API_PATH + BASE_PATH + LINKS;
     public static final String METADATA_PATH = API_PATH + BASE_PATH + METADATAS;
     public static final String SELECT_QUERY_PATH = API_PATH + BASE_PATH + SELECT_QUERY;
     public static final String TRIGGER_DEFINITION_PATH = API_PATH + BASE_PATH + TRIGGER_DEFINITION_QUERY;
-    public static final String CHAT_PATH = API_PATH + BASE_PATH + "chat";
 
     public static final String _0 = "0";
     public static final String _10 = "10";

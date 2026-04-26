@@ -142,6 +142,17 @@ public class PostgresqlConstants {
                                                                "ALTER COLUMN user_message TYPE TEXT, " +
                                                                "ALTER COLUMN ai_response TYPE TEXT";
 
+    public static String creationAiTools = "CREATE TABLE IF NOT EXISTS ai_tools (\n" +
+                                              "  uuid varchar(255) NOT NULL,\n" +
+                                              "  name varchar(255) NOT NULL,\n" +
+                                              "  method_name varchar(255) DEFAULT NULL,\n" +
+                                              "  description text DEFAULT NULL,\n" +
+                                              "  sql_query text DEFAULT NULL,\n" +
+                                              "  parameters_schema text DEFAULT NULL,\n" +
+                                              "  active BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                                              "  PRIMARY KEY (uuid)\n" +
+                                              ") ";
+
     public static String joinTableQuery = "CREATE TABLE IF NOT EXISTS %1$s ( " +
                                           "%2$s varchar(255) NOT NULL, " +
                                           "%3$s varchar(255) NOT NULL, " +
