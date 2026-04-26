@@ -81,6 +81,9 @@ public class PostgresqlConstants {
                                                          "  PRIMARY KEY (uuid)\n" +
                                                          ") ";
 
+    // Compatibility fix for legacy schemas where order_num was created with too-small precision.
+    public static String upgradeFieldDefinitionsOrderNum = "ALTER TABLE IF EXISTS fielddefinitions ALTER COLUMN order_num TYPE NUMERIC(12)";
+
     public static String creationQueryMetadatas = "CREATE TABLE IF NOT EXISTS metadatas (\n" +
                                                   "  uuid varchar(255) NOT NULL,\n" +
                                                   "  table_name varchar(255) NOT NULL,\n" +
