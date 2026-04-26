@@ -1,7 +1,6 @@
 package io.snello.service.rs;
 
 import io.quarkus.logging.Log;
-import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
 import io.snello.util.TableKeyUtils;
@@ -181,26 +180,6 @@ public class ApiServiceRs {
             Log.info("api NOT protected");
         }
         TableKeyUtils.generateUUid(map, metadata, apiService);
-        // CI VUOLE UNA TRANSAZIONE PER TENERE TUTTO INSIEME
-        for (FieldDefinition fd : metadata.fields) {
-            if ("multijoin".equals(fd.type)) {
-                if (map.containsKey(fd.name) && map.get(fd.name) != null) {
-                    String join_table_uuids_value = (String) map.get(fd.name);
-                    String[] join_table_uuids = join_table_uuids_value.split(",|;");
-                    for (String ss : join_table_uuids) {
-                        String join_table_name = metadata.table_name + "_" + fd.join_table_name;
-                        String table_id = metadata.table_name + "_id";
-                        String join_table_id = fd.join_table_name + "_id";
-                        Map<String, Object> join_map = new HashMap<>();
-                        join_map.put(table_id, map.get(metadata.table_key));
-                        join_map.put(join_table_id, ss.trim());
-                        apiService.createFromMap(join_table_name, join_map);
-                    }
-                    //ELIMINO I VALORI NEL CAMPO DI APPOGGIO
-                    map.remove(fd.name);
-                }
-            }
-        }
         map = apiService.create(table, map, key);
         return ok(map).build();
     }
@@ -239,30 +218,7 @@ public class ApiServiceRs {
                 Log.info("admin or manager");
             }
         }
-        // CI VUOLE UNA TRANSAZIONE PER TENERE TUTTO INSIEME
         map = apiService.merge(table, map, uuid, key);
-        //DEVO ELIMINARE TUTTI I VALORI
-
-        for (FieldDefinition fd : metadata.fields) {
-            if ("multijoin".equals(fd.type)) {
-                String join_table_name = metadata.table_name + "_" + fd.join_table_name;
-                String table_id = metadata.table_name + "_id";
-                apiService.delete(join_table_name, table_id, uuid);
-                if (map.containsKey(fd.name) && map.get(fd.name) != null) {
-                    String join_table_uuids_value = (String) map.get(fd.name);
-                    String[] join_table_uuids = join_table_uuids_value.split(",|;");
-                    for (String ss : join_table_uuids) {
-                        String join_table_id = fd.join_table_name + "_id";
-                        Map<String, Object> join_map = new HashMap<>();
-                        join_map.put(table_id, map.get(metadata.table_key));
-                        join_map.put(join_table_id, ss.trim());
-                        apiService.createFromMap(join_table_name, join_map);
-                    }
-                }
-                //ELIMINO I VALORI NEL CAMPO DI APPOGGIO
-                map.remove(fd.name);
-            }
-        }
         return ok(map).build();
     }
 
