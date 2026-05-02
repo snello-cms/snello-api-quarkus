@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import static io.snello.management.AppConstants.*;
+import static io.snello.util.DocumentUtils.hasFormatToken;
 
 @ApplicationScoped
 public class ImageService {
@@ -220,15 +221,4 @@ public class ImageService {
         throw new Exception(String.format("Failed to find Image type for mime type [%s]", mime_type));
     }
 
-    private boolean hasFormatToken(String formats, String target) {
-        if (formats == null || formats.isBlank() || target == null || target.isBlank()) {
-            return false;
-        }
-        for (String token : formats.split(",")) {
-            if (target.equalsIgnoreCase(token.trim())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
