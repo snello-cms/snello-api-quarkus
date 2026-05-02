@@ -67,7 +67,7 @@ public class ImageService {
                     return;
                 }
                 String formats = (String) map.get(FORMATS);
-                boolean itemExists = formats != null && !formats.trim().isEmpty() && formats.contains("webp");
+                boolean itemExists = hasFormatToken(formats, "webp");
                 if (!itemExists) {
                     String ruuid = uuid + "_webp";
                     BufferedImage originalImg = downloadImageFromS3(path, mimetype);
@@ -104,7 +104,7 @@ public class ImageService {
                 }
                 String webpFormat = "webp_" + format;
                 String formats = (String) map.get(FORMATS);
-                boolean itemExists = formats != null && !formats.trim().isEmpty() && formats.contains(webpFormat);
+                boolean itemExists = hasFormatToken(formats, webpFormat);
                 if (!itemExists) {
                     String ruuid = uuid + "_" + webpFormat;
                     BufferedImage originalImg = downloadImageFromS3(path, mimetype);
@@ -140,7 +140,7 @@ public class ImageService {
                     return;
                 }
                 String formats = (String) map.get(FORMATS);
-                boolean itemExists = formats != null && !formats.trim().isEmpty() && formats.contains(format);
+                boolean itemExists = hasFormatToken(formats, format);
                 if (!itemExists) {
                     String ruuid = uuid + "_" + format;
                     BufferedImage originalImg = downloadImageFromS3(path, mimetype);
@@ -218,5 +218,17 @@ public class ImageService {
                 return f;
         }
         throw new Exception(String.format("Failed to find Image type for mime type [%s]", mime_type));
+    }
+
+    private boolean hasFormatToken(String formats, String target) {
+        if (formats == null || formats.isBlank() || target == null || target.isBlank()) {
+            return false;
+        }
+        for (String token : formats.split(",")) {
+            if (target.equalsIgnoreCase(token.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.snello.management.AppConstants.*;
+import static io.snello.util.DocumentUtils.hasFormatToken;
+import static io.snello.util.DocumentUtils.validateDocumentFormData;
 import static jakarta.ws.rs.core.Response.ok;
 import static jakarta.ws.rs.core.Response.serverError;
 
@@ -62,7 +64,7 @@ public class DocumentServiceRs {
         String filename = (String) map.get(DOCUMENT_NAME);
         String formats = (String) map.get(FORMATS);
         if (format != null && !format.isBlank()) {
-            boolean itemExists = formats != null && formats.contains(format);
+            boolean itemExists = hasFormatToken(formats, format);
             if (itemExists) {
                 String duuid = uuid + "_" + format;
                 String dpath = path.replace(uuid, duuid);
@@ -101,7 +103,7 @@ public class DocumentServiceRs {
         boolean isConvertible = (mimetype != null && (mimetype.toLowerCase().contains("png") || mimetype.toLowerCase().contains("jpg") || mimetype.toLowerCase().contains("jpeg"))) ||
                                 (filename != null && (filename.toLowerCase().contains(".png") || filename.toLowerCase().contains(".jpg") || filename.toLowerCase().contains(".jpeg")));
         String requestedFormat = (format != null && !format.isBlank()) ? "webp_" + format.trim() : "webp";
-        boolean itemExists = formats != null && formats.contains(requestedFormat);
+        boolean itemExists = hasFormatToken(formats, requestedFormat);
         if (itemExists) {
             String duuid = uuid + "_" + requestedFormat;
             String dpath = path.replace(uuid, duuid);
@@ -222,28 +224,4 @@ public class DocumentServiceRs {
                 .header(TOTAL_COUNT_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo)).build();
     }
 
-    private void validateDocumentFormData(DocumentFormData documentFormData) {
-        if (documentFormData == null) {
-            throw new BadRequestException("multipart form data is missing");
-        }
-        if (documentFormData.data == null) {
-            throw new BadRequestException("file part is required");
-        }
-        if (isBlank(documentFormData.resolvedOriginalName())) {
-            throw new BadRequestException("filename or original_name is required");
-        }
-        if (isBlank(documentFormData.mimeType)) {
-            throw new BadRequestException("mimeType is required");
-        }
-        if (isBlank(documentFormData.table_name)) {
-            throw new BadRequestException("table_name is required");
-        }
-        if (isBlank(documentFormData.table_key)) {
-            throw new BadRequestException("table_key is required");
-        }
-    }
-
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
-    }
 }
