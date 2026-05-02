@@ -26,7 +26,6 @@ import static jakarta.ws.rs.core.Response.serverError;
 
 @Path(DOCUMENTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Singleton
 public class DocumentServiceRs {
     private static String table = DOCUMENTS;
@@ -46,6 +45,7 @@ public class DocumentServiceRs {
 
     @GET
     @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response fetch(@PathParam("id") String id) throws Exception {
         Map<String, Object> result = apiService.fetch(null, table, id, UUID);
         return ok(result).build();
