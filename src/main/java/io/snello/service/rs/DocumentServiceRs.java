@@ -139,17 +139,12 @@ public class DocumentServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response persist(@BeanParam DocumentFormData documentFormData) {
-        try {
-            String uuid = java.util.UUID.randomUUID().toString();
-            documentFormData.uuid = uuid;
-            Map<String, Object> map = documentsService.upload(documentFormData);
-            map = apiService.create(table, map, AppConstants.UUID);
-            return ok(map).build();
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-        return serverError().build();
+    public Response persist(@BeanParam DocumentFormData documentFormData) throws Exception {
+        String uuid = java.util.UUID.randomUUID().toString();
+        documentFormData.uuid = uuid;
+        Map<String, Object> map = documentsService.upload(documentFormData);
+        map = apiService.create(table, map, AppConstants.UUID);
+        return ok(map).build();
     }
 
 
@@ -158,17 +153,12 @@ public class DocumentServiceRs {
     @Path("/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@BeanParam DocumentFormData documentFormData,
-                           @PathParam("uuid") @NotNull String uuid) {
-        try {
+                           @PathParam("uuid") @NotNull String uuid) throws Exception {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
-            documentFormData.uuid = uuid;
-            Map<String, Object> map = documentsService.upload(documentFormData);
-            map = apiService.merge(table, map, uuid, AppConstants.UUID);
-            return ok(map).build();
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-        return serverError().build();
+        documentFormData.uuid = uuid;
+        Map<String, Object> map = documentsService.upload(documentFormData);
+        map = apiService.merge(table, map, uuid, AppConstants.UUID);
+        return ok(map).build();
     }
 
     @PUT
@@ -176,14 +166,9 @@ public class DocumentServiceRs {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateData(@PathParam("id") String id,
-                               Map<String, Object> map) {
-        try {
-            map = apiService.merge(table, map, id, AppConstants.UUID);
-            return ok(map).build();
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-        }
-        return serverError().build();
+                               Map<String, Object> map) throws Exception {
+        map = apiService.merge(table, map, id, AppConstants.UUID);
+        return ok(map).build();
     }
 
 
