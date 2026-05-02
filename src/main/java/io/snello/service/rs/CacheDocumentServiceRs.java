@@ -40,8 +40,9 @@ public class CacheDocumentServiceRs {
     @Path(UUID_PATH_PARAM + WEBP_PATH)
     @Consumes("*/*")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response webp(@PathParam("uuid") @NotNull String uuid) throws Exception {
-        return documentServiceRs.webp(uuid);
+    public Response webp(@PathParam("uuid") @NotNull String uuid,
+                         @QueryParam(value = "format") String format) throws Exception {
+        return documentServiceRs.webp(uuid, format);
     }
 
     @GET

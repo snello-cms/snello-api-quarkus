@@ -41,6 +41,13 @@ public class ImageService {
         final String format = imageEvent.format;
         if ("webp".equals(format)) {
             webp(uuid);
+        } else if (format.startsWith("webp_")) {
+            String resizeFormat = format.substring("webp_".length());
+            if (resizeFormat.isBlank()) {
+                Log.error("Invalid webp format for uuid " + uuid + ": " + format);
+                return;
+            }
+            webp(uuid, resizeFormat);
         } else {
             //resize and upload to s3
             resize(uuid, format);
@@ -85,6 +92,42 @@ public class ImageService {
     }
 
     @Transactional
+    public void webp(final String uuid, final String format) {
+        try {
+            Map<String, Object> map = apiService.fetch(null, table, uuid, UUID);
+            if (map != null) {
+                String path = (String) map.get(DOCUMENT_PATH);
+                String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
+                if (path == null || mimetype == null) {
+                    Log.error("Missing document path or mime type for uuid " + uuid);
+                    return;
+                }
+                String webpFormat = "webp_" + format;
+                String formats = (String) map.get(FORMATS);
+                boolean itemExists = formats != null && !formats.trim().isEmpty() && formats.contains(webpFormat);
+                if (!itemExists) {
+                    String ruuid = uuid + "_" + webpFormat;
+                    BufferedImage originalImg = downloadImageFromS3(path, mimetype);
+                    if (originalImg == null) {
+                        Log.error("Unable to read image from storage for uuid " + uuid);
+                        return;
+                    }
+                    ByteArrayOutputStream outputStream = resizeAsFormat(originalImg, format, "webp");
+                    uploadImageToS3(ruuid, outputStream, map);
+                    if (formats != null && !formats.trim().isEmpty()) {
+                        map.put(FORMATS, formats + "," + webpFormat);
+                    } else {
+                        map.put(FORMATS, webpFormat);
+                    }
+                    apiService.merge(table, map, uuid, UUID);
+                }
+            }
+        } catch (Exception e) {
+            Log.error("Failed to create formatted webp in ImageService: " + e);
+        }
+    }
+
+    @Transactional
     public void resize(final String uuid, final String format) {
         //resize and upload to s3
         try {
@@ -121,10 +164,14 @@ public class ImageService {
     }
 
     private ByteArrayOutputStream resize(BufferedImage originalImage, String format, String mime_type) throws Exception {
+        String targetImgFormat = getFormatForMimeType(mime_type);
+        return resizeAsFormat(originalImage, format, targetImgFormat);
+    }
+
+    private ByteArrayOutputStream resizeAsFormat(BufferedImage originalImage, String format, String targetImgFormat) throws Exception {
         String[] tokens = format.split("x");
         int targetWidth = Integer.valueOf(tokens[0]);
         int targetHeight = Integer.valueOf(tokens[1]);
-        String targetImgFormat = getFormatForMimeType(mime_type);
         Log.infov("new width = " + targetWidth + ", new height = " + targetHeight + ", target image format = " + targetImgFormat);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Thumbnails.of(originalImage)

@@ -90,8 +90,9 @@ public class DocumentServiceRs {
     @Path(UUID_PATH_PARAM + WEBP_PATH)
     @Consumes("*/*")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response webp(@PathParam("uuid") @NotNull String uuid) throws Exception {
-        Log.info("webp - " + uuid);
+    public Response webp(@PathParam("uuid") @NotNull String uuid,
+                         @QueryParam(value = "format") String format) throws Exception {
+        Log.info("webp - " + uuid + "," + format);
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
         String path = (String) map.get(DOCUMENT_PATH);
         String mimetype = (String) map.get(DOCUMENT_MIME_TYPE);
@@ -99,9 +100,10 @@ public class DocumentServiceRs {
         String formats = (String) map.get(FORMATS);
         boolean isConvertible = (mimetype != null && (mimetype.toLowerCase().contains("png") || mimetype.toLowerCase().contains("jpg") || mimetype.toLowerCase().contains("jpeg"))) ||
                                 (filename != null && (filename.toLowerCase().contains(".png") || filename.toLowerCase().contains(".jpg") || filename.toLowerCase().contains(".jpeg")));
-        boolean itemExists = formats != null && formats.contains("webp");
+        String requestedFormat = (format != null && !format.isBlank()) ? "webp_" + format.trim() : "webp";
+        boolean itemExists = formats != null && formats.contains(requestedFormat);
         if (itemExists) {
-            String duuid = uuid + "_webp";
+            String duuid = uuid + "_" + requestedFormat;
             String dpath = path.replace(uuid, duuid);
             StreamingOutput output = documentsService.streamingOutput(dpath, mimetype);
             return Response.ok(output)
@@ -109,7 +111,7 @@ public class DocumentServiceRs {
                     .build();
         } else if (isConvertible) {
             Log.info("webp - isConvertible:" + isConvertible);
-            imageEvent.fireAsync(new ImageEvent(uuid, "webp"));
+            imageEvent.fireAsync(new ImageEvent(uuid, requestedFormat));
         } else {
             Log.info("NO webp - isConvertible:" + isConvertible + ",itemExists:" + itemExists + ", mimetype: " + mimetype + ", filename: " + filename);
         }
