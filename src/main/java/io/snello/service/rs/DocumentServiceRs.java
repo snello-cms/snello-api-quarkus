@@ -140,6 +140,7 @@ public class DocumentServiceRs {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response persist(@BeanParam DocumentFormData documentFormData) throws Exception {
+        validateDocumentFormData(documentFormData);
         String uuid = java.util.UUID.randomUUID().toString();
         documentFormData.uuid = uuid;
         Map<String, Object> map = documentsService.upload(documentFormData);
@@ -155,6 +156,7 @@ public class DocumentServiceRs {
     public Response update(@BeanParam DocumentFormData documentFormData,
                            @PathParam("uuid") @NotNull String uuid) throws Exception {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
+        validateDocumentFormData(documentFormData);
         documentFormData.uuid = uuid;
         Map<String, Object> map = documentsService.upload(documentFormData);
         map = apiService.merge(table, map, uuid, AppConstants.UUID);
@@ -216,5 +218,30 @@ public class DocumentServiceRs {
         return ok(apiService.list(table, uriInfo.getQueryParameters(), sort, l, s))
                 .header(SIZE_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo))
                 .header(TOTAL_COUNT_HEADER_PARAM, EMPTY + apiService.count(table, uriInfo)).build();
+    }
+
+    private void validateDocumentFormData(DocumentFormData documentFormData) {
+        if (documentFormData == null) {
+            throw new BadRequestException("multipart form data is missing");
+        }
+        if (documentFormData.data == null) {
+            throw new BadRequestException("file part is required");
+        }
+        if (isBlank(documentFormData.resolvedOriginalName())) {
+            throw new BadRequestException("filename or original_name is required");
+        }
+        if (isBlank(documentFormData.mimeType)) {
+            throw new BadRequestException("mimeType is required");
+        }
+        if (isBlank(documentFormData.table_name)) {
+            throw new BadRequestException("table_name is required");
+        }
+        if (isBlank(documentFormData.table_key)) {
+            throw new BadRequestException("table_key is required");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

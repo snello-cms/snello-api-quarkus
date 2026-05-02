@@ -40,15 +40,19 @@ public class FsStorageService implements StorageService {
     @Override
     public Map<String, Object> upload(DocumentFormData documentFormData) throws Exception {
         Path path = verifyPath(documentFormData.table_name);
-        String extension = ResourceFileUtils.getExtension(documentFormData.filename);
+        String originalName = documentFormData.resolvedOriginalName();
+        String extension = ResourceFileUtils.getExtension(originalName);
+        if (extension == null || extension.isBlank()) {
+            extension = "bin";
+        }
         File tempFile = File.createTempFile(documentFormData.uuid, "." + extension, path.toFile());
-        OutputStream outStream = new FileOutputStream(tempFile);
-        byte[] buffer = new byte[documentFormData.data.available()];
-        outStream.write(buffer);
+        try (OutputStream outStream = new FileOutputStream(tempFile)) {
+            documentFormData.data.transferTo(outStream);
+        }
         Map<String, Object> map = new HashMap<>();
         map.put(AppConstants.UUID, documentFormData.uuid);
         map.put(DOCUMENT_NAME, tempFile.getName());
-        map.put(DOCUMENT_ORIGINAL_NAME, documentFormData.filename);
+        map.put(DOCUMENT_ORIGINAL_NAME, originalName != null ? originalName : documentFormData.uuid + "." + extension);
         map.put(DOCUMENT_PATH, tempFile.getParentFile().getName() + "/" + tempFile.getName());
         map.put(DOCUMENT_MIME_TYPE, documentFormData.mimeType);
         map.put(SIZE, documentFormData.data.available());

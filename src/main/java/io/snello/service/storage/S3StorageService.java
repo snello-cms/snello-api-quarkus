@@ -48,12 +48,16 @@ public class S3StorageService implements StorageService {
     @Override
     public Map<String, Object> upload(DocumentFormData documentFormData) throws Exception {
         try {
-            String extension = ResourceFileUtils.getExtension(documentFormData.filename);
+            String originalName = documentFormData.resolvedOriginalName();
+            String extension = ResourceFileUtils.getExtension(originalName);
+            if (extension == null || extension.isBlank()) {
+                extension = "bin";
+            }
             String name = basePath(documentFormData.table_name) + "/" + documentFormData.uuid + "." + extension;
             Map<String, Object> map = new HashMap<>();
             map.put(AppConstants.UUID, documentFormData.uuid);
             map.put(DOCUMENT_NAME, documentFormData.uuid + "." + extension);
-            map.put(DOCUMENT_ORIGINAL_NAME, documentFormData.filename);
+            map.put(DOCUMENT_ORIGINAL_NAME, originalName != null ? originalName : documentFormData.uuid + "." + extension);
             map.put(DOCUMENT_PATH, name);
             map.put(DOCUMENT_MIME_TYPE, documentFormData.mimeType);
             map.put(SIZE, documentFormData.data.available());

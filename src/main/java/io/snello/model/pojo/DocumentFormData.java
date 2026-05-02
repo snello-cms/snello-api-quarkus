@@ -19,6 +19,14 @@ public class DocumentFormData {
     @PartType(MediaType.TEXT_PLAIN)
     public String filename;
 
+    @FormParam("original_name")
+    @PartType(MediaType.TEXT_PLAIN)
+    public String original_name;
+
+    @FormParam("originalName")
+    @PartType(MediaType.TEXT_PLAIN)
+    public String originalName;
+
     @FormParam("mimeType")
     @PartType(MediaType.TEXT_PLAIN)
     public String mimeType;
@@ -30,4 +38,17 @@ public class DocumentFormData {
     @FormParam("table_key")
     @PartType(MediaType.TEXT_PLAIN)
     public String table_key;
+
+    public String resolvedOriginalName() {
+        if (filename != null && !filename.isBlank()) {
+            return filename;
+        }
+        if (original_name != null && !original_name.isBlank()) {
+            return original_name;
+        }
+        if (originalName != null && !originalName.isBlank()) {
+            return originalName;
+        }
+        return null;
+    }
 }
