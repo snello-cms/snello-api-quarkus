@@ -235,7 +235,7 @@ public class ParamUtils {
                 if (where.length() > 0) {
                     where.append(AND);
                 }
-                where.append(key.substring(0, key.length() - LIKE.length()));
+                where.append(key.substring(0, key.length() - ILIKE.length()));
                 where.append(_ICNT);
                 where.append(" ? ").append(SPACE);
                 in.add(_LIKE + value + _LIKE);
