@@ -9,6 +9,7 @@ import io.snello.model.Metadata;
 import io.snello.model.SearchResult;
 import io.snello.service.ApiService;
 import io.snello.service.MetadataService;
+import io.snello.service.ai.AiRequestContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedHashMap;
@@ -24,8 +25,9 @@ import static io.snello.management.AppConstants.*;
  * <p>
  * Tools are grouped into two areas:
  * <ul>
- *   <li><b>Schema / Metadata</b>: read entity schemas and list available entities.</li>
- *   <li><b>Data</b>: list, fetch, create and update records.</li>
+ * <li><b>Schema / Metadata</b>: read entity schemas and list available
+ * entities.</li>
+ * <li><b>Data</b>: list, fetch, create and update records.</li>
  * </ul>
  */
 @ApplicationScoped
@@ -43,6 +45,12 @@ public class SnelloCmsTools {
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    AiRequestContext aiRequestContext;
+
+    @Inject
+    AiPaginationContextStore aiPaginationContextStore;
+
     // ── Schema / Metadata tools ───────────────────────────────────────────────
 
     @Tool("Returns the list of all available entity names (table names) registered in the CMS")
@@ -57,7 +65,7 @@ public class SnelloCmsTools {
     }
 
     @Tool("Returns the schema (fields, types and constraints) of a CMS entity. " +
-          "Call this before any data entry operation to know which fields are required and their types.")
+            "Call this before any data entry operation to know which fields are required and their types.")
     public String getEntitySchema(String entityName) {
         try {
             Metadata metadata = apiService.metadataWithFields(entityName);
@@ -69,11 +77,17 @@ public class SnelloCmsTools {
                 return "Entity '" + entityName + "' has no fields defined.";
             }
             StringBuilder sb = new StringBuilder("Schema for entity '").append(entityName).append("':\n");
-            sb.append("- Primary key: ").append(metadata.table_key).append(" (").append(metadata.table_key_type).append(")\n");
+            sb.append("- Primary key: ").append(metadata.table_key).append(" (").append(metadata.table_key_type)
+                    .append(")\n");
             for (FieldDefinition fd : fields) {
-                sb.append("- ").append(fd.name)
-                  .append(" | type: ").append(fd.type)
-                  .append(" | input_type: ").append(fd.input_type);
+                sb.append("- ").append(fd.name);
+                if (fd.type != null && !fd.type.isBlank()) {
+                    sb.append(" | type: ").append(fd.type);
+                }
+                if (fd.input_type != null && !fd.input_type.isBlank()) {
+                    sb.append(" | data type: ").append(fd.input_type);
+                }
+
                 if (fd.options != null && !fd.options.isBlank()) {
                     sb.append(" | options: ").append(fd.options);
                 }
@@ -89,15 +103,15 @@ public class SnelloCmsTools {
     // ── Data tools ────────────────────────────────────────────────────────────
 
     @Tool("Lists records from a CMS entity with filters and pagination. " +
-          "Arguments: entityName, params, limit, start. " +
-          "params is a simple HashMap<String, String> and is converted internally to a multivalued map. " +
-          "Use params for filters with the same syntax as REST query params: " +
-          "field=value (exact), field_ne, field_lt, field_lte, field_gt, field_gte, " +
-          "field_contains/field_like, field_ilike, field_containss, field_rlike, field_llike, field_ncontains, " +
-          "field_in=a,b,c, field_nn, field_inn, field_nie, field_ie. " +
-          "Examples: params={\"status\":\"published\",\"price_gte\":\"50\",\"title_ilike\":\"java\"}. " +
-          "Returns a SearchResult JSON with load-more metadata (hasMore, remaining, nextStart). " +
-          "Maximum limit is 10.")
+            "Arguments: entityName, params, limit, start. " +
+            "params is a simple HashMap<String, String> and is converted internally to a multivalued map. " +
+            "Use params for filters with the same syntax as REST query params: " +
+            "field=value (exact), field_ne, field_lt, field_lte, field_gt, field_gte, " +
+            "field_contains/field_like, field_ilike, field_containss, field_rlike, field_llike, field_ncontains, " +
+            "field_in=a,b,c, field_nn, field_inn, field_nie, field_ie. " +
+            "Examples: params={\"status\":\"published\",\"price_gte\": 50,\"title_ilike\":\"java\"}. " +
+            "Returns a SearchResult JSON with load-more metadata (hasMore, remaining, nextStart). " +
+            "Maximum limit is 10.")
     public String listRecords(String entityName, HashMap<String, String> params, int limit, int start) {
         try {
             Metadata metadata = apiService.metadata(entityName);
@@ -135,11 +149,39 @@ public class SnelloCmsTools {
             long remaining = Math.max(0L, count - (start + currentSize));
             boolean hasMore = remaining > 0;
             int nextStart = start + currentSize;
+
+            String conversationId = aiRequestContext.getConversationId();
+            aiPaginationContextStore.save(
+                    conversationId,
+                    AiPaginationContextStore.LastSearchContext.of(entityName, params, limit, nextStart, hasMore));
+
             SearchResult result = new SearchResult(count, count, start, limit, hasMore, remaining, nextStart, records);
             return objectMapper.writeValueAsString(result);
         } catch (Exception e) {
             Log.error("listRecords error for: " + entityName, e);
             return "Error listing records for '" + entityName + "': " + e.getMessage();
+        }
+    }
+
+    @Tool("Loads the next page from the last listRecords call in the same conversation. " +
+            "Use this when the user says 'load more data', 'carica altri dati', 'next page', or 'more'. " +
+            "It automatically reuses the same entity and filters from the previous search.")
+    public String loadMoreRecords() {
+        try {
+            String conversationId = aiRequestContext.getConversationId();
+            AiPaginationContextStore.LastSearchContext context = aiPaginationContextStore.get(conversationId);
+            if (context == null) {
+                return "No previous search context found in this conversation. Run listRecords first.";
+            }
+            if (!context.hasMore) {
+                return "No more records are available for the previous search.";
+            }
+
+            HashMap<String, String> paramsCopy = context.params == null ? new HashMap<>() : new HashMap<>(context.params);
+            return listRecords(context.entityName, paramsCopy, context.limit, context.nextStart);
+        } catch (Exception e) {
+            Log.error("loadMoreRecords error", e);
+            return "Error loading more records: " + e.getMessage();
         }
     }
 
@@ -194,8 +236,8 @@ public class SnelloCmsTools {
     }
 
     @Tool("Creates a new record in a CMS entity. " +
-          "Provide the entity name and the record data as a JSON string. " +
-          "Call getEntitySchema first to know the required fields.")
+            "Provide the entity name and the record data as a JSON string. " +
+            "Call getEntitySchema first to know the required fields.")
     public String createRecord(String entityName, String jsonData) {
         checkAuthenticated();
         checkWritePermission(entityName);
@@ -212,7 +254,7 @@ public class SnelloCmsTools {
     }
 
     @Tool("Updates an existing record in a CMS entity. " +
-          "Provide the entity name, the record UUID and the fields to update as a JSON string.")
+            "Provide the entity name, the record UUID and the fields to update as a JSON string.")
     public String updateRecord(String entityName, String uuid, String jsonData) {
         checkAuthenticated();
         checkWritePermission(entityName);
@@ -240,7 +282,7 @@ public class SnelloCmsTools {
         boolean isAdmin = securityIdentity.hasRole("Admin") || securityIdentity.hasRole("Manager");
         if (!isAdmin) {
             throw new SecurityException(
-                "You do not have permission to write data to entity '" + entityName + "'.");
+                    "You do not have permission to write data to entity '" + entityName + "'.");
         }
     }
 

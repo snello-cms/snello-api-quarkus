@@ -3,6 +3,7 @@ package io.snello.service.rs;
 import io.snello.model.ChatInteraction;
 import io.snello.service.ApiService;
 import io.snello.service.ai.SnelloAssistant;
+import io.snello.service.ai.AiRequestContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -39,6 +40,9 @@ public class ChatServiceRs {
     @Inject
     ApiService apiService;
 
+    @Inject
+    AiRequestContext aiRequestContext;
+
     /**
      * POST /api/chat
      * Body: { "message": "..." }
@@ -56,6 +60,7 @@ public class ChatServiceRs {
         String conversationId = extractConversationId(body);
         boolean includeRawResponse = extractIncludeRawResponse(body);
 
+        aiRequestContext.setConversationId(conversationId);
         String reply = assistant.chat(conversationId, message);
         List<Map<String, Object>> actions = extractActions(reply);
         String cleanedReply = stripActionTokens(reply);
