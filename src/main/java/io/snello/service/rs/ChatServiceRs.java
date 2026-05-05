@@ -199,11 +199,7 @@ public class ChatServiceRs {
         if (toolReply == null || toolReply.isBlank()) {
             return "Nessun dato restituito dal caricamento successivo.";
         }
-        if (toolReply.startsWith("Error ") || toolReply.startsWith("No previous") || toolReply.startsWith("No more")) {
-            return toolReply;
-        }
-        String entity = context.entityName == null ? "entity" : context.entityName;
-        return "Ho caricato altri dati per l'entita '" + entity + "'.\n" + toolReply;
+        return toolReply;
     }
 
     private boolean isLoadMoreIntent(String message) {
