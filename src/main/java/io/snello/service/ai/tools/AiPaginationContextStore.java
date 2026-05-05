@@ -2,29 +2,76 @@ package io.snello.service.ai.tools;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @ApplicationScoped
 public class AiPaginationContextStore {
 
     public static final String PAGINATION_CONTEXT_MARKER = "__PAGINATION_CONTEXT__";
+    private static final int MAX_CONTEXTS = 500;
+    private static final Duration CONTEXT_TTL = Duration.ofMinutes(30);
 
-    private final ConcurrentHashMap<String, LastSearchContext> contexts = new ConcurrentHashMap<>();
+    private final Map<String, CacheEntry> contexts = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, CacheEntry> eldest) {
+            return size() > MAX_CONTEXTS;
+        }
+    };
 
-    public void save(String conversationId, LastSearchContext context) {
+    public synchronized void save(String conversationId, LastSearchContext context) {
         if (conversationId == null || conversationId.isBlank() || context == null) {
             return;
         }
-        contexts.put(conversationId, context);
+        pruneExpiredEntries();
+        contexts.put(conversationId, new CacheEntry(context));
     }
 
-    public LastSearchContext get(String conversationId) {
+    public synchronized LastSearchContext get(String conversationId) {
         if (conversationId == null || conversationId.isBlank()) {
             return null;
         }
-        return contexts.get(conversationId);
+        CacheEntry entry = contexts.get(conversationId);
+        if (entry == null) {
+            return null;
+        }
+        if (entry.isExpired()) {
+            contexts.remove(conversationId);
+            return null;
+        }
+        entry.touch();
+        return entry.context;
+    }
+
+    private void pruneExpiredEntries() {
+        Iterator<Map.Entry<String, CacheEntry>> iterator = contexts.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, CacheEntry> entry = iterator.next();
+            if (entry.getValue().isExpired()) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private static class CacheEntry {
+        private final LastSearchContext context;
+        private long expiresAt;
+
+        private CacheEntry(LastSearchContext context) {
+            this.context = context;
+            touch();
+        }
+
+        private void touch() {
+            this.expiresAt = System.currentTimeMillis() + CONTEXT_TTL.toMillis();
+        }
+
+        private boolean isExpired() {
+            return System.currentTimeMillis() > expiresAt;
+        }
     }
 
     public static class LastSearchContext {

@@ -2,6 +2,7 @@ package io.snello.service.rs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.snello.model.ChatInteraction;
+import io.snello.model.SearchResult;
 import io.snello.service.ApiService;
 import io.snello.service.ai.SnelloAssistant;
 import io.snello.service.ai.AiRequestContext;
@@ -18,9 +19,11 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +39,10 @@ public class ChatServiceRs {
     private static final Pattern ACTION_TOKEN_PATTERN = Pattern.compile("\\[ACTION:([^\\]]+)]");
     private static final Pattern LOAD_MORE_INTENT_PATTERN = Pattern.compile(
             "(?i)^\\s*(carica\\s+altri\\s+dati|carica\\s+altri|altri\\s+dati|continua|avanti|next(\\s+page)?|load\\s+more(\\s+data)?)\\s*[.!?]*\\s*$");
+            private static final Set<String> SUMMARY_FIELDS = Set.of(
+                "brand", "category", "length", "weight", "width", "level", "website_url");
+            private static final Set<String> HIDDEN_FIELDS = Set.of(
+                "uuid", "description", "principal_image", "creation_date", "lastupdate_date", "last_update_date");
 
     @Inject
     SnelloAssistant assistant;
@@ -110,15 +117,16 @@ public class ChatServiceRs {
         }
 
         String toolReply = snelloCmsTools.loadMoreRecords();
-        String responseText = buildLoadMoreResponseText(context, toolReply);
+        LoadMoreResponse loadMoreResponse = buildLoadMoreResponse(context, toolReply);
+        String responseText = loadMoreResponse.responseText;
         persistChatInteraction(conversationId, userMessage, responseText);
 
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("response", responseText);
         responseBody.put("conversationId", conversationId);
-        responseBody.put("actions", List.of());
+        responseBody.put("actions", loadMoreResponse.actions);
         if (includeRawResponse) {
-            responseBody.put("rawResponse", responseText);
+            responseBody.put("rawResponse", toolReply);
         }
         return Response.ok(responseBody).build();
     }
@@ -195,11 +203,144 @@ public class ChatServiceRs {
         return value == null ? null : value.toString();
     }
 
-    private String buildLoadMoreResponseText(AiPaginationContextStore.LastSearchContext context, String toolReply) {
+    private LoadMoreResponse buildLoadMoreResponse(AiPaginationContextStore.LastSearchContext context, String toolReply) {
         if (toolReply == null || toolReply.isBlank()) {
-            return "Nessun dato restituito dal caricamento successivo.";
+            return new LoadMoreResponse("Nessun dato restituito dal caricamento successivo.", List.of());
         }
-        return toolReply;
+        if (!toolReply.startsWith("{")) {
+            return new LoadMoreResponse(toolReply, List.of());
+        }
+        try {
+            SearchResult result = objectMapper.readValue(toolReply, SearchResult.class);
+            if (result.records == null || result.records.isEmpty()) {
+                return new LoadMoreResponse("Non ci sono altri dati da mostrare.", List.of());
+            }
+
+            List<Map<String, Object>> actions = buildOpenActions(context, result.records);
+            return new LoadMoreResponse(formatSearchResult(context, result), actions);
+        } catch (Exception e) {
+            return new LoadMoreResponse(toolReply, List.of());
+        }
+    }
+
+    private String formatSearchResult(AiPaginationContextStore.LastSearchContext context, SearchResult result) {
+        String entity = context.entityName == null || context.entityName.isBlank() ? "risultati" : context.entityName;
+        int from = result.records.isEmpty() ? result.start : result.start + 1;
+        int to = result.start + result.records.size();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Ecco altri risultati per ").append(entity).append(" (da ").append(from).append(" a ")
+                .append(to).append("):\n\n");
+
+        for (int index = 0; index < result.records.size(); index++) {
+            Map<String, Object> record = result.records.get(index);
+            appendRecordSummary(sb, record, result.start + index + 1);
+            sb.append("\n");
+        }
+
+        if (result.hasMore) {
+            sb.append("Ci sono altri ").append(result.remaining)
+                    .append(" risultati disponibili. Se vuoi vedere più dati, puoi chiedere di \"Carica altri dati\".");
+        } else {
+            sb.append("Questi sono gli ultimi risultati disponibili.");
+        }
+
+        return sb.toString().trim();
+    }
+
+    private void appendRecordSummary(StringBuilder sb, Map<String, Object> record, int ordinal) {
+        String title = firstNonBlank(record, "name", "title", "label", "uuid");
+        String subtitle = firstNonBlank(record, "brand", "category");
+
+        sb.append(ordinal).append(". **").append(title == null ? "Record" : title).append("**");
+        if (subtitle != null && !subtitle.equals(title)) {
+            sb.append(" - ").append(toDisplayValue(subtitle));
+        }
+        sb.append("\n");
+
+        SUMMARY_FIELDS.stream()
+                .filter(record::containsKey)
+                .filter(field -> record.get(field) != null && !record.get(field).toString().isBlank())
+                .sorted(Comparator.comparingInt(this::fieldPriority))
+                .forEach(field -> sb.append("   - ").append(toDisplayLabel(field)).append(": ")
+                        .append(toDisplayValue(record.get(field))).append("\n"));
+
+        record.entrySet().stream()
+                .filter(entry -> entry.getValue() != null && !entry.getValue().toString().isBlank())
+                .filter(entry -> !SUMMARY_FIELDS.contains(entry.getKey()))
+                .filter(entry -> !HIDDEN_FIELDS.contains(entry.getKey()))
+                .sorted(Map.Entry.comparingByKey())
+                .limit(3)
+                .forEach(entry -> sb.append("   - ").append(toDisplayLabel(entry.getKey())).append(": ")
+                        .append(toDisplayValue(entry.getValue())).append("\n"));
+
+        Object website = record.get("website_url");
+        if (website != null && !website.toString().isBlank()) {
+            sb.append("   - [Dettagli](").append(website).append(")\n");
+        }
+    }
+
+    private List<Map<String, Object>> buildOpenActions(AiPaginationContextStore.LastSearchContext context,
+            List<Map<String, Object>> records) {
+        String entity = context.entityName == null ? "" : context.entityName;
+        List<Map<String, Object>> actions = new ArrayList<>();
+        for (Map<String, Object> record : records) {
+            Object uuid = record.get("uuid");
+            if (uuid == null || uuid.toString().isBlank()) {
+                continue;
+            }
+            Map<String, Object> action = new HashMap<>();
+            action.put("type", "open");
+            action.put("entity", entity);
+            action.put("id", uuid.toString());
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private String firstNonBlank(Map<String, Object> record, String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            Object value = record.get(fieldName);
+            if (value != null && !value.toString().isBlank()) {
+                return value.toString();
+            }
+        }
+        return null;
+    }
+
+    private int fieldPriority(String field) {
+        return switch (field) {
+            case "brand" -> 0;
+            case "length" -> 1;
+            case "weight" -> 2;
+            case "width" -> 3;
+            case "category" -> 4;
+            case "level" -> 5;
+            case "website_url" -> 6;
+            default -> 10;
+        };
+    }
+
+    private String toDisplayLabel(String field) {
+        return switch (field) {
+            case "website_url" -> "Dettagli";
+            case "uuid" -> "ID";
+            default -> Character.toUpperCase(field.charAt(0)) + field.substring(1).replace('_', ' ');
+        };
+    }
+
+    private String toDisplayValue(Object value) {
+        return value == null ? "" : value.toString();
+    }
+
+    private static class LoadMoreResponse {
+        private final String responseText;
+        private final List<Map<String, Object>> actions;
+
+        private LoadMoreResponse(String responseText, List<Map<String, Object>> actions) {
+            this.responseText = responseText;
+            this.actions = actions;
+        }
     }
 
     private boolean isLoadMoreIntent(String message) {
