@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class AiPaginationContextStore {
 
+    public static final String PAGINATION_CONTEXT_MARKER = "__PAGINATION_CONTEXT__";
+
     private final ConcurrentHashMap<String, LastSearchContext> contexts = new ConcurrentHashMap<>();
 
     public void save(String conversationId, LastSearchContext context) {
@@ -41,6 +43,16 @@ public class AiPaginationContextStore {
             context.nextStart = nextStart;
             context.hasMore = hasMore;
             return context;
+        }
+
+        public Map<String, Object> toMap() {
+            Map<String, Object> map = new HashMap<>();
+            map.put("entityName", entityName);
+            map.put("params", params == null ? new HashMap<>() : new HashMap<>(params));
+            map.put("limit", limit);
+            map.put("nextStart", nextStart);
+            map.put("hasMore", hasMore);
+            return map;
         }
     }
 }

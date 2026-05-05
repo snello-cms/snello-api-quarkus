@@ -1,15 +1,19 @@
 package io.snello.service.rs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.snello.model.ChatInteraction;
 import io.snello.service.ApiService;
 import io.snello.service.ai.SnelloAssistant;
 import io.snello.service.ai.AiRequestContext;
+import io.snello.service.ai.tools.AiPaginationContextStore;
+import io.snello.service.ai.tools.SnelloCmsTools;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -30,6 +34,8 @@ import static io.snello.management.AppConstants.UUID;
 public class ChatServiceRs {
 
     private static final Pattern ACTION_TOKEN_PATTERN = Pattern.compile("\\[ACTION:([^\\]]+)]");
+    private static final Pattern LOAD_MORE_INTENT_PATTERN = Pattern.compile(
+            "(?i)^\\s*(carica\\s+altri\\s+dati|carica\\s+altri|altri\\s+dati|continua|avanti|next(\\s+page)?|load\\s+more(\\s+data)?)\\s*[.!?]*\\s*$");
 
     @Inject
     SnelloAssistant assistant;
@@ -42,6 +48,15 @@ public class ChatServiceRs {
 
     @Inject
     AiRequestContext aiRequestContext;
+
+    @Inject
+    AiPaginationContextStore aiPaginationContextStore;
+
+    @Inject
+    SnelloCmsTools snelloCmsTools;
+
+    @Inject
+    ObjectMapper objectMapper;
 
     /**
      * POST /api/chat
@@ -61,6 +76,14 @@ public class ChatServiceRs {
         boolean includeRawResponse = extractIncludeRawResponse(body);
 
         aiRequestContext.setConversationId(conversationId);
+
+        if (isLoadMoreIntent(message)) {
+            Response deterministicLoadMore = tryHandleLoadMore(message, conversationId, includeRawResponse);
+            if (deterministicLoadMore != null) {
+                return deterministicLoadMore;
+            }
+        }
+
         String reply = assistant.chat(conversationId, message);
         List<Map<String, Object>> actions = extractActions(reply);
         String cleanedReply = stripActionTokens(reply);
@@ -73,6 +96,121 @@ public class ChatServiceRs {
             responseBody.put("rawResponse", reply);
         }
         return Response.ok(responseBody).build();
+    }
+
+    private Response tryHandleLoadMore(String userMessage, String conversationId, boolean includeRawResponse)
+            throws Exception {
+        AiPaginationContextStore.LastSearchContext context = aiPaginationContextStore.get(conversationId);
+        if (context == null) {
+            context = restorePaginationContextFromDb(conversationId);
+            if (context == null) {
+                return null;
+            }
+            aiPaginationContextStore.save(conversationId, context);
+        }
+
+        String toolReply = snelloCmsTools.loadMoreRecords();
+        String responseText = buildLoadMoreResponseText(context, toolReply);
+        persistChatInteraction(conversationId, userMessage, responseText);
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("response", responseText);
+        responseBody.put("conversationId", conversationId);
+        responseBody.put("actions", List.of());
+        if (includeRawResponse) {
+            responseBody.put("rawResponse", responseText);
+        }
+        return Response.ok(responseBody).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private AiPaginationContextStore.LastSearchContext restorePaginationContextFromDb(String conversationId) {
+        if (conversationId == null || conversationId.isBlank()) {
+            return null;
+        }
+        try {
+            MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+            params.putSingle("conversation_uuid", conversationId);
+            params.putSingle("user_message", AiPaginationContextStore.PAGINATION_CONTEXT_MARKER);
+            params.putSingle("_sort", "creation_date:desc");
+
+            List<Map<String, Object>> rows = apiService.list(CHAT_INTERACTIONS, params, null, 1, 0);
+            if (rows == null || rows.isEmpty()) {
+                return null;
+            }
+
+            Object rawJson = rows.get(0).get("ai_response");
+            if (!(rawJson instanceof String json) || json.isBlank()) {
+                return null;
+            }
+
+            Map<String, Object> payload = objectMapper.readValue(json, Map.class);
+            String entityName = asString(payload.get("entityName"));
+            Map<String, String> payloadParams = payload.get("params") instanceof Map<?, ?> map
+                    ? (Map<String, String>) map
+                    : Map.of();
+
+            int limit = asInt(payload.get("limit"), 10);
+            int nextStart = asInt(payload.get("nextStart"), 0);
+            boolean hasMore = asBoolean(payload.get("hasMore"), true);
+
+            return AiPaginationContextStore.LastSearchContext.of(entityName, payloadParams, limit, nextStart, hasMore);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int asInt(Object value, int defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        if (value instanceof Number number) {
+            return number.intValue();
+        }
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (Exception ignored) {
+            return defaultValue;
+        }
+    }
+
+    private boolean asBoolean(Object value, boolean defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        if (value instanceof Boolean bool) {
+            return bool;
+        }
+        String text = value.toString().trim();
+        if (text.equalsIgnoreCase("true")) {
+            return true;
+        }
+        if (text.equalsIgnoreCase("false")) {
+            return false;
+        }
+        return defaultValue;
+    }
+
+    private String asString(Object value) {
+        return value == null ? null : value.toString();
+    }
+
+    private String buildLoadMoreResponseText(AiPaginationContextStore.LastSearchContext context, String toolReply) {
+        if (toolReply == null || toolReply.isBlank()) {
+            return "Nessun dato restituito dal caricamento successivo.";
+        }
+        if (toolReply.startsWith("Error ") || toolReply.startsWith("No previous") || toolReply.startsWith("No more")) {
+            return toolReply;
+        }
+        String entity = context.entityName == null ? "entity" : context.entityName;
+        return "Ho caricato altri dati per l'entita '" + entity + "'.\n" + toolReply;
+    }
+
+    private boolean isLoadMoreIntent(String message) {
+        if (message == null || message.isBlank()) {
+            return false;
+        }
+        return LOAD_MORE_INTENT_PATTERN.matcher(message).matches();
     }
 
     private String stripActionTokens(String reply) {

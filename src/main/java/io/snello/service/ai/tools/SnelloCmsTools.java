@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.Tool;
 import io.quarkus.logging.Log;
 import io.quarkus.security.identity.SecurityIdentity;
+import io.snello.model.ChatInteraction;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
 import io.snello.model.SearchResult;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.core.MultivaluedHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 import static io.snello.management.AppConstants.*;
 
@@ -151,9 +153,10 @@ public class SnelloCmsTools {
             int nextStart = start + currentSize;
 
             String conversationId = aiRequestContext.getConversationId();
-            aiPaginationContextStore.save(
-                    conversationId,
-                    AiPaginationContextStore.LastSearchContext.of(entityName, params, limit, nextStart, hasMore));
+                AiPaginationContextStore.LastSearchContext lastSearchContext = AiPaginationContextStore.LastSearchContext
+                    .of(entityName, params, limit, nextStart, hasMore);
+                aiPaginationContextStore.save(conversationId, lastSearchContext);
+                persistPaginationContext(conversationId, lastSearchContext);
 
             SearchResult result = new SearchResult(count, count, start, limit, hasMore, remaining, nextStart, records);
             return objectMapper.writeValueAsString(result);
@@ -161,6 +164,31 @@ public class SnelloCmsTools {
             Log.error("listRecords error for: " + entityName, e);
             return "Error listing records for '" + entityName + "': " + e.getMessage();
         }
+    }
+
+    private void persistPaginationContext(String conversationId, AiPaginationContextStore.LastSearchContext context) {
+        if (conversationId == null || conversationId.isBlank() || context == null) {
+            return;
+        }
+        try {
+            ChatInteraction interaction = new ChatInteraction();
+            interaction.uuid = java.util.UUID.randomUUID().toString();
+            interaction.conversation_uuid = conversationId;
+            interaction.user_id = currentUsernameOrNull();
+            interaction.user_message = AiPaginationContextStore.PAGINATION_CONTEXT_MARKER;
+            interaction.ai_response = objectMapper.writeValueAsString(context.toMap());
+            interaction.creation_date = LocalDateTime.now();
+            apiService.create(CHAT_INTERACTIONS, interaction.toMap(), UUID);
+        } catch (Exception e) {
+            Log.warn("Cannot persist pagination context for conversation " + conversationId + ": " + e.getMessage());
+        }
+    }
+
+    private String currentUsernameOrNull() {
+        if (securityIdentity == null || securityIdentity.isAnonymous() || securityIdentity.getPrincipal() == null) {
+            return null;
+        }
+        return securityIdentity.getPrincipal().getName();
     }
 
     @Tool("Loads the next page from the last listRecords call in the same conversation. " +
