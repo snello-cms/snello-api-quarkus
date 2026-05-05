@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.snello.model.ChatInteraction;
 import io.snello.model.SearchResult;
 import io.snello.service.ApiService;
+import io.snello.service.ai.LoadMoreFormatterAssistant;
 import io.snello.service.ai.SnelloAssistant;
 import io.snello.service.ai.AiRequestContext;
 import io.snello.service.ai.tools.AiPaginationContextStore;
@@ -19,11 +20,9 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,10 +38,6 @@ public class ChatServiceRs {
     private static final Pattern ACTION_TOKEN_PATTERN = Pattern.compile("\\[ACTION:([^\\]]+)]");
     private static final Pattern LOAD_MORE_INTENT_PATTERN = Pattern.compile(
             "(?i)^\\s*(carica\\s+altri\\s+dati|carica\\s+altri|altri\\s+dati|continua|avanti|next(\\s+page)?|load\\s+more(\\s+data)?)\\s*[.!?]*\\s*$");
-            private static final Set<String> SUMMARY_FIELDS = Set.of(
-                "brand", "category", "length", "weight", "width", "level", "website_url");
-            private static final Set<String> HIDDEN_FIELDS = Set.of(
-                "uuid", "description", "principal_image", "creation_date", "lastupdate_date", "last_update_date");
 
     @Inject
     SnelloAssistant assistant;
@@ -64,6 +59,9 @@ public class ChatServiceRs {
 
     @Inject
     ObjectMapper objectMapper;
+
+    @Inject
+    LoadMoreFormatterAssistant loadMoreFormatterAssistant;
 
     /**
      * POST /api/chat
@@ -117,7 +115,7 @@ public class ChatServiceRs {
         }
 
         String toolReply = snelloCmsTools.loadMoreRecords();
-        LoadMoreResponse loadMoreResponse = buildLoadMoreResponse(context, toolReply);
+        LoadMoreResponse loadMoreResponse = buildLoadMoreResponse(context, toolReply, userMessage);
         String responseText = loadMoreResponse.responseText;
         persistChatInteraction(conversationId, userMessage, responseText);
 
@@ -203,80 +201,38 @@ public class ChatServiceRs {
         return value == null ? null : value.toString();
     }
 
-    private LoadMoreResponse buildLoadMoreResponse(AiPaginationContextStore.LastSearchContext context, String toolReply) {
+    private LoadMoreResponse buildLoadMoreResponse(AiPaginationContextStore.LastSearchContext context, String toolReply,
+            String userMessage) {
+        String previousAssistantResponse = findLastVisibleAiResponse(context == null ? null : aiRequestContext.getConversationId());
         if (toolReply == null || toolReply.isBlank()) {
-            return new LoadMoreResponse("Nessun dato restituito dal caricamento successivo.", List.of());
+            return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "EMPTY_RESPONSE", null),
+                    List.of());
+        }
+        if (SnelloCmsTools.LOAD_MORE_NO_PREVIOUS_CONTEXT.equals(toolReply)) {
+            return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "NO_PREVIOUS_CONTEXT", null),
+                    List.of());
+        }
+        if (SnelloCmsTools.LOAD_MORE_NO_MORE_RECORDS.equals(toolReply)) {
+            return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "NO_MORE_RESULTS", null),
+                    List.of());
         }
         if (!toolReply.startsWith("{")) {
-            return new LoadMoreResponse(toolReply, List.of());
+            return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "RAW_TEXT", toolReply),
+                    List.of());
         }
         try {
             SearchResult result = objectMapper.readValue(toolReply, SearchResult.class);
             if (result.records == null || result.records.isEmpty()) {
-                return new LoadMoreResponse("Non ci sono altri dati da mostrare.", List.of());
+                return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "EMPTY_PAGE", toolReply),
+                        List.of());
             }
 
             List<Map<String, Object>> actions = buildOpenActions(context, result.records);
-            return new LoadMoreResponse(formatSearchResult(context, result), actions);
+            return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "RESULTS_PAGE", toolReply),
+                    actions);
         } catch (Exception e) {
-            return new LoadMoreResponse(toolReply, List.of());
-        }
-    }
-
-    private String formatSearchResult(AiPaginationContextStore.LastSearchContext context, SearchResult result) {
-        String entity = context.entityName == null || context.entityName.isBlank() ? "risultati" : context.entityName;
-        int from = result.records.isEmpty() ? result.start : result.start + 1;
-        int to = result.start + result.records.size();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Ecco altri risultati per ").append(entity).append(" (da ").append(from).append(" a ")
-                .append(to).append("):\n\n");
-
-        for (int index = 0; index < result.records.size(); index++) {
-            Map<String, Object> record = result.records.get(index);
-            appendRecordSummary(sb, record, result.start + index + 1);
-            sb.append("\n");
-        }
-
-        if (result.hasMore) {
-            sb.append("Ci sono altri ").append(result.remaining)
-                    .append(" risultati disponibili. Se vuoi vedere più dati, puoi chiedere di \"Carica altri dati\".");
-        } else {
-            sb.append("Questi sono gli ultimi risultati disponibili.");
-        }
-
-        return sb.toString().trim();
-    }
-
-    private void appendRecordSummary(StringBuilder sb, Map<String, Object> record, int ordinal) {
-        String title = firstNonBlank(record, "name", "title", "label", "uuid");
-        String subtitle = firstNonBlank(record, "brand", "category");
-
-        sb.append(ordinal).append(". **").append(title == null ? "Record" : title).append("**");
-        if (subtitle != null && !subtitle.equals(title)) {
-            sb.append(" - ").append(toDisplayValue(subtitle));
-        }
-        sb.append("\n");
-
-        SUMMARY_FIELDS.stream()
-                .filter(record::containsKey)
-                .filter(field -> record.get(field) != null && !record.get(field).toString().isBlank())
-                .sorted(Comparator.comparingInt(this::fieldPriority))
-                .forEach(field -> sb.append("   - ").append(toDisplayLabel(field)).append(": ")
-                        .append(toDisplayValue(record.get(field))).append("\n"));
-
-        record.entrySet().stream()
-                .filter(entry -> entry.getValue() != null && !entry.getValue().toString().isBlank())
-                .filter(entry -> !SUMMARY_FIELDS.contains(entry.getKey()))
-                .filter(entry -> !HIDDEN_FIELDS.contains(entry.getKey()))
-                .sorted(Map.Entry.comparingByKey())
-                .limit(3)
-                .forEach(entry -> sb.append("   - ").append(toDisplayLabel(entry.getKey())).append(": ")
-                        .append(toDisplayValue(entry.getValue())).append("\n"));
-
-        Object website = record.get("website_url");
-        if (website != null && !website.toString().isBlank()) {
-            sb.append("   - [Dettagli](").append(website).append(")\n");
+            return new LoadMoreResponse(formatWithAi(userMessage, previousAssistantResponse, context, "RAW_TEXT", toolReply),
+                    List.of());
         }
     }
 
@@ -298,39 +254,43 @@ public class ChatServiceRs {
         return actions;
     }
 
-    private String firstNonBlank(Map<String, Object> record, String... fieldNames) {
-        for (String fieldName : fieldNames) {
-            Object value = record.get(fieldName);
-            if (value != null && !value.toString().isBlank()) {
-                return value.toString();
+
+    private String formatWithAi(String userMessage, String previousAssistantResponse,
+            AiPaginationContextStore.LastSearchContext context, String status, String payload) {
+        try {
+            Map<String, Object> formatterInput = new HashMap<>();
+            formatterInput.put("status", status);
+            formatterInput.put("userMessage", userMessage);
+            formatterInput.put("previousAssistantResponse", previousAssistantResponse == null ? "" : previousAssistantResponse);
+            formatterInput.put("entityName", context == null ? null : context.entityName);
+            formatterInput.put("params", context == null ? Map.of() : context.params);
+            formatterInput.put("payload", payload == null ? "" : payload);
+            return loadMoreFormatterAssistant.format(objectMapper.writeValueAsString(formatterInput)).trim();
+        } catch (Exception e) {
+            return payload == null || payload.isBlank() ? status : payload;
+        }
+    }
+
+    private String findLastVisibleAiResponse(String conversationId) {
+        if (conversationId == null || conversationId.isBlank()) {
+            return null;
+        }
+        try {
+            MultivaluedHashMap<String, String> params = new MultivaluedHashMap<>();
+            params.putSingle("conversation_uuid", conversationId);
+            params.putSingle("user_message_ne", AiPaginationContextStore.PAGINATION_CONTEXT_MARKER);
+            params.putSingle("_sort", "creation_date:desc");
+
+            List<Map<String, Object>> rows = apiService.list(CHAT_INTERACTIONS, params, null, 5, 0);
+            for (Map<String, Object> row : rows) {
+                Object aiResponse = row.get("ai_response");
+                if (aiResponse instanceof String text && !text.isBlank()) {
+                    return text;
+                }
             }
+        } catch (Exception ignored) {
         }
         return null;
-    }
-
-    private int fieldPriority(String field) {
-        return switch (field) {
-            case "brand" -> 0;
-            case "length" -> 1;
-            case "weight" -> 2;
-            case "width" -> 3;
-            case "category" -> 4;
-            case "level" -> 5;
-            case "website_url" -> 6;
-            default -> 10;
-        };
-    }
-
-    private String toDisplayLabel(String field) {
-        return switch (field) {
-            case "website_url" -> "Dettagli";
-            case "uuid" -> "ID";
-            default -> Character.toUpperCase(field.charAt(0)) + field.substring(1).replace('_', ' ');
-        };
-    }
-
-    private String toDisplayValue(Object value) {
-        return value == null ? "" : value.toString();
     }
 
     private static class LoadMoreResponse {

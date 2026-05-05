@@ -35,6 +35,9 @@ import static io.snello.management.AppConstants.*;
 @ApplicationScoped
 public class SnelloCmsTools {
 
+    public static final String LOAD_MORE_NO_PREVIOUS_CONTEXT = "__LOAD_MORE_NO_PREVIOUS_CONTEXT__";
+    public static final String LOAD_MORE_NO_MORE_RECORDS = "__LOAD_MORE_NO_MORE_RECORDS__";
+
     @Inject
     ApiService apiService;
 
@@ -199,10 +202,10 @@ public class SnelloCmsTools {
             String conversationId = aiRequestContext.getConversationId();
             AiPaginationContextStore.LastSearchContext context = aiPaginationContextStore.get(conversationId);
             if (context == null) {
-                return "No previous search context found in this conversation. Run listRecords first.";
+                return LOAD_MORE_NO_PREVIOUS_CONTEXT;
             }
             if (!context.hasMore) {
-                return "No more records are available for the previous search.";
+                return LOAD_MORE_NO_MORE_RECORDS;
             }
 
             HashMap<String, String> paramsCopy = context.params == null ? new HashMap<>() : new HashMap<>(context.params);
