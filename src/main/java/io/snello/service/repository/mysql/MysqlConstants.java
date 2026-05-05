@@ -96,6 +96,9 @@ public class MysqlConstants {
             "  `order_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `tab_groups` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `already_exist` BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+            "  `calendar_enabled` BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+            "  `calendar_field` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `calendar_label` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `created` BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  PRIMARY KEY (uuid)\n" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";

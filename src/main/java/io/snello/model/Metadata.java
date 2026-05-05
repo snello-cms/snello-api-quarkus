@@ -37,6 +37,10 @@ public class Metadata {
     public boolean api_protected;
     public String username_field;
 
+    public boolean calendar_enabled;
+    public String calendar_field;
+    public String calendar_label;
+
     // la tabella esiste e non deve essere gestita da SNELLO
     public boolean already_exist;
     //la tabella VA CREATA E GESTISTA DA SNELLO
@@ -82,6 +86,9 @@ public class Metadata {
                ", created='" + created + '\'' +
                ", api_protected='" + api_protected + '\'' +
                ", username_field='" + username_field + '\'' +
+               ", calendar_enabled='" + calendar_enabled + '\'' +
+               ", calendar_field='" + calendar_field + '\'' +
+               ", calendar_label='" + calendar_label + '\'' +
                '}';
     }
 
@@ -142,6 +149,15 @@ public class Metadata {
         if (map.get("username_field") instanceof String) {
             metadata.username_field = (String) map.get("username_field");
         }
+        if (map.get("calendar_enabled") instanceof Boolean) {
+            metadata.calendar_enabled = (Boolean) map.get("calendar_enabled");
+        }
+        if (map.get("calendar_field") instanceof String) {
+            metadata.calendar_field = (String) map.get("calendar_field");
+        }
+        if (map.get("calendar_label") instanceof String) {
+            metadata.calendar_label = (String) map.get("calendar_label");
+        }
         return metadata;
     }
 
@@ -190,6 +206,13 @@ public class Metadata {
         if (this.username_field != null) {
             map.put("username_field", this.username_field);
         }
+        if (this.calendar_field != null) {
+            map.put("calendar_field", this.calendar_field);
+        }
+        if (this.calendar_label != null) {
+            map.put("calendar_label", this.calendar_label);
+        }
+        map.put("calendar_enabled", this.calendar_enabled);
         map.put("already_exist", this.already_exist);
         map.put("created", this.created);
         map.put("api_protected", this.api_protected);

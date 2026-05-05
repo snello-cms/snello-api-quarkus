@@ -95,6 +95,9 @@ public class H2Constants {
                         "  order_by varchar(255) DEFAULT NULL,\n" +
                         "  tab_groups varchar(255) DEFAULT NULL,\n" +
                         "  already_exist BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                        "  calendar_enabled BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                        "  calendar_field varchar(255) DEFAULT NULL,\n" +
+                        "  calendar_label varchar(255) DEFAULT NULL,\n" +
                         "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                         "  PRIMARY KEY (uuid)\n" +
                         ") ;";

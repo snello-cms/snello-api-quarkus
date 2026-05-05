@@ -102,6 +102,9 @@ public class PostgresqlConstants {
                                                   "  already_exist BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                                                   "  api_protected BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                                                   "  username_field varchar(255) DEFAULT NULL,\n" +
+                                                  "  calendar_enabled BOOLEAN NOT NULL DEFAULT FALSE,\n" +
+                                                  "  calendar_field varchar(255) DEFAULT NULL,\n" +
+                                                  "  calendar_label varchar(255) DEFAULT NULL,\n" +
                                                   "  created BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                                                   "  PRIMARY KEY (uuid)\n" +
                                                   ") ";
