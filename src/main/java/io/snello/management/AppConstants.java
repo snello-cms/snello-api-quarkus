@@ -37,7 +37,7 @@ public class AppConstants {
     public static final String _0 = "0";
     public static final String _10 = "10";
     public static final String TABLE_PATH_PARAM = "/{table}";
-    public static final String EXTRA_PATH_PARAM = "/{+path}";
+    public static final String EXTRA_PATH_PARAM = "/{path:.*}";
     public static final String UUID = "uuid";
     public static final String UUID_PATH_PARAM = "/{" + UUID + "}";
     public static final String UUID_PATH_PARAM_CREATE = UUID_PATH_PARAM + "/create";
