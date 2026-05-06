@@ -32,6 +32,7 @@ import static io.snello.management.AppConstants.*;
  * entities.</li>
  * <li><b>Data</b>: list, fetch, create and update records.</li>
  * </ul>
+ * 
  */
 @ApplicationScoped
 public class SnelloCmsTools {

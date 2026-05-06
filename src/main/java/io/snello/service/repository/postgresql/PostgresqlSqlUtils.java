@@ -11,7 +11,6 @@ import static io.snello.service.repository.postgresql.PostgresqlConstants.*;
 
 public class PostgresqlSqlUtils {
 
-
     public static List<Map<String, Object>> list(final ResultSet rs)
             throws Exception {
         ResultSetMetaData rsmd = rs.getMetaData();
