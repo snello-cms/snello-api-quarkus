@@ -70,8 +70,21 @@ public class SnelloCmsTools {
     @Tool("Returns the list of all available entity names (table names) registered in the CMS")
     public String listEntities() {
         try {
-            List<String> names = metadataService.metadataMap().keySet().stream().sorted().toList();
-            return "Available entities: " + String.join(", ", names);
+            Map<String, Metadata> metadataMap = metadataService.metadataMap();
+            List<String> entitiesWithDescription = metadataMap.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(entry -> {
+                        String entityName = entry.getKey();
+                        Metadata metadata = entry.getValue();
+                    String description = (metadata != null && metadata.description != null
+                        && !metadata.description.isBlank()) ? metadata.description : null;
+                    if (description == null) {
+                        return entityName;
+                    }
+                    return entityName + " (" + description + ")";
+                    })
+                    .toList();
+            return "Available entities with description: " + String.join(", ", entitiesWithDescription);
         } catch (Exception e) {
             Log.error("listEntities error", e);
             return "Error retrieving entity list: " + e.getMessage();

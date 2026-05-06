@@ -37,7 +37,7 @@ public class ChatServiceRs {
 
     private static final Pattern ACTION_TOKEN_PATTERN = Pattern.compile("\\[ACTION:([^\\]]+)]");
     private static final Pattern LOAD_MORE_INTENT_PATTERN = Pattern.compile(
-            "(?i)^\\s*(carica\\s+altri\\s+dati|carica\\s+altri|altri\\s+dati|continua|avanti|next(\\s+page)?|load\\s+more(\\s+data)?)\\s*[.!?]*\\s*$");
+            "(?i)^\\s*(carica\\s+altri\\s+dati|carica\\s+altri|altri\\s+dati|continua|continue|avanti|next(\\s+page)?|load\\s+more(\\s+data)?)\\s*[.!?]*\\s*$");
 
     @Inject
     SnelloAssistant assistant;

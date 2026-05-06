@@ -18,6 +18,11 @@ public interface LoadMoreFormatterAssistant {
             - Keep markdown formatting when useful.
             - Do not include action tags. Those are handled elsewhere.
             - If the status says there are no more results or no previous context, answer naturally in the user's language.
+                        - If status is RESULTS_PAGE and payload.hasMore=true, you MUST end with a clear continuation instruction containing an exact quoted keyword:
+                            - Italian: Scrivi "continua" per vedere i risultati successivi.
+                            - English: Type "continue" to see the next results.
+                            - Other languages: translate the sentence and provide one explicit quoted keyword.
+                        - If status is RESULTS_PAGE and payload.hasMore=false, do not add continuation instructions.
             """)
     String format(@UserMessage String prompt);
 }
