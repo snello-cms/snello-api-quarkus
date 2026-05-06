@@ -206,12 +206,8 @@ public class Metadata {
         if (this.username_field != null) {
             map.put("username_field", this.username_field);
         }
-        if (this.calendar_field != null) {
-            map.put("calendar_field", this.calendar_field);
-        }
-        if (this.calendar_label != null) {
-            map.put("calendar_label", this.calendar_label);
-        }
+        map.put("calendar_field", this.calendar_field);
+        map.put("calendar_label", this.calendar_label);
         map.put("calendar_enabled", this.calendar_enabled);
         map.put("already_exist", this.already_exist);
         map.put("created", this.created);
