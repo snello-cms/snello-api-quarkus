@@ -12,6 +12,7 @@ import io.snello.service.ApiService;
 import io.snello.service.MetadataService;
 import io.snello.service.ai.AiRequestContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import io.snello.util.FieldTypeUtils;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 
@@ -58,6 +59,14 @@ public class SnelloCmsTools {
 
     // ── Schema / Metadata tools ───────────────────────────────────────────────
 
+    /**
+     * Maps FieldDefinition type and input_type to a unified, simplified type for AI context.
+     * Normalizes: string, number, decimal, date, datetime
+     * For join fields, returns "text (join: foreignKeyFieldName)" or "text (multijoin: comma-separated uuids)"
+     */
+    // Removed the private method getUnifiedFieldType
+    // Use FieldTypeUtils.getUnifiedFieldType(fd) instead where necessary
+
     @Tool("Returns the list of all available entity names (table names) registered in the CMS")
     public String listEntities() {
         try {
@@ -86,11 +95,12 @@ public class SnelloCmsTools {
                     .append(")\n");
             for (FieldDefinition fd : fields) {
                 sb.append("- ").append(fd.name);
-                if (fd.type != null && !fd.type.isBlank()) {
-                    sb.append(" | type: ").append(fd.type);
+                if (fd.description != null && !fd.description.isBlank()) {
+                    sb.append(" | description: ").append(fd.description);
                 }
-                if (fd.input_type != null && !fd.input_type.isBlank()) {
-                    sb.append(" | data type: ").append(fd.input_type);
+                String unifiedType = FieldTypeUtils.getUnifiedFieldType(fd);
+                if (unifiedType != null && !unifiedType.isBlank()) {
+                    sb.append(" | type: ").append(unifiedType);
                 }
 
                 if (fd.options != null && !fd.options.isBlank()) {
