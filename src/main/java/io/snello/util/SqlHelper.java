@@ -1,6 +1,7 @@
 package io.snello.util;
 
 import io.quarkus.logging.Log;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -23,6 +24,7 @@ public class SqlHelper {
     private static final Pattern UUID = Pattern
             .compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
     private static final boolean castUUID = false;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void fillStatement(PreparedStatement statement, Map<String, Object> in) throws SQLException {
         if (in == null) {
@@ -30,15 +32,7 @@ public class SqlHelper {
         }
         int i = 0;
         for (Object value : in.values()) {
-            if (value != null) {
-                if (value instanceof String) {
-                    statement.setObject(i + 1, optimisticCast((String) value));
-                } else {
-                    statement.setObject(i + 1, value);
-                }
-            } else {
-                statement.setObject(i + 1, null);
-            }
+            bindValue(statement, i + 1, value);
             i++;
         }
 
@@ -50,16 +44,66 @@ public class SqlHelper {
         }
         int i = 0;
         for (Object value : in) {
-            if (value != null) {
-                if (value instanceof String) {
-                    statement.setObject(i + 1, optimisticCast((String) value));
-                } else {
-                    statement.setObject(i + 1, value);
-                }
-            } else {
-                statement.setObject(i + 1, null);
-            }
+            bindValue(statement, i + 1, value);
             i++;
+        }
+    }
+
+    private static void bindValue(PreparedStatement statement, int index, Object value) throws SQLException {
+        if (value == null) {
+            statement.setObject(index, null);
+            return;
+        }
+        if (value instanceof String stringValue) {
+            if (shouldBindEmptyStringAsNull(statement, index, stringValue)) {
+                statement.setObject(index, null);
+                return;
+            }
+            statement.setObject(index, optimisticCast(stringValue));
+            return;
+        }
+        // Handle List/ArrayList by converting to JSON string
+        if (value instanceof List) {
+            try {
+                String jsonString = objectMapper.writeValueAsString(value);
+                statement.setObject(index, jsonString);
+                return;
+            } catch (Exception e) {
+                Log.warn("Failed to serialize List to JSON: " + e.getMessage());
+                statement.setObject(index, value.toString());
+                return;
+            }
+        }
+        // Handle Map by converting to JSON string
+        if (value instanceof Map) {
+            try {
+                String jsonString = objectMapper.writeValueAsString(value);
+                statement.setObject(index, jsonString);
+                return;
+            } catch (Exception e) {
+                Log.warn("Failed to serialize Map to JSON: " + e.getMessage());
+                statement.setObject(index, value.toString());
+                return;
+            }
+        }
+        statement.setObject(index, value);
+    }
+
+    private static boolean shouldBindEmptyStringAsNull(PreparedStatement statement, int index, String value) {
+        if (!value.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            ParameterMetaData parameterMetaData = statement.getParameterMetaData();
+            if (parameterMetaData == null) {
+                return false;
+            }
+            int parameterType = parameterMetaData.getParameterType(index);
+            return parameterType == Types.DATE
+                    || parameterType == Types.TIMESTAMP
+                    || parameterType == Types.TIMESTAMP_WITH_TIMEZONE;
+        } catch (SQLException | RuntimeException e) {
+            return false;
         }
     }
 
