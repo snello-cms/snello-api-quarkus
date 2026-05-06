@@ -54,6 +54,7 @@ public class MysqlConstants {
             "  `metadata_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `label` varchar(255) COLLATE utf8mb4_unicode_ci  NOT NULL,\n" +
+            "  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n" +
             "  `input_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `options` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +

@@ -55,6 +55,7 @@ public class PostgresqlConstants {
                                                          "  metadata_name varchar(255) NOT NULL,\n" +
                                                          "  name varchar(255) NOT NULL,\n" +
                                                          "  label varchar(255)  NOT NULL,\n" +
+                                                         "  description varchar(255) DEFAULT NULL,\n" +
                                                          "  type varchar(255) NOT NULL,\n" +
                                                          "  input_type varchar(255) DEFAULT NULL,\n" +
                                                          "  options varchar(255) DEFAULT NULL,\n" +

@@ -14,6 +14,7 @@ public class FieldDefinition {
 
     public String name;
     public String label;
+    public String description;
     // input|button|select|date|radiobutton|checkbox
     public String type;
     // html password, text, number, radio, checkbox, color, date, datetime-local,
@@ -91,6 +92,9 @@ public class FieldDefinition {
         }
         if (map.get("label") instanceof String) {
             fieldDefinition.label = (String) map.get("label");
+        }
+        if (map.get("description") instanceof String) {
+            fieldDefinition.description = (String) map.get("description");
         }
         if (map.get("type") instanceof String) {
             fieldDefinition.type = (String) map.get("type");
@@ -189,6 +193,9 @@ public class FieldDefinition {
         if (this.label != null) {
             map.put("label", this.label);
         }
+        if (this.description != null) {
+            map.put("description", this.description);
+        }
         if (this.type != null) {
             map.put("type", this.type);
         }
@@ -257,6 +264,7 @@ public class FieldDefinition {
                 ", metadata_uuid='" + metadata_uuid + '\'' +
                 ", name='" + name + '\'' +
                 ", label='" + label + '\'' +
+                ", description='" + description + '\'' +
                 ", type='" + type + '\'' +
                 ", input_type='" + input_type + '\'' +
                 ", options='" + options + '\'' +
