@@ -41,6 +41,14 @@ jobs:
       - name: Maven Package (Native)
         run: mvn clean package -DskipTests=true -Pnative -Dquarkus.native.container-build=true
 
+      - name: Verify native runner artifact
+        run: |
+          ls -la target
+          if ! ls target/*-runner >/dev/null 2>&1; then
+            echo "Native runner not found in target/. Expected target/*-runner"
+            exit 1
+          fi
+
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
