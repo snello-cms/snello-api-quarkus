@@ -1,5 +1,7 @@
 package io.snello.service.rs;
 
+
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
 import io.snello.service.MetadataService;
@@ -19,6 +21,7 @@ import static jakarta.ws.rs.core.Response.ok;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RunOnVirtualThread
 public class DataListServiceRs {
 
     @Inject
@@ -29,12 +32,14 @@ public class DataListServiceRs {
 
     @GET
     @Path("/names")
+    
     public Response names() throws Exception {
         return ok(metadataService.names()).build();
     }
 
     @GET
     @Path("/metadata/{name}")
+    
     public Response metadata(@PathParam("name") @NotNull String name) throws Exception {
         io.snello.model.Metadata metadata = metadataService.metadata(name);
         if (metadata != null) {
@@ -46,6 +51,7 @@ public class DataListServiceRs {
 
     @GET
     @Path("/metadata/{name}/fielddefinitions")
+    
     public Response fielddefinitions(@PathParam("name") @NotNull String name) throws Exception {
         Metadata metadata = metadataService.metadata(name);
         if (metadata == null || metadata.uuid == null) {
@@ -58,6 +64,7 @@ public class DataListServiceRs {
 
     @GET
     @Path("/metadata/{name}/condition")
+    
     public Response conditions(@PathParam("name") @NotNull String name) throws Exception {
         return ok(metadataService.conditions(name)).build();
     }

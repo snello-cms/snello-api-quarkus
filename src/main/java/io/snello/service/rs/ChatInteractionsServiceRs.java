@@ -1,5 +1,6 @@
 package io.snello.service.rs;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.service.ApiService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,6 +17,7 @@ import static io.snello.management.AppConstants.CHAT_INTERACTIONS_PATH;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RunOnVirtualThread
 public class ChatInteractionsServiceRs extends AbstractServiceRs {
 
     @Inject

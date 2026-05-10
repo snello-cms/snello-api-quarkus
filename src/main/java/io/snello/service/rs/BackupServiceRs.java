@@ -1,7 +1,9 @@
 package io.snello.service.rs;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.model.pojo.ZipFormData;
 import io.snello.service.BackupService;
+
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -17,6 +19,7 @@ import static io.snello.management.AppConstants.BACKUP_PATH;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
+@RunOnVirtualThread
 public class BackupServiceRs {
 
     @Inject
@@ -25,6 +28,7 @@ public class BackupServiceRs {
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/data")
+    
     public Response download() {
         ZipFile output = backupService.exportData();
         return Response.ok(output)
@@ -35,6 +39,7 @@ public class BackupServiceRs {
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/files")
+    
     public Response downloadFiles() {
         ZipFile output = backupService.exportData();
         return Response.ok(output)
@@ -45,6 +50,7 @@ public class BackupServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/data")
+    
     public Response upload(@BeanParam ZipFormData zipFormData) {
         backupService.importData(zipFormData.data);
         return Response.ok().build();
@@ -53,6 +59,7 @@ public class BackupServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/files")
+    
     public Response uploadFiles(@BeanParam ZipFormData zipFormData) {
         backupService.importData(zipFormData.data);
         return Response.ok().build();

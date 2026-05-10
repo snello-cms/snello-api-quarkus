@@ -1,6 +1,8 @@
 package io.snello.service.rs;
 
 import io.quarkus.logging.Log;
+
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.smallrye.common.constraint.Nullable;
 import io.snello.api.service.StorageService;
 import io.snello.management.AppConstants;
@@ -27,6 +29,7 @@ import static jakarta.ws.rs.core.Response.serverError;
 @Path(DOCUMENTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
+@RunOnVirtualThread
 public class DocumentServiceRs {
     private static String table = DOCUMENTS;
 
@@ -46,6 +49,7 @@ public class DocumentServiceRs {
     @GET
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    
     public Response fetch(@PathParam("id") String id) throws Exception {
         Map<String, Object> result = apiService.fetch(null, table, id, UUID);
         return ok(result).build();
@@ -56,6 +60,7 @@ public class DocumentServiceRs {
     @Path(UUID_PATH_PARAM + DOWNLOAD_PATH)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    
     public Response download(@PathParam("uuid") @NotNull String uuid, @QueryParam(value = "format") String format) throws Exception {
         Log.info("download - " + uuid + "," + format);
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
@@ -92,6 +97,7 @@ public class DocumentServiceRs {
     @Path(UUID_PATH_PARAM + WEBP_PATH)
     @Consumes("*/*")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    
     public Response webp(@PathParam("uuid") @NotNull String uuid,
                          @QueryParam(value = "format") String format) throws Exception {
         Log.info("webp - " + uuid + "," + format);
@@ -128,6 +134,7 @@ public class DocumentServiceRs {
     @Path("/{uuid}/download/{name}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Consumes(MediaType.APPLICATION_JSON)
+    
     public Response downloadWithName(@PathParam("uuid") @NotNull String uuid,
                                      @PathParam("name") @NotNull String name) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
@@ -143,6 +150,7 @@ public class DocumentServiceRs {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
+    
     public Response persist(@BeanParam DocumentFormData documentFormData) throws Exception {
         validateDocumentFormData(documentFormData);
         String uuid = java.util.UUID.randomUUID().toString();
@@ -157,6 +165,7 @@ public class DocumentServiceRs {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
+    
     public Response update(@BeanParam DocumentFormData documentFormData,
                            @PathParam("uuid") @NotNull String uuid) throws Exception {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
@@ -182,6 +191,7 @@ public class DocumentServiceRs {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    
     public Response delete(@PathParam("uuid") @NotNull String uuid,
                            @Nullable @QueryParam("delete") String delete) throws Exception {
         Map<String, Object> map = apiService.fetch(null, table, uuid, AppConstants.UUID);
@@ -204,6 +214,7 @@ public class DocumentServiceRs {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    
     public Response list(
             @QueryParam(SORT_PARAM) String sort,
             @QueryParam(LIMIT_PARAM) String limit,

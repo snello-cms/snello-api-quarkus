@@ -1,5 +1,8 @@
 package io.snello.service.rs;
 
+
+
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Link;
@@ -28,6 +31,7 @@ import static jakarta.ws.rs.core.Response.ok;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RunOnVirtualThread
 public class LinksServiceRs extends AbstractServiceRs {
 
     @Inject
@@ -47,6 +51,7 @@ public class LinksServiceRs extends AbstractServiceRs {
 
     @Override
     @POST
+    
     public Response persist(Map<String, Object> map) throws Exception {
         map.put(NAME, map.get(NAME));
         map = apiService.create(LINKS, map, NAME);
@@ -56,6 +61,7 @@ public class LinksServiceRs extends AbstractServiceRs {
     @Override
     @PUT
     @Path("/{id}")
+    
     public Response update(@PathParam("id") String id, Map<String, Object> map) throws Exception {
         if (map.get(NAME) == null) {
             throw new Exception(MSG_NAME_PARAM_IS_EMPTY);
@@ -69,6 +75,7 @@ public class LinksServiceRs extends AbstractServiceRs {
 
     @GET
     @Path(UUID_PATH_PARAM_CREATE)
+    
     public Response create(@NotNull String uuid) throws Exception {
         Map<String, Object> map = apiService.fetch(null, LINKS, uuid, NAME);
         map.put(CREATED, true);

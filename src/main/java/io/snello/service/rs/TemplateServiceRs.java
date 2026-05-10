@@ -1,6 +1,8 @@
 package io.snello.service.rs;
 
 import io.quarkus.logging.Log;
+
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.service.ApiService;
 import io.snello.service.TemplateService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,6 +19,7 @@ import static jakarta.ws.rs.core.Response.ok;
 
 @Path(PAGES_PATH)
 @ApplicationScoped
+@RunOnVirtualThread
 public class TemplateServiceRs {
 
 
@@ -37,6 +40,7 @@ public class TemplateServiceRs {
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
+    
     public Response fetch(@NotNull @PathParam("table") String table,
                           @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());

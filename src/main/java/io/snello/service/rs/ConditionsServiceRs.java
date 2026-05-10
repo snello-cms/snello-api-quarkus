@@ -1,5 +1,6 @@
 package io.snello.service.rs;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.model.events.ConditionCreateUpdateEvent;
 import io.snello.model.events.ConditionDeleteEvent;
@@ -21,6 +22,7 @@ import static io.snello.management.AppConstants.CONDITIONS_PATH;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RunOnVirtualThread
 public class ConditionsServiceRs extends AbstractServiceRs {
 
 

@@ -1,6 +1,8 @@
 package io.snello.service.rs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.model.ChatInteraction;
 import io.snello.model.SearchResult;
 import io.snello.service.ApiService;
@@ -33,6 +35,7 @@ import static io.snello.management.AppConstants.UUID;
 @Path(CHAT_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@RunOnVirtualThread
 public class ChatServiceRs {
 
     private static final Pattern ACTION_TOKEN_PATTERN = Pattern.compile("\\[ACTION:([^\\]]+)]");
@@ -69,6 +72,7 @@ public class ChatServiceRs {
      * Returns: { "response": "..." }
      */
     @POST
+    
     public Response chat(Map<String, Object> body) throws Exception {
         if (body == null || body.get("message") == null) {
             return Response.status(Response.Status.BAD_REQUEST)

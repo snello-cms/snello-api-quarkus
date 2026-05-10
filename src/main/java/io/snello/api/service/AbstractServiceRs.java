@@ -1,6 +1,7 @@
 package io.snello.api.service;
 
 import io.quarkus.logging.Log;
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.management.AppConstants;
 import io.snello.service.ApiService;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import static io.snello.management.AppConstants.*;
 import static jakarta.ws.rs.core.Response.ok;
 import static jakarta.ws.rs.core.Response.serverError;
 
+@RunOnVirtualThread
 public abstract class AbstractServiceRs {
 
 

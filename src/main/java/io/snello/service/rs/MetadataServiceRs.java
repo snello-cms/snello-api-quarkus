@@ -1,6 +1,7 @@
 package io.snello.service.rs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.api.service.AbstractServiceRs;
 import io.snello.model.FieldDefinition;
 import io.snello.model.Metadata;
@@ -31,6 +32,7 @@ import static jakarta.ws.rs.core.Response.serverError;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RunOnVirtualThread
 public class MetadataServiceRs extends AbstractServiceRs {
     private static String table = METADATAS;
 

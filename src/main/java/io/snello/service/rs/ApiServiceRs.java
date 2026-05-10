@@ -1,6 +1,7 @@
 package io.snello.service.rs;
 
 import io.quarkus.logging.Log;
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.snello.model.Metadata;
 import io.snello.service.ApiService;
 import io.snello.util.TableKeyUtils;
@@ -20,6 +21,7 @@ import static jakarta.ws.rs.core.Response.serverError;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RunOnVirtualThread
 public class ApiServiceRs {
 
 
@@ -38,6 +40,7 @@ public class ApiServiceRs {
 
     @GET
     @Path(TABLE_PATH_PARAM)
+    @RunOnVirtualThread
     public Response list(@NotNull @PathParam("table") String table, @QueryParam(SORT_PARAM) String sort, @QueryParam(LIMIT_PARAM) String limit, @QueryParam(START_PARAM) String start) throws Exception {
         if (sort != null) Log.info(SORT_DOT_DOT + sort);
         if (limit != null) Log.info(LIMIT_DOT_DOT + limit);
@@ -71,6 +74,7 @@ public class ApiServiceRs {
 
     @GET
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
+    @RunOnVirtualThread
     public Response fetch(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(GET.class.getName());
         debugMe();
@@ -104,6 +108,7 @@ public class ApiServiceRs {
 
     @GET
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM + EXTRA_PATH_PARAM)
+    @RunOnVirtualThread
     public Response get(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid, @NotNull @PathParam("path") String path, @QueryParam(SORT_PARAM) String sort, @QueryParam(LIMIT_PARAM) String limit, @QueryParam(START_PARAM) String start) throws Exception {
         debug(GET.class.getName());
         debugMe();
@@ -158,6 +163,7 @@ public class ApiServiceRs {
 
     @POST
     @Path(TABLE_PATH_PARAM)
+    @RunOnVirtualThread
     public Response post(Map<String, Object> map, @NotNull @PathParam("table") String table) throws Exception {
         debug(POST.class.getName());
         debugMe();
@@ -186,6 +192,7 @@ public class ApiServiceRs {
 
     @PUT
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
+    @RunOnVirtualThread
     public Response put(Map<String, Object> map, @NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(PUT.class.getName());
         debugMe();
@@ -224,6 +231,7 @@ public class ApiServiceRs {
 
     @DELETE
     @Path(TABLE_PATH_PARAM + UUID_PATH_PARAM)
+    @RunOnVirtualThread
     public Response delete(@NotNull @PathParam("table") String table, @NotNull @PathParam("uuid") String uuid) throws Exception {
         debug(DELETE.class.getName());
         debugMe();
