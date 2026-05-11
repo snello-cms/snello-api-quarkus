@@ -59,7 +59,11 @@ public class SqlHelper {
                 statement.setObject(index, null);
                 return;
             }
-            statement.setObject(index, optimisticCast(stringValue));
+            Object casted = optimisticCast(stringValue);
+            if (casted instanceof String) {
+                casted = castToNumericIfNeeded(statement, index, stringValue);
+            }
+            statement.setObject(index, casted);
             return;
         }
         // Handle List/ArrayList by converting to JSON string
@@ -105,6 +109,45 @@ public class SqlHelper {
         } catch (SQLException | RuntimeException e) {
             return false;
         }
+    }
+
+    private static Object castToNumericIfNeeded(PreparedStatement statement, int index, String value) {
+        try {
+            ParameterMetaData pmd = statement.getParameterMetaData();
+            if (pmd == null) {
+                return value;
+            }
+            int paramType = pmd.getParameterType(index);
+            switch (paramType) {
+                case Types.TINYINT:
+                case Types.SMALLINT:
+                case Types.INTEGER:
+                case Types.BIGINT:
+                case Types.NUMERIC:
+                case Types.DECIMAL:
+                    try {
+                        return Long.parseLong(value);
+                    } catch (NumberFormatException ignore) {
+                    }
+                    try {
+                        return new BigDecimal(value);
+                    } catch (NumberFormatException ignore) {
+                    }
+                    break;
+                case Types.FLOAT:
+                case Types.REAL:
+                case Types.DOUBLE:
+                    try {
+                        return Double.parseDouble(value);
+                    } catch (NumberFormatException ignore) {
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } catch (SQLException | RuntimeException ignore) {
+        }
+        return value;
     }
 
     public static Object convertSqlValue(Object value) throws SQLException {

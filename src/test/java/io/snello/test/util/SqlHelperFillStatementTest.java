@@ -4,6 +4,7 @@ import io.snello.util.SqlHelper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.Types;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class SqlHelperFillStatementTest {
@@ -40,6 +42,59 @@ class SqlHelperFillStatementTest {
         SqlHelper.fillStatement(preparedStatement.proxy(), List.of(""));
 
         assertEquals("", preparedStatement.values().getFirst());
+    }
+
+    @Test
+    void shouldCastStringToLongForNumericIntegerParameter() throws Exception {
+        RecordingPreparedStatement preparedStatement = new RecordingPreparedStatement(Types.NUMERIC);
+
+        SqlHelper.fillStatement(preparedStatement.proxy(), List.of("5"));
+
+        Object bound = preparedStatement.values().getFirst();
+        assertInstanceOf(Long.class, bound);
+        assertEquals(5L, bound);
+    }
+
+    @Test
+    void shouldCastStringToBigDecimalForNumericDecimalParameter() throws Exception {
+        RecordingPreparedStatement preparedStatement = new RecordingPreparedStatement(Types.DECIMAL);
+
+        SqlHelper.fillStatement(preparedStatement.proxy(), List.of("3.14"));
+
+        Object bound = preparedStatement.values().getFirst();
+        assertInstanceOf(BigDecimal.class, bound);
+        assertEquals(new BigDecimal("3.14"), bound);
+    }
+
+    @Test
+    void shouldCastStringToLongForIntegerParameter() throws Exception {
+        RecordingPreparedStatement preparedStatement = new RecordingPreparedStatement(Types.INTEGER);
+
+        SqlHelper.fillStatement(preparedStatement.proxy(), List.of("42"));
+
+        Object bound = preparedStatement.values().getFirst();
+        assertInstanceOf(Long.class, bound);
+        assertEquals(42L, bound);
+    }
+
+    @Test
+    void shouldCastStringToDoubleForDoubleParameter() throws Exception {
+        RecordingPreparedStatement preparedStatement = new RecordingPreparedStatement(Types.DOUBLE);
+
+        SqlHelper.fillStatement(preparedStatement.proxy(), List.of("2.71"));
+
+        Object bound = preparedStatement.values().getFirst();
+        assertInstanceOf(Double.class, bound);
+        assertEquals(2.71, bound);
+    }
+
+    @Test
+    void shouldKeepStringForVarcharParameterWithNumericValue() throws Exception {
+        RecordingPreparedStatement preparedStatement = new RecordingPreparedStatement(Types.VARCHAR);
+
+        SqlHelper.fillStatement(preparedStatement.proxy(), List.of("5"));
+
+        assertEquals("5", preparedStatement.values().getFirst());
     }
 
     private static final class RecordingPreparedStatement {
