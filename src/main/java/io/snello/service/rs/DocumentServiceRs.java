@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static io.snello.management.AppConstants.*;
 import static io.snello.util.DocumentUtils.hasFormatToken;
+import static io.snello.util.DocumentUtils.resolveRemoteFile;
 import static io.snello.util.DocumentUtils.validateDocumentFormData;
 import static jakarta.ws.rs.core.Response.ok;
 import static jakarta.ws.rs.core.Response.serverError;
@@ -152,6 +153,7 @@ public class DocumentServiceRs {
     @Produces(MediaType.APPLICATION_JSON)
     
     public Response persist(@BeanParam DocumentFormData documentFormData) throws Exception {
+        resolveRemoteFile(documentFormData);
         validateDocumentFormData(documentFormData);
         String uuid = java.util.UUID.randomUUID().toString();
         documentFormData.uuid = uuid;
@@ -169,6 +171,7 @@ public class DocumentServiceRs {
     public Response update(@BeanParam DocumentFormData documentFormData,
                            @PathParam("uuid") @NotNull String uuid) throws Exception {
 //            Map<String, Object> map = documentsService.upload(file, uuid, table_name, table_key);
+        resolveRemoteFile(documentFormData);
         validateDocumentFormData(documentFormData);
         documentFormData.uuid = uuid;
         Map<String, Object> map = documentsService.upload(documentFormData);

@@ -39,6 +39,10 @@ public class DocumentFormData {
     @PartType(MediaType.TEXT_PLAIN)
     public String table_key;
 
+    @FormParam("remote_url")
+    @PartType(MediaType.TEXT_PLAIN)
+    public String remote_url;
+
     public String resolvedOriginalName() {
         if (filename != null && !filename.isBlank()) {
             return filename;
