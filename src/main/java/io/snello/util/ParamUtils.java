@@ -125,6 +125,27 @@ public class ParamUtils {
                     // in.add(null);
                     continue;
                 }
+
+                // NIE = "_nie"; field <> '' (no value needed)
+                if (key.endsWith(NIE)) {
+                    if (!where.isEmpty()) {
+                        where.append(AND);
+                    }
+                    where.append(key.substring(0, key.length() - NIE.length()));
+                    where.append(_NIE_).append(SPACE);
+                    continue;
+                }
+
+                // IE = "_ie"; field = '' (no value needed)
+                if (key.endsWith(IE)) {
+                    if (!where.isEmpty()) {
+                        where.append(AND);
+                    }
+                    where.append(key.substring(0, key.length() - IE.length()));
+                    where.append(_IE).append(SPACE);
+                    continue;
+                }
+
                 continue;
             }
 
@@ -148,26 +169,6 @@ public class ParamUtils {
                     in.add(value == null ? null : value.trim());
                 }
                 where.append(") ").append(SPACE);
-                continue;
-            }
-
-            // NIE = "_nie";
-            if (key.endsWith(NIE)) {
-                if (where.length() > 0) {
-                    where.append(AND);
-                }
-                where.append(key.substring(0, key.length() - NIE.length()));
-                where.append(_NIE_).append(SPACE);
-                continue;
-            }
-            // IE = "_ie";
-            if (key.endsWith(IE)) {
-                if (where.length() > 0) {
-                    where.append(AND);
-                }
-                where.append(key.substring(0, key.length() - IE.length()));
-                where.append(_IE).append(SPACE);
-                in.add(value);
                 continue;
             }
             if (key.endsWith(LT)) {

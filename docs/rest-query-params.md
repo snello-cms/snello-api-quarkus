@@ -145,6 +145,8 @@ GET /api/datalist/metadata/users?deleted_at_inn
 
 ### Empty string checks
 
+These suffixes do **not** require a value — the parameter key alone is sufficient.
+
 | Suffix | SQL condition | Description |
 |---|---|---|
 | `_nie` | `<> ''` | Field is **not** an empty string |
@@ -160,6 +162,20 @@ GET /api/datalist/metadata/articles?description_nie
 GET /api/datalist/metadata/profiles?bio_ie
 ```
 → `WHERE bio = ''`
+
+---
+
+## Numeric field filtering
+
+When filtering on a numeric column (e.g. `numeric`, `integer`, `bigint`, `decimal`), pass the value as a plain string — the API automatically casts it to the correct type before binding the prepared statement.
+
+**Example** — table with column `heat_number numeric(10,0)`:
+```
+GET /api/ficr_results?heat_number=5
+```
+→ `WHERE heat_number = 5` (bound as a number, not a string)
+
+No explicit cast is needed in the query parameter.
 
 ---
 
@@ -201,5 +217,5 @@ WHERE category = 'electronics'
 | `_in` | `field IN (?,?,?)` | Comma-separated values |
 | `_nn` | `field IS NOT NULL` | No value needed |
 | `_inn` | `field IS NULL` | No value needed |
-| `_nie` | `field <> ''` | Not empty string |
-| `_ie` | `field = ''` | Is empty string |
+| `_nie` | `field <> ''` | No value needed |
+| `_ie` | `field = ''` | No value needed |
