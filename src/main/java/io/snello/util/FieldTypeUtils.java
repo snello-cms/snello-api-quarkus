@@ -62,7 +62,7 @@ public class FieldTypeUtils {
             return "decimal";
         }
 
-        if ("join".equals(type)) {
+        if ("join".equals(type) || "lookup".equals(type)) {
             String desc = fd.join_table_name != null ? " (join entity: " + fd.join_table_name + ")" : "";
             return "text" + desc;
         }

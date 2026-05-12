@@ -79,6 +79,7 @@ public class PostgresqlFieldDefinitionUtils {
             case "relationship":
             case "relationships":
             case "join":
+            case "lookup":
                 return escape(fieldDefinition.name) + " varchar(2048) default null  ";
         }
         return null;

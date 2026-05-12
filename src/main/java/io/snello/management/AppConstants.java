@@ -78,6 +78,7 @@ public class AppConstants {
     public static final String ROLE = "role";
     public static final String NAME = "name";
     public static final String JOIN = "join";
+    public static final String LOOKUP = "lookup";
     public static final String STRING = "string";
     public static final String TRUE = "true";
     public static final String ZIP = "zip";

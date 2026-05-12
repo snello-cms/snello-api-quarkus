@@ -64,6 +64,7 @@ public class MysqlFieldDefinitionUtils {
             case "tags":
             case "multijoin":
             case "join":
+            case "lookup":
             case "realtionship":
             case "realtionships":
             case "relationship":
