@@ -26,6 +26,8 @@ public class Metadata {
 
     public String order_by;
 
+    public String metadata_group;
+
     // tab1:group0,group1;tab2:
     public String tab_groups;
 
@@ -78,6 +80,7 @@ public class Metadata {
                ", table_key_addition='" + table_key_addition + '\'' +
                ", creation_query='" + creation_query + '\'' +
                ", order_by='" + order_by + '\'' +
+               ", metadata_group='" + metadata_group + '\'' +
                ", tab_groups='" + tab_groups + '\'' +
                ", icon='" + icon + '\'' +
                ", fields='" + fields + '\'' +
@@ -130,6 +133,9 @@ public class Metadata {
         }
         if (map.get("order_by") instanceof String) {
             metadata.order_by = (String) map.get("order_by");
+        }
+        if (map.get("metadata_group") instanceof String) {
+            metadata.metadata_group = (String) map.get("metadata_group");
         }
         if (map.get("tab_groups") instanceof String) {
             metadata.tab_groups = (String) map.get("tab_groups");
@@ -196,6 +202,9 @@ public class Metadata {
         }
         if (this.order_by != null) {
             map.put("order_by", this.order_by);
+        }
+        if (this.metadata_group != null) {
+            map.put("metadata_group", this.metadata_group);
         }
         if (this.tab_groups != null) {
             map.put("tab_groups", this.tab_groups);

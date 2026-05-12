@@ -128,6 +128,21 @@ public class MetadataServiceRs extends AbstractServiceRs {
         }
     }
 
+    @GET
+    @Path("/groups")
+    public Response groups() throws Exception {
+        List<Map<String, Object>> rows = getApiService().list(
+                "SELECT DISTINCT metadata_group FROM metadatas WHERE metadata_group IS NOT NULL ORDER BY metadata_group");
+        List<String> result = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            Object val = row.get("metadata_group");
+            if (val != null) {
+                result.add(val.toString());
+            }
+        }
+        return ok(result).build();
+    }
+
     @POST
     @Path("/export")
     public Response export(Map<String, Object> body) throws Exception {

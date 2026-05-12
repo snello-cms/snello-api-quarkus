@@ -198,6 +198,10 @@ public class ApiService {
         return jdbcRepository.create(table, UUID, map);
     }
 
+    public List<Map<String, Object>> list(String query) throws Exception {
+        return jdbcRepository.list(query);
+    }
+
     public Map<String, Object> merge(String table, Map<String, Object> map, String key, String table_key)
             throws Exception {
         table = initTable(table);

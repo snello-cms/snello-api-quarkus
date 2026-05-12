@@ -95,6 +95,7 @@ public class MysqlConstants {
             "  `table_key_addition` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `creation_query` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `order_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
+            "  `metadata_group` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `tab_groups` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
             "  `already_exist` BOOLEAN NOT NULL DEFAULT FALSE,\n" +
             "  `calendar_enabled` BOOLEAN NOT NULL DEFAULT FALSE,\n" +

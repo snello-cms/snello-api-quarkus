@@ -94,6 +94,7 @@ public class H2Constants {
                         "  table_key_addition varchar(255) DEFAULT NULL,\n" +
                         "  creation_query varchar(255) DEFAULT NULL,\n" +
                         "  order_by varchar(255) DEFAULT NULL,\n" +
+                        "  metadata_group varchar(150) DEFAULT NULL,\n" +
                         "  tab_groups varchar(255) DEFAULT NULL,\n" +
                         "  already_exist BOOLEAN NOT NULL DEFAULT FALSE,\n" +
                         "  calendar_enabled BOOLEAN NOT NULL DEFAULT FALSE,\n" +
