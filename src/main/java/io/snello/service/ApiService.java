@@ -226,7 +226,7 @@ public class ApiService {
         metadata.fields = metadataService.fielddefinitions(metadata.table_name);
         List<FieldDefinition> fields = metadata.fields == null ? List.of() : metadata.fields;
         for (FieldDefinition fd : fields) {
-            if ("multijoin".equals(fd.type)) {
+            if ("multijoin".equals(fd.type) || "multilookup".equals(fd.type)) {
                 String join_table_name = metadata.table_name + "_" + fd.join_table_name;
                 jdbcRepository.query(DROP_TABLE + join_table_name, null);
             }

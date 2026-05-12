@@ -426,7 +426,7 @@ public class PostgresqlJdbcRepository implements JdbcRepository {
                 }
                 sb.append(columnSql);
             }
-            if ("multijoin".equals(fieldDefinition.type)) {
+            if ("multijoin".equals(fieldDefinition.type) || "multilookup".equals(fieldDefinition.type)) {
                 String join_table_name = metadata.table_name + "_" + fieldDefinition.join_table_name;
                 String table_id = metadata.table_name + "_id";
                 String join_table_id = fieldDefinition.join_table_name + "_id";

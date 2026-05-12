@@ -66,7 +66,7 @@ public class FieldTypeUtils {
             String desc = fd.join_table_name != null ? " (join entity: " + fd.join_table_name + ")" : "";
             return "text" + desc;
         }
-        if ("multijoin".equals(type)) {
+        if ("multijoin".equals(type) || "multilookup".equals(type)) {
             String desc = fd.join_table_name != null ? " (multijoin: comma-separated uuids from " + fd.join_table_name + ")" : " (multijoin)";
             return "text" + desc;
         }
